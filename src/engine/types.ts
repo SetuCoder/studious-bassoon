@@ -112,4 +112,6 @@ export interface AppData {
   checkIns: CheckIn[]
   chargeChecks: ChargeCheck[]
   feedback: { wouldAct?: 'yes' | 'maybe' | 'no'; recommend?: 'not_likely' | 'maybe' | 'very_likely' }
+  /** Me tab toggle "Share anonymous usage counts"; on by default. */
+  settings: { shareUsageCounts: boolean }
 }
