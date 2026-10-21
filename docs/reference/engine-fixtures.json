@@ -1,0 +1,463 @@
+{
+  "note": "Generated from docs/reference/prototype.html engine on 2026-10-21. Tolerance ±1 rupee. Loan monthlyPayment values are pmt(balance, apr, months) with months home 240, car 36, personal 30.",
+  "constants": {
+    "HORIZON_MONTHS": 36,
+    "SAVINGS_RATE": 3,
+    "GST_RATE": 0.18
+  },
+  "takeHomeMonthly": 145000,
+  "debts": [
+    {
+      "id": "home",
+      "name": "Home loan",
+      "type": "home_loan",
+      "balance": 3800000,
+      "apr": 8.75,
+      "monthlyPayment": 33581.01,
+      "rateType": "floating",
+      "sanctionedOn": "2021-06-10",
+      "purpose": "personal"
+    },
+    {
+      "id": "car",
+      "name": "Car loan",
+      "type": "car_loan",
+      "balance": 420000,
+      "apr": 9.5,
+      "monthlyPayment": 13453.84,
+      "rateType": "fixed",
+      "sanctionedOn": "2023-04-05",
+      "purpose": "personal"
+    },
+    {
+      "id": "personal",
+      "name": "Personal loan",
+      "type": "personal_loan",
+      "balance": 210000,
+      "apr": 13,
+      "monthlyPayment": 8236.53,
+      "rateType": "floating",
+      "sanctionedOn": "2026-03-14",
+      "purpose": "personal"
+    },
+    {
+      "id": "card1",
+      "name": "Credit card 1",
+      "type": "credit_card",
+      "balance": 85000,
+      "apr": 42,
+      "monthlyPayment": 6000
+    },
+    {
+      "id": "card2",
+      "name": "Credit card 2",
+      "type": "credit_card",
+      "balance": 22000,
+      "apr": 38,
+      "monthlyPayment": 2500
+    },
+    {
+      "id": "bnpl",
+      "name": "Buy now, pay later",
+      "type": "bnpl",
+      "balance": 18000,
+      "apr": 30,
+      "monthlyPayment": 6000
+    }
+  ],
+  "ledger": {
+    "totalOwed": 4555000,
+    "monthlyPayments": 69771.37,
+    "shareOfTakeHome": 0.4812,
+    "interestThisMonth": 37430,
+    "weightedApr": 9.86,
+    "sortedByCostIds": [
+      "card1",
+      "card2",
+      "bnpl",
+      "personal",
+      "car",
+      "home"
+    ]
+  },
+  "baseSimulation": {
+    "totalInterest": 1053718.23,
+    "spare": 0,
+    "remaining": 3096948.87,
+    "clearedMonth": {
+      "bnpl": 4,
+      "card1": 11,
+      "card2": 11,
+      "personal": 18,
+      "car": 24
+    }
+  },
+  "options": [
+    {
+      "input": {
+        "amount": 150000,
+        "buffer": 30000,
+        "assumedReturn": 12
+      },
+      "expected": {
+        "L": 120000,
+        "order": [
+          "apr",
+          "size",
+          "invest",
+          "home",
+          "save"
+        ],
+        "options": [
+          {
+            "id": "apr",
+            "delta": 55727.66,
+            "allocation": {
+              "card1": 85000,
+              "card2": 22000,
+              "bnpl": 13000
+            }
+          },
+          {
+            "id": "size",
+            "delta": 55660.5,
+            "allocation": {
+              "bnpl": 18000,
+              "card2": 22000,
+              "card1": 80000
+            }
+          },
+          {
+            "id": "invest",
+            "delta": 40406.09,
+            "allocation": {}
+          },
+          {
+            "id": "home",
+            "delta": 24586.48,
+            "allocation": {
+              "home": 120000
+            }
+          },
+          {
+            "id": "save",
+            "delta": 0,
+            "allocation": {}
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "amount": 150000,
+        "buffer": 150000,
+        "assumedReturn": 12
+      },
+      "expected": {
+        "L": 0,
+        "order": [
+          "apr",
+          "size",
+          "home",
+          "invest",
+          "save"
+        ],
+        "options": [
+          {
+            "id": "apr",
+            "delta": 0,
+            "allocation": {}
+          },
+          {
+            "id": "size",
+            "delta": 0,
+            "allocation": {}
+          },
+          {
+            "id": "home",
+            "delta": 0,
+            "allocation": {}
+          },
+          {
+            "id": "invest",
+            "delta": 0,
+            "allocation": {}
+          },
+          {
+            "id": "save",
+            "delta": 0,
+            "allocation": {}
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "amount": 150000,
+        "buffer": 30000,
+        "assumedReturn": 36
+      },
+      "expected": {
+        "L": 120000,
+        "order": [
+          "invest",
+          "split",
+          "apr",
+          "size",
+          "home",
+          "save"
+        ],
+        "options": [
+          {
+            "id": "invest",
+            "delta": 216507.23,
+            "allocation": {}
+          },
+          {
+            "id": "split",
+            "delta": 107792.59,
+            "allocation": {
+              "card1": 85000
+            },
+            "invested": 35000
+          },
+          {
+            "id": "apr",
+            "delta": 55727.66,
+            "allocation": {
+              "card1": 85000,
+              "card2": 22000,
+              "bnpl": 13000
+            }
+          },
+          {
+            "id": "size",
+            "delta": 55660.5,
+            "allocation": {
+              "bnpl": 18000,
+              "card2": 22000,
+              "card1": 80000
+            }
+          },
+          {
+            "id": "home",
+            "delta": 24586.48,
+            "allocation": {
+              "home": 120000
+            }
+          },
+          {
+            "id": "save",
+            "delta": 0,
+            "allocation": {}
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "amount": 150000,
+        "buffer": 30000,
+        "assumedReturn": 45
+      },
+      "expected": {
+        "L": 120000,
+        "order": [
+          "invest",
+          "apr",
+          "size",
+          "home",
+          "save"
+        ],
+        "options": [
+          {
+            "id": "invest",
+            "delta": 320312.9,
+            "allocation": {}
+          },
+          {
+            "id": "apr",
+            "delta": 55727.66,
+            "allocation": {
+              "card1": 85000,
+              "card2": 22000,
+              "bnpl": 13000
+            }
+          },
+          {
+            "id": "size",
+            "delta": 55660.5,
+            "allocation": {
+              "bnpl": 18000,
+              "card2": 22000,
+              "card1": 80000
+            }
+          },
+          {
+            "id": "home",
+            "delta": 24586.48,
+            "allocation": {
+              "home": 120000
+            }
+          },
+          {
+            "id": "save",
+            "delta": 0,
+            "allocation": {}
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "amount": 1000000,
+        "buffer": 30000,
+        "assumedReturn": 12
+      },
+      "expected": {
+        "L": 970000,
+        "order": [
+          "split",
+          "invest",
+          "apr",
+          "size",
+          "home",
+          "save"
+        ],
+        "options": [
+          {
+            "id": "split",
+            "delta": 342639.53,
+            "allocation": {
+              "card1": 85000
+            },
+            "invested": 885000
+          },
+          {
+            "id": "invest",
+            "delta": 326615.86,
+            "allocation": {}
+          },
+          {
+            "id": "apr",
+            "delta": 239462.51,
+            "allocation": {
+              "card1": 85000,
+              "card2": 22000,
+              "bnpl": 18000,
+              "personal": 210000,
+              "car": 420000,
+              "home": 215000
+            }
+          },
+          {
+            "id": "size",
+            "delta": 239462.51,
+            "allocation": {
+              "bnpl": 18000,
+              "card2": 22000,
+              "card1": 85000,
+              "personal": 210000,
+              "car": 420000,
+              "home": 215000
+            }
+          },
+          {
+            "id": "home",
+            "delta": 198740.74,
+            "allocation": {
+              "home": 970000
+            }
+          },
+          {
+            "id": "save",
+            "delta": 0,
+            "allocation": {}
+          }
+        ]
+      }
+    }
+  ],
+  "neverClearingCard": {
+    "debt": {
+      "balance": 100000,
+      "apr": 42,
+      "monthlyPayment": 3000
+    },
+    "expected": {
+      "payoffNever": true,
+      "remainingAfter36": 135003.8
+    }
+  },
+  "chargeChecks": [
+    {
+      "debtId": "personal",
+      "lines": [
+        {
+          "kind": "principal",
+          "label": "Outstanding principal",
+          "amount": 210000
+        },
+        {
+          "kind": "interest",
+          "label": "Interest to the closing date",
+          "amount": 1820
+        },
+        {
+          "kind": "foreclosure",
+          "label": "Foreclosure charge (3% of principal)",
+          "amount": 6300
+        },
+        {
+          "kind": "prepay_fee",
+          "label": "Prepayment processing fee",
+          "amount": 1500
+        },
+        {
+          "kind": "admin",
+          "label": "Documentation and administration fee",
+          "amount": 750,
+          "disclosed": "no"
+        },
+        {
+          "kind": "gst",
+          "label": "GST at 18% on the charges above",
+          "amount": 1539
+        }
+      ],
+      "expected": {
+        "flaggedTotal": 9204,
+        "toConfirmTotal": 885
+      }
+    },
+    {
+      "debtId": "car",
+      "lines": [
+        {
+          "kind": "principal",
+          "label": "Outstanding principal",
+          "amount": 420000
+        },
+        {
+          "kind": "interest",
+          "label": "Interest to the closing date",
+          "amount": 1640
+        },
+        {
+          "kind": "foreclosure",
+          "label": "Foreclosure charge (2% of principal)",
+          "amount": 8400
+        },
+        {
+          "kind": "gst",
+          "label": "GST at 18% on the charge above",
+          "amount": 1512
+        }
+      ],
+      "expected": {
+        "flaggedTotal": 0,
+        "toConfirmTotal": 0
+      }
+    }
+  ]
+}

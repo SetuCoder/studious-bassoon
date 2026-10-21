@@ -1,0 +1,560 @@
+<title>Credit Layer Prototype</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:wght@400;600&display=swap">
+<style>
+/* Layout: one narrow column app. Four steps along the top, one job per screen, numbers in serif, everything else in Inter. */
+:root {
+  --bg: #FAF9F5;
+  --surface: #FFFFFF;
+  --ink: #14213D;
+  --muted: #5B6472;
+  --line: #E3E1D9;
+  --accent: #1F7A52;
+  --accent-soft: #E3F2EA;
+  --on-accent: #FFFFFF;
+  --warn: #9A5712;
+  --warn-soft: #FBEEDC;
+  --bad: #A32C2C;
+  --bad-soft: #FBE6E4;
+  --deep: #14213D;
+  --on-deep: #FAF9F5;
+  --on-deep-muted: #C3CAD4;
+  --font-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-num: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1626; --surface: #172036; --ink: #EEF1F6; --muted: #A3ACBB; --line: #2A3550;
+    --accent: #5CCB97; --accent-soft: #16372B; --on-accent: #0B1A14;
+    --warn: #E2A55B; --warn-soft: #3A2A14; --bad: #F08A82; --bad-soft: #3D1E1E;
+    --deep: #0A1020; --on-deep: #FAF9F5; --on-deep-muted: #A9B4C4;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1626; --surface: #172036; --ink: #EEF1F6; --muted: #A3ACBB; --line: #2A3550;
+  --accent: #5CCB97; --accent-soft: #16372B; --on-accent: #0B1A14;
+  --warn: #E2A55B; --warn-soft: #3A2A14; --bad: #F08A82; --bad-soft: #3D1E1E;
+  --deep: #0A1020; --on-deep: #FAF9F5; --on-deep-muted: #A9B4C4;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--font-ui); font-size: 16px; line-height: 1.5; }
+* { box-sizing: border-box; }
+.wrap { max-width: 1040px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 56px; display: flex; flex-direction: column; gap: 24px; }
+h1, h2, h3, p { margin: 0; }
+h1 { font-family: var(--font-num); font-weight: 600; font-size: clamp(28px, 5vw, 40px); line-height: 1.15; text-wrap: balance; }
+h2 { font-family: var(--font-num); font-weight: 600; font-size: 24px; line-height: 1.2; text-wrap: balance; }
+h3 { font-size: 16px; font-weight: 600; }
+.muted { color: var(--muted); }
+.small { font-size: 14px; }
+.label { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.num { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* header + steps */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.brand { font-family: var(--font-num); font-weight: 600; font-size: 22px; }
+.pill { font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 999px; background: var(--warn-soft); color: var(--warn); }
+.steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.step { appearance: none; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; cursor: pointer; display: flex; gap: 10px; align-items: center; min-width: 0; }
+.step[disabled] { opacity: 0.5; cursor: not-allowed; }
+.step .n { flex: none; width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--muted); display: grid; place-items: center; font-size: 13px; font-weight: 700; color: var(--muted); }
+.step .t { font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+.step[aria-current="step"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.step[aria-current="step"] .n { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.step.done .n { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+@media (max-width: 640px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* generic */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.deep { background: var(--deep); color: var(--on-deep); border-color: var(--deep); }
+.deep .muted { color: var(--on-deep-muted); }
+.btn { appearance: none; border: 1px solid var(--accent); background: var(--accent); color: var(--on-accent); font-weight: 600; padding: 12px 20px; border-radius: 10px; cursor: pointer; align-self: flex-start; }
+.btn.ghost { background: transparent; color: var(--accent); }
+.btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.panel { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.panel[hidden] { display: none !important; }
+.head { display: flex; flex-direction: column; gap: 8px; max-width: 62ch; }
+
+/* upload */
+.docs { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.doc { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--line); background: var(--surface); min-width: 0; }
+.doc:last-child { border-bottom: 0; }
+.doc .tick { flex: none; width: 24px; height: 24px; border-radius: 50%; border: 1.5px dashed var(--muted); display: grid; place-items: center; font-size: 13px; font-weight: 700; color: var(--accent); }
+.doc.read .tick { border: 1.5px solid var(--accent); background: var(--accent-soft); }
+.doc .what { min-width: 0; flex: 1; }
+.doc .name { font-weight: 600; overflow-wrap: anywhere; }
+.doc .found { font-size: 14px; color: var(--muted); overflow-wrap: anywhere; }
+.drop { border: 1.5px dashed var(--line); border-radius: 12px; padding: 16px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+.file-input { font-size: 14px; max-width: 100%; }
+
+/* ledger */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.stat .v { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 26px; font-weight: 600; line-height: 1.1; overflow-wrap: anywhere; }
+@media (max-width: 760px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.debts { display: flex; flex-direction: column; gap: 10px; }
+.debt { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; grid-template-columns: minmax(0, 1.7fr) repeat(3, minmax(0, 1fr)); gap: 8px 16px; align-items: center; }
+.debt.top { border-color: var(--bad); }
+.d-name { font-weight: 600; overflow-wrap: anywhere; }
+.tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+.tag { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; background: var(--bg); border: 1px solid var(--line); color: var(--muted); }
+.ratebar { height: 6px; border-radius: 3px; background: var(--line); margin-top: 8px; overflow: hidden; }
+.ratebar i { display: block; height: 100%; background: var(--warn); }
+.cell { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.cell .v { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 20px; font-weight: 600; overflow-wrap: anywhere; }
+@media (max-width: 720px) { .debt { grid-template-columns: repeat(3, minmax(0, 1fr)); } .debt .d-main { grid-column: 1 / -1; } }
+
+/* decide */
+.decide { display: grid; grid-template-columns: minmax(0, 320px) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 860px) { .decide { grid-template-columns: minmax(0, 1fr); } }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 14px; font-weight: 600; }
+.field input { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 20px; }
+.avail { background: var(--accent-soft); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+.avail .v { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 28px; font-weight: 600; color: var(--accent); }
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt { appearance: none; width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; cursor: pointer; display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; }
+.opt[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.opt .rk { font-family: var(--font-num); font-weight: 600; font-size: 20px; color: var(--muted); }
+.opt .nm { font-weight: 600; overflow-wrap: anywhere; }
+.opt .bl { grid-column: 2; font-size: 14px; color: var(--muted); overflow-wrap: anywhere; }
+.opt .dl { grid-column: 3; grid-row: 1 / span 2; text-align: right; font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 22px; font-weight: 600; }
+.opt .dl small { display: block; font-family: var(--font-ui); font-size: 12px; font-weight: 500; color: var(--muted); }
+.opt .bar { grid-column: 2 / -1; height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
+.opt .bar i { display: block; height: 100%; background: var(--accent); min-width: 2px; }
+.best { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: var(--accent); color: var(--on-accent); margin-left: 8px; vertical-align: middle; }
+.stack { display: flex; flex-direction: column; gap: 8px; }
+.block { border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; background: var(--bg); }
+.block.hit { border-color: var(--accent); background: var(--accent-soft); }
+.block .b-n { font-weight: 600; overflow-wrap: anywhere; }
+.block .b-v { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; }
+.block .b-bar { grid-column: 1 / -1; height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.block .b-bar i { display: block; height: 100%; background: var(--accent); }
+.assume { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+
+/* charges */
+.quote { gap: 10px; }
+.qline { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 16px; padding: 12px 0; border-top: 1px solid var(--line); align-items: start; }
+.qline:first-of-type { border-top: 0; }
+.qline .ql { font-weight: 500; overflow-wrap: anywhere; }
+.qline .qa { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; }
+.qline .why { grid-column: 1 / -1; font-size: 14px; color: var(--muted); display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.chip { flex: none; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; display: inline-flex; gap: 6px; align-items: center; }
+.chip.flag { background: var(--bad-soft); color: var(--bad); }
+.chip.check { background: var(--warn-soft); color: var(--warn); }
+.chip.ok { background: var(--accent-soft); color: var(--accent); }
+.chip.note, .chip.follows { background: var(--bg); color: var(--muted); border: 1px solid var(--line); }
+.totals { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 560px) { .totals { grid-template-columns: minmax(0, 1fr); } }
+.tot { border-radius: 10px; padding: 12px 14px; background: var(--bg); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 2px; }
+.tot .v { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-size: 24px; font-weight: 600; }
+.tot.save { background: var(--accent-soft); border-color: var(--accent); }
+.tot.save .v { color: var(--accent); }
+textarea { width: 100%; min-height: 260px; resize: vertical; padding: 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: 14px/1.5 var(--font-ui); }
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <div class="brand">Credit Layer</div>
+    <div class="pill">Prototype · sample data, not real accounts</div>
+  </div>
+
+  <nav class="steps" aria-label="Steps" id="steps"></nav>
+
+  <!-- 1 UPLOAD -->
+  <section class="panel" id="p1">
+    <div class="card">
+      <div class="head">
+        <p class="label">Step 1</p>
+        <h1>Add the statements you already have.</h1>
+        <p class="muted">We read them here. No bank login, no SMS access, and nothing to type in.</p>
+      </div>
+      <div class="docs" id="docs"></div>
+      <div class="drop">
+        <div>
+          <p><b>Choose your own files</b></p>
+          <p class="small muted">In this prototype your files are not read. The sample statements below are used instead.</p>
+        </div>
+        <input class="file-input" id="files" type="file" multiple accept=".pdf,image/*" aria-label="Choose statement files">
+      </div>
+      <div class="row">
+        <button class="btn" id="readBtn" type="button">Use the sample statements</button>
+        <span class="small muted" id="readNote"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 LEDGER -->
+  <section class="panel" id="p2" hidden>
+    <div class="head">
+      <p class="label">Step 2</p>
+      <h1>Everything you owe, in one place.</h1>
+      <p class="muted">Every figure comes from a statement you added. Sorted by what each debt costs you per year.</p>
+    </div>
+    <div class="stats" id="stats"></div>
+    <div class="debts" id="debts"></div>
+    <button class="btn" type="button" id="toDecide">I have money to put to work</button>
+  </section>
+
+  <!-- 3 DECIDE -->
+  <section class="panel" id="p3" hidden>
+    <div class="head">
+      <p class="label">Step 3</p>
+      <h1>What should the next rupee do?</h1>
+      <p class="muted">Change the numbers and the ranking recalculates. Every option is measured against leaving the money in savings.</p>
+    </div>
+    <div class="decide">
+      <div class="card">
+        <div class="field">
+          <label for="bonus">Money you have (₹)</label>
+          <input id="bonus" type="number" inputmode="numeric" min="0" step="5000" value="150000">
+        </div>
+        <div class="field">
+          <label for="buffer">Cash to keep aside (₹)</label>
+          <input id="buffer" type="number" inputmode="numeric" min="0" step="5000" value="30000">
+        </div>
+        <div class="field">
+          <label for="ret">Return you would assume if you invested (% a year)</label>
+          <input id="ret" type="number" inputmode="decimal" min="0" max="60" step="0.5" value="12">
+          <p class="small muted">Your assumption, not a promise. Savings are taken as 3%.</p>
+        </div>
+        <div class="avail"><span class="small muted">Available to use</span><span class="v" id="avail"></span></div>
+      </div>
+      <div class="opts" id="opts"></div>
+    </div>
+    <div class="card" id="detail"></div>
+    <button class="btn" type="button" id="toCharges">Check my closing quotes for extra charges</button>
+  </section>
+
+  <!-- 4 CHARGES -->
+  <section class="panel" id="p4" hidden>
+    <div class="head">
+      <p class="label">Step 4</p>
+      <h1>Check the charges before you pay them.</h1>
+      <p class="muted">Each line on a closing quote is checked against the loan's details and the RBI rule on prepayment charges.</p>
+    </div>
+    <div id="quotes" style="display:flex;flex-direction:column;gap:20px"></div>
+    <div class="card" id="draftCard" hidden>
+      <h2>Draft message to the lender</h2>
+      <p class="small muted">Plain wording, ready to edit. It asks the lender to confirm or explain; it does not claim more than the rule says.</p>
+      <textarea id="draft" aria-label="Draft message to the lender"></textarea>
+      <div class="row">
+        <button class="btn" type="button" id="copyBtn">Copy message</button>
+        <span class="small muted" id="copyNote" aria-live="polite"></span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+/*ENGINE_START*/
+const SAVINGS_RATE = 3;      // % a year, an assumption for the savings baseline
+const HORIZON = 36;          // months compared
+const TAKE_HOME = 145000;    // from the sample salary slip
+const inr = n => (n < 0 ? '−' : '') + '₹' + Math.round(Math.abs(n)).toLocaleString('en-IN');
+
+function pmt(P, apr, n) { const r = apr / 1200; return r === 0 ? P / n : (P * r) / (1 - Math.pow(1 + r, -n)); }
+
+const DEBTS = [
+  { id: 'home',     name: 'Home loan',        type: 'Loan', rateType: 'floating', sanctioned: '2021-06-10', apr: 8.75, balance: 3800000, months: 240, source: 'Home loan statement' },
+  { id: 'car',      name: 'Car loan',         type: 'Loan', rateType: 'fixed',    sanctioned: '2023-04-05', apr: 9.5,  balance: 420000,  months: 36,  source: 'Car loan statement' },
+  { id: 'personal', name: 'Personal loan',    type: 'Loan', rateType: 'floating', sanctioned: '2026-03-14', apr: 13,   balance: 210000,  months: 30,  source: 'Personal loan statement' },
+  { id: 'card1',    name: 'Credit card 1',    type: 'Card', apr: 42, balance: 85000, payment: 6000, source: 'Card statement' },
+  { id: 'card2',    name: 'Credit card 2',    type: 'Card', apr: 38, balance: 22000, payment: 2500, source: 'Card statement' },
+  { id: 'bnpl',     name: 'Buy now, pay later', type: 'BNPL', apr: 30, balance: 18000, payment: 6000, source: 'BNPL statement' }
+];
+DEBTS.forEach(d => { if (d.type === 'Loan') d.payment = pmt(d.balance, d.apr, d.months); });
+
+function allocate(order, amount) {
+  const alloc = {}; let left = amount;
+  for (const d of order) { if (left <= 0) break; const a = Math.min(left, d.balance); alloc[d.id] = a; left -= a; }
+  return { alloc, used: amount - left };
+}
+
+// Month by month: interest accrues, scheduled payments go in, and any payment freed by a cleared debt rolls to the highest-rate debt left.
+function simulate(debts, lump) {
+  const ds = debts.map(d => ({ id: d.id, apr: d.apr, r: d.apr / 1200, pay: d.payment, bal: Math.max(0, d.balance - (lump[d.id] || 0)) }));
+  const budget = debts.reduce((s, d) => s + d.payment, 0);
+  let interest = 0, spare = 0; const cleared = {};
+  for (let m = 1; m <= HORIZON; m++) {
+    ds.forEach(d => { const i = d.bal * d.r; d.bal += i; interest += i; });
+    let avail = budget;
+    ds.forEach(d => { const p = Math.min(d.pay, d.bal); d.bal -= p; avail -= p; });
+    const order = ds.filter(d => d.bal > 0.5).sort((a, b) => b.apr - a.apr);
+    for (const d of order) { if (avail <= 0) break; const p = Math.min(avail, d.bal); d.bal -= p; avail -= p; }
+    spare += Math.max(0, avail);
+    ds.forEach(d => { if (d.bal <= 0.5 && !(d.id in cleared)) cleared[d.id] = m; });
+  }
+  return { interest, spare, remaining: ds.reduce((s, d) => s + Math.max(0, d.bal), 0), cleared };
+}
+
+const fv = rate => Math.pow(1 + rate / 1200, HORIZON);
+
+function buildOptions(bonus, buffer, ret) {
+  const L = Math.max(0, bonus - buffer);
+  const base = simulate(DEBTS, {});
+  const byApr = [...DEBTS].sort((a, b) => b.apr - a.apr);
+  const bySize = [...DEBTS].sort((a, b) => a.balance - b.balance);
+  const home = DEBTS.filter(d => d.id === 'home');
+  const prepay = (id, name, blurb, order) => {
+    const { alloc, used } = allocate(order, L);
+    const s = simulate(DEBTS, alloc);
+    return { id, name, blurb, kind: 'debt', alloc, used, delta: (base.remaining - s.remaining) + (s.spare - base.spare) - used * fv(SAVINGS_RATE), sim: s };
+  };
+  const opts = [
+    prepay('apr', 'Highest rate first', 'Pay down the most expensive debt, then the next.', byApr),
+    prepay('size', 'Smallest balance first', 'Clear the small debts to simplify things.', bySize),
+    prepay('home', 'Prepay the home loan', 'Put it all on the biggest, cheapest loan.', home),
+    { id: 'invest', name: 'Invest it', blurb: 'At the return you assumed, debts keep running.', kind: 'invest', alloc: {}, used: 0, delta: L * (fv(ret) - fv(SAVINGS_RATE)) },
+    { id: 'save', name: 'Keep it in savings', blurb: 'The baseline everything else is compared with.', kind: 'save', alloc: {}, used: 0, delta: 0 }
+  ];
+  const above = byApr.filter(d => d.apr > ret);
+  let split = null;
+  for (let k = 1; k <= above.length; k++) {
+    const sp = allocate(above.slice(0, k), L);
+    if (sp.used <= 0 || sp.used >= L - 0.5) continue;
+    const s = simulate(DEBTS, sp.alloc);
+    const left = L - sp.used;
+    const delta = (base.remaining - s.remaining) + (s.spare - base.spare) - sp.used * fv(SAVINGS_RATE) + left * (fv(ret) - fv(SAVINGS_RATE));
+    if (!split || delta > split.delta) split = { id: 'split', name: 'Clear the costliest debts, invest the rest', blurb: 'Pays off debts costing more than ' + ret + '%, invests what is left.', kind: 'split', alloc: sp.alloc, used: sp.used, invested: left, delta, sim: s };
+  }
+  const bestDebt = Math.max(...opts.filter(o => o.kind === 'debt').map(o => o.delta));
+  if (split && split.delta > bestDebt * 1.05) opts.push(split); // shown only when it clearly beats paying debts alone
+  opts.sort((a, b) => b.delta - a.delta);
+  return { L, base, opts };
+}
+
+function explain(opt, L, ret) {
+  const byApr = [...DEBTS].sort((a, b) => b.apr - a.apr);
+  const top = byApr[0];
+  if (L <= 0) return 'There is nothing left to deploy after the cash you are keeping aside.';
+  if (opt.kind === 'debt') {
+    const parts = byApr.filter(d => opt.alloc[d.id] > 0).map(d => inr(opt.alloc[d.id]) + ' to ' + d.name + ' (' + d.apr + '%)');
+    const lead = opt.id === 'apr'
+      ? top.name + ' costs ' + top.apr + '% a year. No savings account pays anywhere near that, and an investment return is never guaranteed, so the money goes there first.'
+      : 'This puts the money where you chose, not where it saves the most interest.';
+    return lead + ' The split: ' + parts.join(', ') + '. Freed-up monthly payments then roll to the next highest-rate debt.';
+  }
+  if (opt.kind === 'split') {
+    const parts = byApr.filter(d => opt.alloc[d.id] > 0).map(d => inr(opt.alloc[d.id]) + ' to ' + d.name + ' (' + d.apr + '%)');
+    return 'The costliest debts are paid off first, since each costs more than the ' + ret + '% you assumed: ' + parts.join(', ') + '. The remaining ' + inr(opt.invested) + ' is invested at that assumed return. Debts not listed keep running as scheduled.';
+  }
+  if (opt.kind === 'invest') {
+    return 'Investing ' + inr(L) + ' at an assumed ' + ret + '% would grow it more than savings would, but ' + top.name + ' still costs ' + top.apr + '% a year. ' +
+      (ret < top.apr ? 'That is higher than the return you assumed, so paying it down comes out ahead.' : 'Your assumed return is above that rate, so this wins on paper. Returns are not guaranteed and the debt cost is.');
+  }
+  return 'The money stays safe and earns about ' + SAVINGS_RATE + '% while ' + top.name + ' keeps charging ' + top.apr + '%.';
+}
+
+/* RBI 2026 direction on prepayment charges, as summarised: floating-rate loans to individuals, sanctioned or renewed on or after 1 Jan 2026. */
+const QUOTES = [
+  { loanId: 'personal', title: 'Personal loan, closing quote', borrower: 'individual', lines: [
+    { id: 'p',  label: 'Outstanding principal', kind: 'principal', amount: 210000 },
+    { id: 'i',  label: 'Interest to the closing date', kind: 'interest', amount: 1820 },
+    { id: 'f',  label: 'Foreclosure charge (3% of principal)', kind: 'foreclosure', amount: 6300 },
+    { id: 'pp', label: 'Prepayment processing fee', kind: 'prepay_fee', amount: 1500 },
+    { id: 'a',  label: 'Documentation and administration fee', kind: 'admin', amount: 750, disclosed: false },
+    { id: 'g',  label: 'GST at 18% on the charges above', kind: 'gst', amount: 1539, on: ['f', 'pp', 'a'] }
+  ] },
+  { loanId: 'car', title: 'Car loan, closing quote', borrower: 'individual', lines: [
+    { id: 'p', label: 'Outstanding principal', kind: 'principal', amount: 420000 },
+    { id: 'i', label: 'Interest to the closing date', kind: 'interest', amount: 1640 },
+    { id: 'f', label: 'Foreclosure charge (2% of principal)', kind: 'foreclosure', amount: 8400 },
+    { id: 'g', label: 'GST at 18% on the charge above', kind: 'gst', amount: 1512, on: ['f'] }
+  ] }
+];
+
+function evaluateQuote(q) {
+  const loan = DEBTS.find(d => d.id === q.loanId);
+  const covered = loan.rateType === 'floating' && q.borrower === 'individual' && loan.sanctioned >= '2026-01-01';
+  const results = {};
+  q.lines.filter(l => l.kind !== 'gst').forEach(l => {
+    if (l.kind === 'principal') {
+      results[l.id] = Math.abs(l.amount - loan.balance) < 1
+        ? { status: 'ok', chip: 'Matches', text: 'Equals the balance in your ledger.' }
+        : { status: 'flag', chip: 'Doesn’t add up', text: 'Your ledger shows ' + inr(loan.balance) + '.' };
+    } else if (l.kind === 'interest') {
+      results[l.id] = { status: 'note', chip: 'Not checked', text: 'The prototype does not test interest to date.' };
+    } else if (l.kind === 'foreclosure' || l.kind === 'prepay_fee') {
+      results[l.id] = covered
+        ? { status: 'flag', chip: 'Doesn’t add up', text: 'RBI bars prepayment and foreclosure charges on floating-rate loans to individuals sanctioned or renewed on or after 1 Jan 2026. This loan is ' + loan.rateType + ', ' + q.borrower + ', sanctioned ' + fmtDate(loan.sanctioned) + '.' }
+        : { status: 'note', chip: 'Rule does not cover it', text: loan.rateType === 'fixed' ? 'That RBI rule covers floating-rate loans. This one is fixed-rate, so your loan agreement decides. Read the charges section.' : 'This loan was sanctioned before 1 Jan 2026, so the rule does not apply. Your loan agreement decides.' };
+    } else if (l.kind === 'admin') {
+      results[l.id] = l.disclosed === false
+        ? { status: 'check', chip: 'Ask the lender', text: 'Not in the charges list of the sanction letter. RBI expects charges to be disclosed in the sanction letter and Key Facts Statement. Ask where this one is.' }
+        : { status: 'ok', chip: 'Matches', text: 'Listed in your sanction letter.' };
+    }
+  });
+  q.lines.filter(l => l.kind === 'gst').forEach(l => {
+    const hit = l.on.filter(id => results[id] && (results[id].status === 'flag' || results[id].status === 'check'));
+    results[l.id] = hit.length
+      ? { status: 'follows', chip: 'Depends on lines above', text: 'Falls away on any charge that comes off.' }
+      : { status: 'note', chip: 'Follows the charge above', text: 'Applies only if the charge above stands.' };
+  });
+  const sum = q.lines.reduce((s, l) => s + l.amount, 0);
+  const flagged = q.lines.filter(l => results[l.id].status === 'flag' && l.kind !== 'principal');
+  const flaggedSum = flagged.reduce((s, l) => s + l.amount, 0);
+  const pending = q.lines.filter(l => results[l.id].status === 'check');
+  const pendingSum = pending.reduce((s, l) => s + l.amount, 0);
+  const gstRate = 0.18;
+  return { loan, results, sum, flagged, pending, savings: flaggedSum * (1 + gstRate), toConfirm: pendingSum * (1 + gstRate), after: sum - flaggedSum * (1 + gstRate) };
+}
+
+function fmtDate(iso) {
+  const m = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const [y, mo, d] = iso.split('-').map(Number); return d + ' ' + m[mo - 1] + ' ' + y;
+}
+
+function draftMessage(q, ev) {
+  const loan = ev.loan;
+  const lines = [];
+  lines.push('Subject: Closing quote for my ' + loan.name.toLowerCase() + ', request to review charges');
+  lines.push('');
+  lines.push('Hello,');
+  lines.push('');
+  lines.push('I am preparing to close my ' + loan.name.toLowerCase() + ' (' + loan.rateType + ' rate, sanctioned ' + fmtDate(loan.sanctioned) + '). Your quote includes:');
+  ev.flagged.forEach(l => lines.push('  - ' + l.label + ': ' + inr(l.amount)));
+  lines.push('');
+  lines.push('RBI’s directions on prepayment charges bar these on floating-rate loans to individuals sanctioned or renewed on or after 1 January 2026. Please confirm they will be removed, or point me to the clause in my agreement that permits them.');
+  if (ev.pending.length) {
+    lines.push('');
+    ev.pending.forEach(l => lines.push('Please also show me where the ' + l.label.toLowerCase() + ' (' + inr(l.amount) + ') is disclosed in my sanction letter or Key Facts Statement.'));
+  }
+  lines.push('');
+  lines.push('Please send a revised quote, including how GST has been recalculated.');
+  lines.push('');
+  lines.push('Thank you,');
+  lines.push('[Your name]');
+  lines.push('Loan account: [number]');
+  return lines.join('\n');
+}
+/*ENGINE_END*/
+
+/* ---------- interface ---------- */
+const $ = id => document.getElementById(id);
+const STEPS = ['Upload', 'Your debts', 'What to do', 'Check charges'];
+let step = 1, loaded = false, selected = null, parsing = false;
+
+function renderSteps() {
+  $('steps').innerHTML = STEPS.map((t, i) => {
+    const n = i + 1, dis = !loaded && n > 1;
+    return '<button class="step' + (loaded && n < step ? ' done' : '') + '" type="button" data-step="' + n + '"' + (dis ? ' disabled' : '') + (n === step ? ' aria-current="step"' : '') + '><span class="n">' + (loaded && n < step ? '✓' : n) + '</span><span class="t">' + t + '</span></button>';
+  }).join('');
+  $('steps').querySelectorAll('button').forEach(b => b.addEventListener('click', () => go(Number(b.dataset.step))));
+}
+
+function go(n) {
+  step = n;
+  for (let i = 1; i <= 4; i++) $('p' + i).hidden = i !== n;
+  renderSteps();
+  if (n === 2) renderLedger();
+  if (n === 3) renderDecide();
+  if (n === 4) renderCharges();
+  window.scrollTo({ top: 0 });
+}
+
+/* upload */
+const DOCS = [
+  { name: 'Home loan statement', found: 'Balance ' + inr(3800000) + ' · 8.75% floating · 20 years left' },
+  { name: 'Car loan statement', found: 'Balance ' + inr(420000) + ' · 9.5% fixed · 3 years left' },
+  { name: 'Personal loan statement and closing quote', found: 'Balance ' + inr(210000) + ' · 13% floating · quote has 4 charge lines' },
+  { name: 'Credit card statements (2)', found: inr(85000) + ' at 42% and ' + inr(22000) + ' at 38%' },
+  { name: 'Buy now, pay later statement', found: inr(18000) + ' at 30%' },
+  { name: 'Salary slip', found: 'Take-home ' + inr(TAKE_HOME) + ' a month' }
+];
+function renderDocs(readCount) {
+  $('docs').innerHTML = DOCS.map((d, i) => '<div class="doc' + (i < readCount ? ' read' : '') + '"><span class="tick">' + (i < readCount ? '✓' : '') + '</span><div class="what"><div class="name">' + d.name + '</div><div class="found">' + (i < readCount ? d.found : 'Waiting') + '</div></div></div>').join('');
+}
+function runRead() {
+  if (parsing) return;
+  parsing = true; $('readBtn').disabled = true; $('readNote').textContent = 'Reading the statements…';
+  let k = 0;
+  const t = setInterval(() => {
+    k++; renderDocs(k);
+    if (k >= DOCS.length) {
+      clearInterval(t); parsing = false; loaded = true;
+      $('readNote').textContent = 'All six read.';
+      $('readBtn').textContent = 'See my debts'; $('readBtn').disabled = false;
+      $('readBtn').onclick = () => go(2);
+      renderSteps();
+    }
+  }, 380);
+}
+$('readBtn').onclick = runRead;
+$('files').addEventListener('change', e => {
+  const n = e.target.files.length;
+  $('readNote').textContent = n ? n + ' file' + (n > 1 ? 's' : '') + ' chosen. Not read here; the sample statements will be used.' : '';
+});
+
+/* ledger */
+function renderLedger() {
+  const total = DEBTS.reduce((s, d) => s + d.balance, 0);
+  const pay = DEBTS.reduce((s, d) => s + d.payment, 0);
+  const intr = DEBTS.reduce((s, d) => s + d.balance * d.apr / 1200, 0);
+  const avg = DEBTS.reduce((s, d) => s + d.balance * d.apr, 0) / total;
+  $('stats').innerHTML = [
+    ['Total owed', inr(total), 'across ' + DEBTS.length + ' debts'],
+    ['Paid out each month', inr(pay), Math.round(pay / TAKE_HOME * 100) + '% of take-home'],
+    ['Interest each month', inr(intr), 'before any principal'],
+    ['Average rate', avg.toFixed(1) + '%', 'weighted by balance']
+  ].map(s => '<div class="stat"><span class="small muted">' + s[0] + '</span><span class="v">' + s[1] + '</span><span class="small muted">' + s[2] + '</span></div>').join('');
+  const sorted = [...DEBTS].sort((a, b) => b.apr - a.apr);
+  $('debts').innerHTML = sorted.map((d, i) => '<div class="debt' + (i === 0 ? ' top' : '') + '">' +
+    '<div class="d-main"><div class="d-name">' + d.name + '</div><div class="tags"><span class="tag">' + d.type + '</span>' + (d.rateType ? '<span class="tag">' + d.rateType + ' rate</span>' : '') + '<span class="tag">from ' + d.source.toLowerCase() + '</span></div><div class="ratebar" aria-hidden="true"><i style="width:' + Math.min(100, d.apr / 45 * 100) + '%"></i></div></div>' +
+    '<div class="cell"><span class="small muted">Rate a year</span><span class="v">' + d.apr + '%</span></div>' +
+    '<div class="cell"><span class="small muted">Balance</span><span class="v">' + inr(d.balance) + '</span></div>' +
+    '<div class="cell"><span class="small muted">Interest a month</span><span class="v">' + inr(d.balance * d.apr / 1200) + '</span></div></div>').join('');
+}
+$('toDecide').onclick = () => go(3);
+
+/* decide */
+function num(id) { const v = parseFloat($(id).value); return isFinite(v) && v >= 0 ? v : 0; }
+function renderDecide() {
+  const bonus = num('bonus'), buffer = num('buffer'), ret = num('ret');
+  const { L, opts } = buildOptions(bonus, buffer, ret);
+  $('avail').textContent = inr(L);
+  if (!selected || !opts.find(o => o.id === selected)) selected = opts[0].id;
+  const maxAbs = Math.max(1, ...opts.map(o => Math.abs(o.delta)));
+  $('opts').innerHTML = opts.map((o, i) => '<button class="opt" type="button" data-id="' + o.id + '" aria-pressed="' + (o.id === selected) + '">' +
+    '<span class="rk">' + (i + 1) + '</span><span class="nm">' + o.name + (i === 0 && o.delta > 0 ? '<span class="best">Best</span>' : '') + '</span>' +
+    '<span class="dl">' + (o.id === 'save' ? 'Baseline' : (o.delta >= 0 ? '+' : '') + inr(o.delta)) + '<small>' + (o.id === 'save' ? 'no change' : 'after ' + HORIZON + ' months') + '</small></span>' +
+    '<span class="bl">' + o.blurb + '</span><span class="bar" aria-hidden="true"><i style="width:' + (o.delta > 0 ? Math.max(2, o.delta / maxAbs * 100) : 2) + '%"></i></span></button>').join('');
+  $('opts').querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => { selected = b.dataset.id; renderDecide(); }));
+  const opt = opts.find(o => o.id === selected);
+  const stack = [...DEBTS].sort((a, b) => b.apr - a.apr).map(d => {
+    const a = opt.alloc[d.id] || 0, after = d.balance - a;
+    return '<div class="block' + (a > 0 ? ' hit' : '') + '"><span class="b-n">' + d.name + ' · ' + d.apr + '%</span><span class="b-v">' + (a > 0 ? inr(d.balance) + ' → ' + inr(after) : inr(d.balance)) + '</span><span class="b-bar" aria-hidden="true"><i style="width:' + (a / d.balance * 100) + '%"></i></span></div>';
+  }).join('');
+  $('detail').innerHTML = '<div class="row" style="justify-content:space-between"><h2>' + opt.name + '</h2><span class="small muted">Explanation text is templated in this prototype</span></div>' +
+    '<p>' + explain(opt, L, ret) + '</p><div class="stack">' + stack + '</div>' +
+    '<ul class="assume small muted"><li>Compared over ' + HORIZON + ' months, against leaving the money in savings at ' + SAVINGS_RATE + '%.</li><li>Payments freed by a cleared debt roll to the highest-rate debt that is left.</li><li>Home-loan tax benefits and tax on investment gains are not included.</li><li>This compares options by cost. It is not advice on any investment product.</li></ul>';
+}
+['bonus', 'buffer', 'ret'].forEach(id => $(id).addEventListener('input', () => { selected = null; renderDecide(); }));
+$('toCharges').onclick = () => go(4);
+
+/* charges */
+const MARK = { flag: '✕', check: '?', ok: '✓', note: '–', follows: '↳' };
+function renderCharges() {
+  let draft = null;
+  $('quotes').innerHTML = QUOTES.map(q => {
+    const ev = evaluateQuote(q);
+    if (!draft && (ev.flagged.length || ev.pending.length)) draft = { q, ev };
+    const lines = q.lines.map(l => { const r = ev.results[l.id]; return '<div class="qline"><span class="ql">' + l.label + '</span><span class="qa">' + inr(l.amount) + '</span><div class="why"><span class="chip ' + r.status + '"><span aria-hidden="true">' + MARK[r.status] + '</span>' + r.chip + '</span><span>' + r.text + '</span></div></div>'; }).join('');
+    const tag = ev.loan.rateType + ' rate · sanctioned ' + fmtDate(ev.loan.sanctioned);
+    const totals = ev.flagged.length
+      ? '<div class="totals"><div class="tot"><span class="small muted">Quoted total</span><span class="v">' + inr(ev.sum) + '</span></div><div class="tot save"><span class="small muted">If the flagged lines come off</span><span class="v">' + inr(ev.after) + '</span><span class="small muted">saves ' + inr(ev.savings) + ' with GST' + (ev.pending.length ? ', and ' + inr(ev.toConfirm) + ' more to confirm' : '') + '</span></div></div>'
+      : '<div class="totals"><div class="tot"><span class="small muted">Quoted total</span><span class="v">' + inr(ev.sum) + '</span></div><div class="tot"><span class="small muted">Result</span><span class="v" style="font-size:18px">Nothing to dispute from this rule</span></div></div>';
+    return '<div class="card quote"><div class="row" style="justify-content:space-between"><h2>' + q.title + '</h2><span class="tag">' + tag + '</span></div>' + lines + totals + '</div>';
+  }).join('');
+  if (draft) { $('draftCard').hidden = false; $('draft').value = draftMessage(draft.q, draft.ev); } else { $('draftCard').hidden = true; }
+}
+$('copyBtn').onclick = () => {
+  const ta = $('draft'), note = $('copyNote');
+  const fallback = () => { ta.focus(); ta.select(); note.textContent = 'Text selected. Press copy on your keyboard.'; };
+  try { navigator.clipboard.writeText(ta.value).then(() => { note.textContent = 'Copied.'; }, fallback); } catch (e) { fallback(); }
+};
+
+renderSteps(); renderDocs(0);
+</script>
