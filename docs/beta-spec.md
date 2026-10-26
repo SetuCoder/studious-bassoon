@@ -128,7 +128,7 @@ Follow the Figma screens and their notes. Key behaviours:
 - [ ] Engine fixtures pass (`npm test`).
 - [ ] Fresh install → add 3 debts → ranking → option detail → charge check → copy message, without errors.
 - [ ] Delete all my data works and the app returns to 01.
-- [ ] Installable to the home screen (PWA manifest and icon).
+- [x] Installable to the home screen (PWA manifest and icon).
 - [ ] Analytics events fire as listed, and none carry amounts.
 - [ ] Feedback and waitlist form URLs set.
 - [ ] Deployed on Vercel from `main`; link tested on Android and iPhone.

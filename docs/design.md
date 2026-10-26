@@ -32,6 +32,8 @@ Contrast rule: marigold is never text on a light ground (2:1). It is a fill unde
 
 The phone's "reduce motion" setting removes travel, smears, rolling and petals; the final values are always in the DOM for screen readers. Gains are framed as interest not paid, never as a prize.
 
+**App icon and launch screen:** the full marigold on an aubergine tile. `scripts/make-icons.mjs` draws every size from the same petal rings as `src/ui/Marigold.tsx` (run `npm run icons` after changing either): a rounded 192/512 icon, a full-bleed maskable 512 with the flower inside the 40% safe circle, a 180 apple-touch icon, and a favicon using the eight-petal mark. Theme and background colour are aubergine, so Android's launch screen is the marigold on aubergine. iOS launch images are not made in the beta; iOS shows a blank screen briefly instead.
+
 Numbers on screens 12 to 19 are illustrative. The engine is the source of truth.
 
 ## Screen index

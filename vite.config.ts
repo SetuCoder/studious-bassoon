@@ -17,12 +17,17 @@ export default defineConfig({
         name: APP_NAME,
         short_name: APP_NAME,
         description: 'See everything you owe. Know what to do with your next rupee.',
-        theme_color: '#ffffff',
-        background_color: '#ffffff',
+        // Aubergine bar and launch screen; Android draws its splash from these, the name and the 512 icon.
+        theme_color: '#3A0F34',
+        background_color: '#3A0F34',
         display: 'standalone',
         start_url: '/',
-        // Placeholder until the brand icon exists; PNG 192/512 icons are needed for M1.
-        icons: [{ src: 'favicon.svg', sizes: 'any', type: 'image/svg+xml' }],
+        // Drawn by scripts/make-icons.mjs (npm run icons).
+        icons: [
+          { src: 'pwa-192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'pwa-512.png', sizes: '512x512', type: 'image/png' },
+          { src: 'maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+        ],
       },
     }),
   ],
