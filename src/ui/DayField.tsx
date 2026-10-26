@@ -59,3 +59,42 @@ export function DayField({ label, hint, error, kind, value, onChange, ...rest }:
     </div>
   )
 }
+
+interface DaySelectProps<T extends string> {
+  label: string
+  hint?: ReactNode
+  value: T | ''
+  onChange: (value: T) => void
+  options: readonly (readonly [T, string])[]
+  /** Shown while nothing is chosen. */
+  placeholder?: string
+}
+
+/** A native dropdown dressed as a raised day field; the phone's own picker opens on tap. */
+export function DaySelect<T extends string>({ label, hint, value, onChange, options, placeholder }: DaySelectProps<T>) {
+  const id = useId()
+  const noteId = `${id}-note`
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={id} className="text-[14px] font-semibold">{label}</label>
+      <div className="relative">
+        <select
+          id={id}
+          aria-describedby={hint ? noteId : undefined}
+          value={value}
+          onChange={(e) => onChange(e.target.value as T)}
+          className="h-14 w-full appearance-none rounded-2xl bg-white pr-11 pl-4 text-[17px] font-semibold text-aubergine focus:outline-2 focus:outline-aubergine"
+          style={{ boxShadow: '0 3px 0 0 #C5CCD3' }}
+        >
+          {placeholder && <option value="" disabled>{placeholder}</option>}
+          {options.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+        </select>
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"
+          className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </div>
+      {hint && <p id={noteId} className="text-[13px] text-plum-muted">{hint}</p>}
+    </div>
+  )
+}
