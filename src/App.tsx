@@ -6,6 +6,9 @@ import { ComingSoon } from './screens/ComingSoon'
 import { AddDebt } from './screens/debts/AddDebt'
 import { DebtEdit } from './screens/debts/DebtEdit'
 import { DebtsTab } from './screens/debts/DebtsTab'
+import { NextRupeeInputs } from './screens/plan/NextRupeeInputs'
+import { OptionDetail } from './screens/plan/OptionDetail'
+import { Results } from './screens/plan/Results'
 import { Welcome } from './screens/welcome/Welcome'
 import { useAppStore } from './state/store'
 
@@ -44,7 +47,9 @@ export default function App() {
           <Route index element={<HomeRoute />} />
           <Route path="/debts" element={<DebtsTab />} />
           <Route path="/debts/:id" element={<DebtEdit />} />
-          <Route path="/plan" element={<NeedsDebts><ComingSoon title="Next rupee" /></NeedsDebts>} />
+          <Route path="/plan" element={<NeedsDebts><NextRupeeInputs /></NeedsDebts>} />
+          <Route path="/plan/results" element={<NeedsDebts><Results /></NeedsDebts>} />
+          <Route path="/plan/results/:optionId" element={<NeedsDebts><OptionDetail /></NeedsDebts>} />
           <Route path="/charges" element={<NeedsDebts><ComingSoon title="Check a closing quote" /></NeedsDebts>} />
           <Route path="/me" element={<ComingSoon title="Me" />} />
         </Route>
