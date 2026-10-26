@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Link } from 'react-router'
 import { Sheet } from '../../components/Sheet'
 import { summariseLedger } from '../../engine/ledger'
+import { track } from '../../lib/analytics'
 import { formatINR, formatRate } from '../../lib/format'
 import { useAppStore } from '../../state/store'
 import { DayField } from '../../ui/DayField'
@@ -111,6 +112,7 @@ export function Home() {
           disabled={!Number(takeHome)}
           onClick={() => {
             setTakeHome(Number(takeHome))
+            track('take_home_set')
             setTakeHomeOpen(false)
           }}
         >

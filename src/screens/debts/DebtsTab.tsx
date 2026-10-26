@@ -2,6 +2,7 @@ import { motion, useReducedMotion } from 'motion/react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { isActive, isLoan, summariseLedger } from '../../engine/ledger'
+import { track, useTrackOnMount } from '../../lib/analytics'
 import { debtMeta } from '../../lib/debtTypes'
 import { formatINR, formatRate, formatShare } from '../../lib/format'
 import { useAppStore } from '../../state/store'
@@ -52,7 +53,11 @@ function DebtsEmpty() {
         hint="Shows what share of your income goes to debt"
         value={takeHome}
         onChange={setTakeHomeText}
-        onBlur={() => setTakeHome(takeHome ? Number(takeHome) : undefined)}
+        onBlur={() => {
+          const rupees = takeHome ? Number(takeHome) : undefined
+          if (rupees && rupees !== saved) track('take_home_set')
+          setTakeHome(rupees)
+        }}
       />
       <div className="mt-auto pt-4">
         <SlabLink to="/debts/new">Add your first debt</SlabLink>
@@ -69,6 +74,7 @@ function DebtsOverview() {
   const debts = useAppStore((s) => s.debts)
   const takeHome = useAppStore((s) => s.profile.takeHomeMonthly)
   const ledger = summariseLedger(debts, takeHome)
+  useTrackOnMount('overview_viewed', { debt_count: ledger.sortedByCost.length })
   const hasLoan = ledger.sortedByCost.some((d) => isLoan(d.type))
   const costliest = ledger.sortedByCost[0]
   const maxApr = Math.max(...ledger.sortedByCost.map((d) => d.apr), 1)
@@ -157,7 +163,7 @@ function DebtsOverview() {
 
       <div className="flex flex-col gap-3">
         <SlabLink to="/plan">What should my next rupee do?</SlabLink>
-        {hasLoan && <SlabLink to="/charges" variant="outline">Check a closing quote</SlabLink>}
+        {hasLoan && <SlabLink to="/charges" state={{ entry: 'overview' }} variant="outline">Check a closing quote</SlabLink>}
         <Link to="/debts/new" className="mx-auto flex min-h-11 items-center px-3 text-[15px] font-bold underline underline-offset-4">
           + Add another debt
         </Link>

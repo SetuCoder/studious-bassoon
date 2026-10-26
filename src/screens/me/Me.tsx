@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Sheet } from '../../components/Sheet'
+import { forgetAnalyticsId, track } from '../../lib/analytics'
 import { APP_NAME, FEEDBACK_FORM_URL } from '../../lib/constants'
 import { useAppStore } from '../../state/store'
 import { DayScreen } from '../../ui/DayScreen'
@@ -35,6 +36,7 @@ export function Me() {
             href={FEEDBACK_FORM_URL}
             target="_blank"
             rel="noreferrer"
+            onClick={() => track('feedback_form_opened')}
             className="flex h-14 items-center justify-center rounded-full bg-marigold text-[17px] font-extrabold"
             style={{ boxShadow: 'var(--shadow-slab-marigold)' }}
           >
@@ -43,7 +45,12 @@ export function Me() {
         ) : (
           <SlabButton surface="day" disabled>Feedback form coming soon</SlabButton>
         )}
-        <PillGroup label="How likely are you to recommend this to a friend?" options={RECOMMEND} value={recommend} onChange={setRecommend} />
+        <PillGroup label="How likely are you to recommend this to a friend?" options={RECOMMEND} value={recommend}
+          onChange={(answer) => {
+            setRecommend(answer)
+            track('recommend_answered', { answer })
+          }}
+        />
       </section>
 
       <section aria-labelledby="your-data" className="flex flex-col gap-4 rounded-3xl bg-white/60 p-5">
@@ -74,7 +81,9 @@ export function Me() {
         <SlabButton
           variant="ink"
           onClick={() => {
+            track('data_deleted')
             deleteAllData()
+            forgetAnalyticsId()
             navigate('/', { replace: true })
           }}
         >

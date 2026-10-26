@@ -2,7 +2,8 @@ import { motion } from 'motion/react'
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router'
 import { HORIZON_MONTHS } from '../../engine/constants'
-import { amountToPutToWork } from '../../engine/options'
+import { amountToPutToWork, rankOptions } from '../../engine/options'
+import { track } from '../../lib/analytics'
 import { formatINR } from '../../lib/format'
 import { useAppStore } from '../../state/store'
 import { Coin } from '../../ui/Coin'
@@ -21,6 +22,7 @@ export function NextRupeeInputs() {
   const navigate = useNavigate()
   const last = useAppStore((s) => s.lastNextRupee) ?? DEFAULT_NEXT_RUPEE
   const setLastNextRupee = useAppStore((s) => s.setLastNextRupee)
+  const debts = useAppStore((s) => s.debts)
   const [amount, setAmount] = useState(String(last.amount))
   const [buffer, setBuffer] = useState(String(last.buffer))
   const [ret, setRet] = useState(String(last.assumedReturn))
@@ -37,6 +39,8 @@ export function NextRupeeInputs() {
     setTried(true)
     if (L <= 0 || returnError) return
     setLastNextRupee(input)
+    const { options } = rankOptions(debts, input)
+    track('next_rupee_compared', { option_count: options.length, split_shown: options.some((o) => o.id === 'split') })
     navigate('/plan/results')
   }
 

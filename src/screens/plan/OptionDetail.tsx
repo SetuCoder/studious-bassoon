@@ -6,6 +6,7 @@ import { allocationRows, explainOption, optionName } from '../../engine/explain'
 import { isActive, sortByCost } from '../../engine/ledger'
 import type { SimulationResult } from '../../engine/simulate'
 import type { EngineDebt } from '../../engine/types'
+import { track } from '../../lib/analytics'
 import { formatDelta, formatINR, formatRate } from '../../lib/format'
 import { useAppStore } from '../../state/store'
 import { ClearedStamp } from '../../ui/Celebrate'
@@ -109,7 +110,10 @@ export function OptionDetail() {
         type="button"
         aria-expanded={showWorking}
         aria-controls={workingId}
-        onClick={() => setShowWorking((v) => !v)}
+        onClick={() => {
+          if (!showWorking) track('working_expanded', { option_id: option.id })
+          setShowWorking(!showWorking)
+        }}
         className="mx-auto min-h-11 px-3 text-[15px] font-bold text-ice underline underline-offset-4"
       >
         {showWorking ? 'Hide the full working' : 'Show the full working'}

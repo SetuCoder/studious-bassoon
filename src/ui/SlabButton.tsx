@@ -60,11 +60,13 @@ export function SlabButton({
 
 const MotionLink = motion.create(Link)
 
-export function SlabLink({ variant = 'marigold', children, to }: CommonProps & { to: string }) {
+/** `state` rides along on the navigation (the charge check reads where it was opened from). */
+export function SlabLink({ variant = 'marigold', children, to, state }: CommonProps & { to: string; state?: unknown }) {
   const v = look[variant]
   return (
     <MotionLink
       to={to}
+      state={state}
       onClick={() => tap()}
       className={`${base} ${v.className}`}
       style={{ boxShadow: v.shadow }}

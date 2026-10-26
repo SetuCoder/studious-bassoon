@@ -2,6 +2,7 @@ import { motion, useReducedMotion } from 'motion/react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Sheet } from '../../components/Sheet'
+import { track } from '../../lib/analytics'
 import { APP_NAME } from '../../lib/constants'
 import { useAppStore } from '../../state/store'
 import { Marigold, MarigoldMark } from '../../ui/Marigold'
@@ -85,6 +86,7 @@ export function Welcome() {
         <SlabButton
           onClick={() => {
             startOnboarding()
+            track('onboarding_started')
             navigate('/debts')
           }}
         >
