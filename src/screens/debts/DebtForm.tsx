@@ -1,11 +1,13 @@
+import { motion } from 'motion/react'
 import { useState, type FormEvent, type ReactNode } from 'react'
-import { Button } from '../../components/Button'
-import { ChipGroup } from '../../components/Chip'
-import { Field, RateInput, RupeeInput, TextInput } from '../../components/Field'
 import { isLoan } from '../../engine/ledger'
 import { DEBT_TYPES, DEBT_TYPE_LABELS } from '../../lib/debtTypes'
 import type { DebtInput } from '../../state/store'
 import { localToday, validateDebt } from '../../state/validation'
+import { DayField } from '../../ui/DayField'
+import { springSettle } from '../../ui/motion'
+import { PillGroup } from '../../ui/PillGroup'
+import { SlabButton } from '../../ui/SlabButton'
 import { formToInput, num, type DebtFormState } from './debtFormState'
 
 const TYPE_OPTIONS = DEBT_TYPES.map((t) => ({ value: t, label: DEBT_TYPE_LABELS[t] }))
@@ -53,60 +55,66 @@ export function DebtForm({ initial, submitLabel, onSubmit, info, hidePaymentWarn
   }
 
   return (
-    <form noValidate onSubmit={submit} className="flex flex-1 flex-col gap-4">
-      <ChipGroup label="What kind of debt?" options={TYPE_OPTIONS} value={f.type} onChange={(v) => set('type', v)} />
+    <form noValidate onSubmit={submit} className="flex flex-1 flex-col gap-5">
+      <PillGroup label="What kind of debt?" options={TYPE_OPTIONS} value={f.type} onChange={(v) => set('type', v)} />
 
-      <Field label="Name">
-        {(p) => (
-          <TextInput
-            {...p}
-            value={f.name}
-            onChange={(v) => set('name', v)}
-            placeholder={f.type === 'credit_card' ? 'e.g. HDFC Millennia card' : 'Optional'}
-            autoComplete="off"
-          />
-        )}
-      </Field>
+      <DayField
+        kind="text"
+        label="Name"
+        value={f.name}
+        onChange={(v) => set('name', v)}
+        placeholder={f.type === 'credit_card' ? 'e.g. HDFC Millennia card' : 'Optional'}
+      />
 
-      <Field label="How much do you owe?" hint="From your lender app or latest statement" error={errors.balance}>
-        {(p) => <RupeeInput {...p} value={f.balance} onChange={(v) => set('balance', v)} />}
-      </Field>
+      <DayField kind="rupees" label="How much do you owe?" hint="From your lender app or latest statement" error={errors.balance} value={f.balance} onChange={(v) => set('balance', v)} />
 
-      <Field
+      <DayField
+        kind="rate"
         label="Interest rate (% a year)"
         hint={f.type === 'credit_card' ? 'Cards are usually 36–45% a year. Check your statement.' : undefined}
         error={errors.apr}
-      >
-        {(p) => <RateInput {...p} value={f.apr} onChange={(v) => set('apr', v)} />}
-      </Field>
+        value={f.apr}
+        onChange={(v) => set('apr', v)}
+      />
 
-      <Field
+      <DayField
+        kind="rupees"
         label="What you pay each month"
         hint={!hidePaymentWarning && validation.warning
-          ? <span className="text-amber-800">{validation.warning}</span>
+          ? <span className="font-semibold text-brick">{validation.warning}</span>
           : 'Your EMI, or what you usually pay on the card'}
         error={errors.monthlyPayment}
-      >
-        {(p) => <RupeeInput {...p} value={f.monthlyPayment} onChange={(v) => set('monthlyPayment', v)} />}
-      </Field>
+        value={f.monthlyPayment}
+        onChange={(v) => set('monthlyPayment', v)}
+      />
 
       {isLoan(f.type) && (
-        <section aria-label="Loans only" className="flex flex-col gap-4 rounded-[10px] bg-neutral-100 p-4">
-          <p className="text-xs font-medium text-neutral-600">Loans only</p>
-          <ChipGroup label="Fixed or floating rate?" hideLabel options={RATE_OPTIONS} value={f.rateType} onChange={(v) => set('rateType', v)} />
-          <Field label="Sanctioned or renewed on" hint="Needed for the charge check" error={errors.sanctionedOn}>
-            {(p) => (
-              <TextInput {...p} type="date" max={localToday()} value={f.sanctionedOn} onChange={(v) => set('sanctionedOn', v)} />
-            )}
-          </Field>
-          <ChipGroup label="Personal or business use?" options={PURPOSE_OPTIONS} value={f.purpose === 'unknown' ? undefined : f.purpose} onChange={(v) => set('purpose', v)} />
-        </section>
+        <motion.section
+          aria-label="Loans only"
+          className="flex flex-col gap-5 rounded-3xl bg-white/60 p-4"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={springSettle}
+        >
+          <p className="text-[13px] font-extrabold text-plum-muted">Loans only</p>
+          <PillGroup label="Fixed or floating rate?" hideLabel options={RATE_OPTIONS} value={f.rateType} onChange={(v) => set('rateType', v)} />
+          <DayField
+            kind="date"
+            label="Sanctioned or renewed on"
+            hint="Needed for the charge check"
+            error={errors.sanctionedOn}
+            max={localToday()}
+            value={f.sanctionedOn}
+            onChange={(v) => set('sanctionedOn', v)}
+          />
+          <PillGroup label="Personal or business use?" options={PURPOSE_OPTIONS} value={f.purpose === 'unknown' ? undefined : f.purpose} onChange={(v) => set('purpose', v)} />
+        </motion.section>
       )}
 
       {info?.(input)}
 
       <div className="mt-auto flex flex-col gap-3 pt-2">
-        <Button type="submit">{submitLabel}</Button>
+        <SlabButton type="submit">{submitLabel}</SlabButton>
         {footer}
       </div>
     </form>

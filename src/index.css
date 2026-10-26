@@ -17,6 +17,8 @@
   --color-ice: #F1F4F6;
   --color-mauve: #CDB9C9;
   --color-plum-muted: #5A4558;
+  /* Errors and "doesn't add up" on light grounds: 8.5:1 on white, 7:1 on silver. */
+  --color-brick: #8C2A1C;
 
   --font-display: "Schibsted Grotesk Variable", system-ui, sans-serif;
 
