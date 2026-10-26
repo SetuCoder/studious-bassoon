@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react'
-import { Navigate, Route, Routes } from 'react-router'
+import { useEffect, type ReactNode } from 'react'
+import { Navigate, Route, Routes, useLocation } from 'react-router'
 import { TabLayout } from './components/Layout'
 import { isActive } from './engine/ledger'
 import { ChargeCheckFlow } from './screens/charges/ChargeCheckFlow'
@@ -34,6 +34,15 @@ function WelcomeRoute() {
   return hasDebts ? <Navigate to="/" replace /> : <Welcome />
 }
 
+/** Every new screen starts at the top, so its entrance plays where the user can see it. */
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    window.scrollTo?.({ top: 0, left: 0, behavior: 'instant' })
+  }, [pathname])
+  return null
+}
+
 export default function App() {
   const storageAvailable = useAppStore((s) => s.storageAvailable)
   return (
@@ -43,6 +52,7 @@ export default function App() {
           Your data won't be saved on this device.
         </p>
       )}
+      <ScrollToTop />
       <Routes>
         <Route path="/welcome" element={<WelcomeRoute />} />
         <Route path="/debts/new" element={<AddDebt />} />

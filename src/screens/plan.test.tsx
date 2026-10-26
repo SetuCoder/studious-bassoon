@@ -59,13 +59,20 @@ describe('07 results and 08 option detail', () => {
 
     expect(screen.getByText('Over 36 months, compared with leaving ₹1,20,000 in savings at 3%:')).toBeInTheDocument()
     const cards = within(screen.getByRole('list', { name: 'Options, best first' })).getAllByRole('link')
-    expect(cards.map((c) => c.textContent)).toEqual([
-      expect.stringMatching(/^Saves the most.*Highest rate first\+₹55,728Clears Credit card 1, Credit card 2 and part of Buy now, pay later$/),
-      expect.stringMatching(/Smallest balance first\+₹55,661/),
-      expect.stringMatching(/Invest at 12%\+₹40,406Return not guaranteed; the debts keep running$/),
-      expect.stringMatching(/Prepay the home loan\+₹24,586Your cheapest debt/),
-      expect.stringMatching(/Keep it in savings₹0The baseline/),
-    ])
+    const expected = [
+      ['Highest rate first', '+₹55,728', 'Clears Credit card 1, Credit card 2 and part of Buy now, pay later'],
+      ['Smallest balance first', '+₹55,661', 'Clears Buy now, pay later, Credit card 2 and part of Credit card 1'],
+      ['Invest at 12%', '+₹40,406', 'Return not guaranteed; the debts keep running'],
+      ['Prepay the home loan', '+₹24,586', 'Your cheapest debt, so each rupee saves the least'],
+      ['Keep it in savings', '₹0', 'The baseline everything is compared with'],
+    ]
+    expect(cards).toHaveLength(expected.length)
+    cards.forEach((card, i) => {
+      for (const text of expected[i]) expect(within(card).getByText(text)).toBeInTheDocument()
+    })
+    expect(within(cards[0]).getByText('Saves the most')).toBeInTheDocument()
+    expect(within(cards[0]).getByText('Credit card 1, cleared')).toBeInTheDocument()
+    expect(within(cards[0]).getByText('Buy now, pay later, part')).toBeInTheDocument()
 
     await user.click(screen.getByRole('radio', { name: 'Maybe' }))
     expect(appStore.getState().feedback.wouldAct).toBe('maybe')
@@ -73,8 +80,10 @@ describe('07 results and 08 option detail', () => {
     await user.click(cards[0])
     expect(screen.getByRole('heading', { name: 'Highest rate first' })).toBeInTheDocument()
     expect(screen.getByText('+₹55,728')).toBeInTheDocument()
-    expect(screen.getByText('42% · ₹85,000 → ₹0')).toBeInTheDocument()
-    expect(screen.getByText('30% · ₹18,000 → ₹5,000')).toBeInTheDocument()
+    expect(screen.getByText('42% a year')).toBeInTheDocument()
+    expect(screen.getByText('₹85,000 → ₹0')).toBeInTheDocument()
+    expect(screen.getByText('₹18,000 → ₹5,000')).toBeInTheDocument()
+    expect(screen.getAllByText('Cleared')).toHaveLength(2) // both cards; BNPL is only part paid
     expect(screen.getByText('Then the ₹8,500 a month you stop paying on Credit card 1 and Credit card 2 rolls to the next most expensive debt.')).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Show the full working' }))

@@ -1,6 +1,39 @@
 @import "tailwindcss";
+@import "@fontsource-variable/schibsted-grotesk";
+
+/* Marigold design language. Contrast pairs checked (WCAG):
+   aubergine on silver 12.5:1 · ice on aubergine 14.6:1 · mauve on aubergine 8.8:1
+   marigold on aubergine 7.9:1 · plum-muted on silver 6.7:1.
+   Marigold is never text on a light ground (2:1). */
+@theme {
+  --color-aubergine: #3A0F34;
+  --color-aubergine-raised: #4B1A44;
+  --color-aubergine-deep: #22081E;
+  --color-marigold: #EAAA00;
+  --color-marigold-light: #F7C944;
+  --color-marigold-deep: #B57E00;
+  --color-silver: #DDE3E8;
+  --color-silver-line: #C5CCD3;
+  --color-ice: #F1F4F6;
+  --color-mauve: #CDB9C9;
+  --color-plum-muted: #5A4558;
+
+  --font-display: "Schibsted Grotesk Variable", system-ui, sans-serif;
+
+  /* The hard offset shadow that makes a slab look raised. */
+  --shadow-slab: 0 5px 0 0 var(--color-aubergine-deep);
+  --shadow-slab-marigold: 0 5px 0 0 var(--color-marigold-deep);
+}
 
 html {
-  background: #f5f5f4;
+  background: var(--color-silver);
   -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--font-display);
+}
+
+/* Fixed-width digits for columns that must line up (tables). Not for display figures:
+   in Schibsted Grotesk the tabular setting widens commas, so ₹1,50,000 reads "1 , 50 , 000". */
+.num {
+  font-variant-numeric: tabular-nums;
 }

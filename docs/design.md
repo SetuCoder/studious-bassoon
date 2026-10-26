@@ -2,7 +2,35 @@
 
 Figma file: https://www.figma.com/design/vO6zkBDsfXAc9ZhOsZBICQ (page "Beta wireframes").
 
-The wireframes are low-fidelity on purpose: grey boxes, real words. Build the structure, flow and copy from them. Visual design (colours, type, brand) is not decided yet; use a clean neutral Tailwind theme so it can be restyled later. Yellow boxes in Figma are team notes, not UI.
+The wireframes are low-fidelity on purpose: grey boxes, real words. Build the structure, flow and copy from them. Yellow boxes in Figma are team notes, not UI.
+
+## Design language: Marigold
+
+Chosen 27 October 2026 from the team's inspiration board. The next-rupee flow (06–08) is the first part built in it; the other screens still use the wireframe styling until they are rebuilt.
+
+**Palette** (tokens in `src/index.css`):
+
+| Token | Hex | Job |
+| --- | --- | --- |
+| `aubergine` | #3A0F34 | Ink for all text; the "night" surface money moments sit on |
+| `marigold` | #EAAA00 | The one action per screen, the answer's highlights, stamps, petals |
+| `silver` | #DDE3E8 | Calm reading ground |
+| `ice` | #F1F4F6 | Text on aubergine; the hero result slab |
+| `mauve` | #CDB9C9 | Secondary text on aubergine |
+| `plum-muted` | #5A4558 | Secondary text on silver or white |
+
+Contrast rule: marigold is never text on a light ground (2:1). It is a fill under aubergine text, or text on aubergine (7.9:1). Every text pair passes 4.5:1.
+
+**Type:** Schibsted Grotesk (self-hosted, variable 400–900). Answers at 900 with tight tracking (−0.04 to −0.05em). Display figures use normal digits: the font's tabular setting widens commas, which breaks Indian grouping. Tabular digits only in tables.
+
+**Material:** raised slabs and pills with a hard offset shadow as their thickness (`shadow-slab`); pressing pushes them down onto it. Large radii (24–28px) on slabs, full pills on buttons.
+
+**Motion** (Motion for React, presets in `src/ui/motion.ts`). One set of springs everywhere. Each money screen has one ritual:
+- the answer figure arrives with the motion smear (`SmearIn`) and its digits roll in (`Odometer`);
+- money visibly moves: the allocation strip fills, balances drain to what is left;
+- a debt cleared gets a "Cleared" stamp, a burst of marigold petals and a vibration on Android.
+
+The phone's "reduce motion" setting removes travel, smears, rolling and petals; the final values are always in the DOM for screen readers. Gains are framed as interest not paid, never as a prize.
 
 Numbers on screens 12 to 19 are illustrative. The engine is the source of truth.
 
