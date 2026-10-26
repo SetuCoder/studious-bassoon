@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react'
 import { Outlet } from 'react-router'
 import { TabBar } from './TabBar'
 
@@ -12,9 +11,4 @@ export function TabLayout() {
       <TabBar />
     </div>
   )
-}
-
-/** The scrolling body of a screen: 20 px sides, 16 px between blocks. */
-export function ScreenBody({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <main className={`flex flex-1 flex-col gap-4 px-5 py-5 ${className}`}>{children}</main>
 }
