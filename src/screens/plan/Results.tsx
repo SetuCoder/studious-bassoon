@@ -5,6 +5,7 @@ import { NOTHING_TO_PUT_TO_WORK, allocationRows, optionName, optionNote, topLabe
 import { isActive } from '../../engine/ledger'
 import type { NextRupeeOption } from '../../engine/options'
 import type { EngineDebt } from '../../engine/types'
+import { track } from '../../lib/analytics'
 import { formatDelta, formatINR } from '../../lib/format'
 import { useAppStore } from '../../state/store'
 import { tap } from '../../ui/haptics'
@@ -93,6 +94,7 @@ export function Results() {
                     onClick={() => {
                       tap()
                       setWouldAct(a.value)
+                      track('would_act_answered', { answer: a.value, top_option_id: best.id })
                     }}
                     whileTap={{ scale: 0.94 }}
                     transition={springPress}
@@ -127,7 +129,10 @@ function HeroOption({ option, debts, assumedReturn, L }: HeroProps) {
   return (
     <MotionLink
       to={`/plan/results/${option.id}`}
-      onClick={() => tap()}
+      onClick={() => {
+        tap()
+        track('option_opened', { option_id: option.id, rank: 1 })
+      }}
       className="block rounded-[28px] bg-ice p-5 text-aubergine"
       style={{ boxShadow: '0 6px 0 0 #9AA5AF' }}
       initial={{ opacity: 0, y: 40, scale: 0.96 }}
@@ -187,7 +192,10 @@ function OptionSlab({ rank, option, debts, assumedReturn, share }: SlabProps) {
   return (
     <MotionLink
       to={`/plan/results/${option.id}`}
-      onClick={() => tap()}
+      onClick={() => {
+        tap()
+        track('option_opened', { option_id: option.id, rank })
+      }}
       className="block rounded-3xl bg-aubergine-raised px-4 py-3.5 shadow-slab"
       whileTap={{ y: 5, boxShadow: '0 0 0 0 rgba(0,0,0,0)' }}
       transition={springPress}

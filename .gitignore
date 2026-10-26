@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment (keys live in Vercel, never in git)
+.env
+.env.*
+!.env.example

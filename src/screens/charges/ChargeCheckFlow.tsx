@@ -1,7 +1,9 @@
 import { motion, useReducedMotion } from 'motion/react'
 import { useEffect, useState, type ReactNode } from 'react'
 import { useLocation, useNavigate } from 'react-router'
+import { isCovered, type CoverageResult } from '../../engine/rules'
 import type { ChargeKind, LenderType, Purpose, RateType, YesNoUnknown } from '../../engine/types'
+import { track, useTrackOnMount, type ChargeCheckEntry } from '../../lib/analytics'
 import { CHARGE_KINDS, CHARGE_KIND_LABELS, LENDER_TYPE_LABELS } from '../../lib/chargeLabels'
 import { debtMeta } from '../../lib/debtTypes'
 import { formatDate } from '../../lib/format'
@@ -37,6 +39,8 @@ const PURPOSE = [
 ] as const satisfies readonly { value: Purpose; label: string }[]
 
 const LENDERS = Object.entries(LENDER_TYPE_LABELS) as [LenderType, string][]
+const COVERED: Record<CoverageResult['coverage'], 'yes' | 'no' | 'unknown'> = { covered: 'yes', not_covered: 'no', unknown: 'unknown' }
+
 const KINDS = CHARGE_KINDS.map((k) => [k, CHARGE_KIND_LABELS[k]] as const)
 
 /** 09 Charge check: five questions, one per screen, no tab bar. `?debt=<id>` picks the loan. */
@@ -58,6 +62,10 @@ export function ChargeCheckFlow() {
   // +1 when going forward, -1 back: the next question slides in from that side.
   const [direction, setDirection] = useState(1)
   const [nextKey, setNextKey] = useState(2)
+
+  // Opened from the overview's button, or from the Charges tab (no state).
+  const entry = (location.state as { entry?: ChargeCheckEntry } | null)?.entry ?? 'tab'
+  useTrackOnMount('charge_check_started', { entry })
 
   // Each question starts at the top, even after tapping Next at the bottom of a long one.
   useEffect(() => {
@@ -95,7 +103,14 @@ export function ChargeCheckFlow() {
       return
     }
     if (!debt) return
-    const id = saveChargeCheck(buildChargeCheck(debt, form))
+    const check = buildChargeCheck(debt, form)
+    const id = saveChargeCheck(check)
+    track('charge_check_completed', {
+      covered: COVERED[isCovered(check.answers).coverage],
+      flag_count: check.results.filter((r) => r.status === 'doesnt_add_up').length,
+      ask_count: check.results.filter((r) => r.status === 'ask_lender').length,
+      line_count: check.lines.length,
+    })
     navigate(`/charges/${id}`, { replace: true })
   }
 

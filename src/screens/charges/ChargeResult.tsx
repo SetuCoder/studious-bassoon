@@ -3,6 +3,7 @@ import { useId, useState } from 'react'
 import { Navigate, useParams } from 'react-router'
 import { whatsAppShareUrl } from '../../engine/message'
 import type { ChargeCheck, ChargeStatus } from '../../engine/types'
+import { track } from '../../lib/analytics'
 import { CHARGE_STATUS_CHIPS } from '../../lib/chargeLabels'
 import { formatINR } from '../../lib/format'
 import { useAppStore } from '../../state/store'
@@ -51,6 +52,7 @@ function Result({ check }: { check: ChargeCheck }) {
     try {
       await navigator.clipboard.writeText(message)
       setCopied(true)
+      track('lender_message_copied')
     } catch {
       // Clipboard blocked (some in-app browsers): select the text so the user can copy it.
       const box = document.getElementById(messageId) as HTMLTextAreaElement | null
@@ -143,7 +145,10 @@ function Result({ check }: { check: ChargeCheck }) {
             href={whatsAppShareUrl(message)}
             target="_blank"
             rel="noreferrer"
-            onClick={() => tap()}
+            onClick={() => {
+              tap()
+              track('lender_message_shared')
+            }}
             className="flex h-14 items-center justify-center rounded-full border-2 border-ice/70 text-[17px] font-extrabold text-ice"
           >
             Share on WhatsApp

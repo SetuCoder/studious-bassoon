@@ -1,6 +1,7 @@
 import { motion } from 'motion/react'
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { isLoan } from '../../engine/ledger'
+import { track } from '../../lib/analytics'
 import { DEBT_TYPES, DEBT_TYPE_LABELS } from '../../lib/debtTypes'
 import type { DebtInput } from '../../state/store'
 import { localToday, validateDebt } from '../../state/validation'
@@ -51,7 +52,9 @@ export function DebtForm({ initial, submitLabel, onSubmit, info, hidePaymentWarn
   const submit = (e: FormEvent) => {
     e.preventDefault()
     setTried(true)
-    if (input) onSubmit(input)
+    if (!input) return
+    if (validation.warning) track('debt_payment_below_interest', { type: input.type })
+    onSubmit(input)
   }
 
   return (
