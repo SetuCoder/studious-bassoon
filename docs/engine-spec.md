@@ -81,10 +81,12 @@ If `L = 0`, every option's delta is 0. Show: "There is nothing left to put to wo
 
 ## 6. Option detail (`explain.ts`)
 
-Template sentences built from engine numbers only. No AI-generated numbers.
+Template sentences built from engine numbers only. No AI-generated numbers. `explainOption` returns paragraphs; the allocation itself is shown as rows ("Where the ₹{L} goes", `allocationRows`), not repeated in the text.
 
-- `apr`: "{top debt} costs {apr}% a year. No savings account pays anywhere near that, and an investment return is never guaranteed, so the money goes there first." Then the allocation list, then "Freed-up monthly payments then roll to the next highest-rate debt."
-- Other debt options: "This puts the money where you chose, not where it saves the most interest." plus the allocation list.
+- `apr`: "{top debt} costs {apr}% a year. No savings account pays anywhere near that, and an investment return is never guaranteed, so the money goes there first." Then, if the allocation clears any debt: "Then the ₹{freed} a month you stop paying on {cleared debts} rolls to the next most expensive debt." (or "is yours to keep, since every debt is cleared." when nothing is left).
+- Other debt options: "This puts the money where you chose, not where it saves the most interest." plus the same freed-payment sentence when relevant.
+- Option names (`optionName`): as in the table in section 5, except invest, which carries the assumed return: "Invest at {assumedReturn}%".
+- One-line notes on the results screen (`optionNote`): debt options say what they clear, in the order the money goes ("Clears Credit card 1, Credit card 2 and part of Buy now, pay later", or "Pays off part of {debt}"). The home option says "Your cheapest debt, so each rupee saves the least" only when the home loan is the lowest-rate debt. Invest: "Return not guaranteed; the debts keep running". Save: "The baseline everything is compared with". Split: "{clears}, then invests ₹{invested}".
 - `invest`: if `assumedReturn < top apr`: "...so paying it down comes out ahead." Otherwise: "Your assumed return is above that rate, so this wins on paper. Returns are not guaranteed and the debt cost is."
 - `save`: "The money stays safe and earns about 3% while {top debt} keeps charging {apr}%."
 - Freed monthly payment = Σ monthlyPayment of debts the allocation pays off completely (balance after the lump sum = 0). For the default fixture that is card 1 + card 2 = ₹8,500.

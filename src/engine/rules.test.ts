@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { answersFromDebt, checkCharges, isCovered } from './rules'
+import { answersFromDebt, checkCharges, consistentSanctionDate, isCovered } from './rules'
 import type { ChargeCheckAnswers, ChargeLine } from './types'
 
 const personal: ChargeCheckAnswers = { rateType: 'floating', sanctionedOnOrAfter2026: 'yes', purpose: 'personal' }
@@ -78,5 +78,15 @@ describe('checkCharges', () => {
     expect(r.results[0].reason).toBe('This loan was sanctioned before 1 Jan 2026, so the rule does not apply. Your loan agreement decides.')
     expect(r.results[1].reason).toBe('Applies only if the charge above stands.')
     expect(r.flaggedTotal).toBe(0)
+  })
+})
+
+describe('consistentSanctionDate', () => {
+  it('quotes the ledger date only when it agrees with the answer', () => {
+    expect(consistentSanctionDate(personal, '2026-03-14')).toBe('2026-03-14')
+    expect(consistentSanctionDate({ ...personal, sanctionedOnOrAfter2026: 'no' }, '2025-05-01')).toBe('2025-05-01')
+    expect(consistentSanctionDate(personal, '2025-05-01')).toBeUndefined()
+    expect(consistentSanctionDate({ ...personal, sanctionedOnOrAfter2026: 'unknown' }, '2026-03-14')).toBeUndefined()
+    expect(consistentSanctionDate(personal, undefined)).toBeUndefined()
   })
 })

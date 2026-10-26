@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatDate, formatINR, formatRate, formatShare, groupDigits, rateText, rupeeDigits } from './format'
+import { formatDate, formatDelta, formatINR, formatRate, formatShare, groupDigits, rateText, rupeeDigits } from './format'
 
 describe('formatINR', () => {
   it('uses Indian digit grouping and no decimals', () => {
@@ -37,5 +37,13 @@ describe('input helpers', () => {
     expect(formatRate(8.75)).toBe('8.75')
     expect(formatRate(42)).toBe('42')
     expect(formatShare(0.4812)).toBe('48%')
+  })
+})
+
+describe('formatDelta', () => {
+  it('signs gains and losses', () => {
+    expect(formatDelta(55727.66)).toBe('+₹55,728')
+    expect(formatDelta(0.3)).toBe('₹0')
+    expect(formatDelta(-1200)).toBe('−₹1,200')
   })
 })

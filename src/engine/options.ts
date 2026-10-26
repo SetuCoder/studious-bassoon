@@ -28,6 +28,11 @@ export interface NextRupeeResult {
   options: NextRupeeOption[]
 }
 
+/** "₹L to put to work": the amount minus the buffer, never below 0. The buffer is never used. */
+export function amountToPutToWork(input: Pick<NextRupeeInput, 'amount' | 'buffer'>): number {
+  return Math.max(0, input.amount - input.buffer)
+}
+
 /** Growth of ₹1 over the horizon at rate % a year, compounded monthly. */
 export function growthFactor(rate: number, months = HORIZON_MONTHS): number {
   return Math.pow(1 + rate / 1200, months)
@@ -67,7 +72,7 @@ export function homeLoanOf<T extends EngineDebt>(debts: readonly T[]): T | undef
  */
 export function rankOptions(debts: readonly EngineDebt[], input: NextRupeeInput): NextRupeeResult {
   const active = debts.filter(isActive)
-  const L = Math.max(0, input.amount - input.buffer)
+  const L = amountToPutToWork(input)
   const ret = input.assumedReturn
   const base = simulate(active, {})
   const savingsGrowth = growthFactor(SAVINGS_RATE)

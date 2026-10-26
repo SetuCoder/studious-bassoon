@@ -45,3 +45,11 @@ export function rateText(text: string): string {
   const [whole, ...rest] = text.replace(/[^\d.]/g, '').split('.')
   return rest.length ? `${whole}.${rest.join('').slice(0, 2)}` : whole
 }
+
+/** An option's gain: "+₹55,728", "₹0", or "−₹1,200". */
+export function formatDelta(rupees: number): string {
+  const r = Math.round(rupees)
+  if (r > 0) return `+${formatINR(r)}`
+  if (r < 0) return `−${formatINR(-r)}`
+  return formatINR(0)
+}
