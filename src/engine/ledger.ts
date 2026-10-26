@@ -1,7 +1,12 @@
-import type { EngineDebt } from './types'
+import type { DebtType, EngineDebt } from './types'
 
 export function isActive(debt: EngineDebt): boolean {
   return !debt.paidOffOn
+}
+
+/** Loans carry rate type, sanction date and purpose, and can have a charge check. Cards and BNPL can't. */
+export function isLoan(type: DebtType): boolean {
+  return type !== 'credit_card' && type !== 'bnpl'
 }
 
 /** Highest apr first; ties by larger balance first. */

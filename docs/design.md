@@ -63,3 +63,5 @@ Screens 01 to 11 sit on the board "Beta flow · screens 01–11"; 12 to 19 on "T
 ## Working with Figma from Claude Code
 
 The Figma connector reaches Claude Code if you log in with the claude.ai account that has it. The team's Figma plan currently has a low cap on connector calls, so if you hit it, export the frames as PNG and attach them instead of linking.
+
+PNG exports of both boards and the component sheet are in `docs/design/wireframes/`. Build from these; re-export them when the Figma file changes.

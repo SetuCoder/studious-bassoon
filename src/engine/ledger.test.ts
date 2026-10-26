@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest'
-import { summariseLedger } from './ledger'
+import { isLoan, summariseLedger } from './ledger'
 import { debt } from './testDebts'
+
+describe('isLoan', () => {
+  it('treats cards and BNPL as not loans', () => {
+    expect(isLoan('credit_card')).toBe(false)
+    expect(isLoan('bnpl')).toBe(false)
+    expect(isLoan('personal_loan')).toBe(true)
+    expect(isLoan('other')).toBe(true)
+  })
+})
 
 describe('summariseLedger', () => {
   it('leaves out paid-off debts', () => {
