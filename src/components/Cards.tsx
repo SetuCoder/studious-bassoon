@@ -48,3 +48,28 @@ export function Placeholder({ label, className = 'h-36' }: { label: string; clas
 export function InfoBox({ children }: { children: ReactNode }) {
   return <div className="rounded-[10px] bg-neutral-100 px-4 py-3 text-sm text-neutral-900">{children}</div>
 }
+
+interface ActionRowProps {
+  title: string
+  detail: string
+  to?: string
+  onClick?: () => void
+}
+
+/** WF Action row: a Home to-do item that leads somewhere. */
+export function ActionRow({ title, detail, to, onClick }: ActionRowProps) {
+  const body = (
+    <>
+      <span aria-hidden className="size-8 shrink-0 rounded-md bg-neutral-100" />
+      <span className="min-w-0 flex-1">
+        <span className="block font-semibold text-neutral-900">{title}</span>
+        <span className="block text-xs text-neutral-600">{detail}</span>
+      </span>
+      <span aria-hidden className="text-neutral-500">›</span>
+    </>
+  )
+  const box = 'flex min-h-16 w-full items-center gap-3 rounded-[10px] border border-neutral-300 bg-white px-4 py-3 text-left active:bg-neutral-50'
+  return to
+    ? <Link to={to} className={box}>{body}</Link>
+    : <button type="button" onClick={onClick} className={box}>{body}</button>
+}
