@@ -1,13 +1,14 @@
-import type { ReactNode } from 'react'
-import { Navigate, Route, Routes } from 'react-router'
+import { useEffect, type ReactNode } from 'react'
+import { Navigate, Route, Routes, useLocation } from 'react-router'
 import { TabLayout } from './components/Layout'
 import { isActive } from './engine/ledger'
 import { ChargeCheckFlow } from './screens/charges/ChargeCheckFlow'
 import { ChargeResult } from './screens/charges/ChargeResult'
-import { ComingSoon } from './screens/ComingSoon'
 import { AddDebt } from './screens/debts/AddDebt'
 import { DebtEdit } from './screens/debts/DebtEdit'
 import { DebtsTab } from './screens/debts/DebtsTab'
+import { Home } from './screens/home/Home'
+import { Me } from './screens/me/Me'
 import { NextRupeeInputs } from './screens/plan/NextRupeeInputs'
 import { OptionDetail } from './screens/plan/OptionDetail'
 import { Results } from './screens/plan/Results'
@@ -25,12 +26,21 @@ function HomeRoute() {
   const hasDebts = useAppStore((s) => s.debts.some(isActive))
   const started = useAppStore((s) => s.onboardingStarted)
   if (!hasDebts) return <Navigate to={started ? '/debts' : '/welcome'} replace />
-  return <ComingSoon title="Home" />
+  return <Home />
 }
 
 function WelcomeRoute() {
   const hasDebts = useAppStore((s) => s.debts.some(isActive))
   return hasDebts ? <Navigate to="/" replace /> : <Welcome />
+}
+
+/** Every new screen starts at the top, so its entrance plays where the user can see it. */
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    window.scrollTo?.({ top: 0, left: 0, behavior: 'instant' })
+  }, [pathname])
+  return null
 }
 
 export default function App() {
@@ -42,6 +52,7 @@ export default function App() {
           Your data won't be saved on this device.
         </p>
       )}
+      <ScrollToTop />
       <Routes>
         <Route path="/welcome" element={<WelcomeRoute />} />
         <Route path="/debts/new" element={<AddDebt />} />
@@ -54,7 +65,7 @@ export default function App() {
           <Route path="/plan/results" element={<NeedsDebts><Results /></NeedsDebts>} />
           <Route path="/plan/results/:optionId" element={<NeedsDebts><OptionDetail /></NeedsDebts>} />
           <Route path="/charges/:checkId" element={<NeedsDebts><ChargeResult /></NeedsDebts>} />
-          <Route path="/me" element={<ComingSoon title="Me" />} />
+          <Route path="/me" element={<Me />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

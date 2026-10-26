@@ -12,17 +12,24 @@ export function Sheet({ open, title, onClose, children }: SheetProps) {
   const titleId = useId()
   const panel = useRef<HTMLDivElement>(null)
 
+  // Callers pass a new onClose on every render; keep the latest in a ref so the effect below
+  // runs only when the sheet opens or closes, and never pulls focus out of a field mid-typing.
+  const onCloseRef = useRef(onClose)
+  useEffect(() => {
+    onCloseRef.current = onClose
+  })
+
   useEffect(() => {
     if (!open) return
     const previous = document.activeElement as HTMLElement | null
     panel.current?.focus()
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onCloseRef.current()
     document.addEventListener('keydown', onKey)
     return () => {
       document.removeEventListener('keydown', onKey)
       previous?.focus()
     }
-  }, [open, onClose])
+  }, [open])
 
   if (!open) return null
   return (

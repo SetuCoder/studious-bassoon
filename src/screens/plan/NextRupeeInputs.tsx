@@ -1,17 +1,20 @@
+import { motion } from 'motion/react'
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router'
-import { Button } from '../../components/Button'
-import { InfoBox } from '../../components/Cards'
-import { Field, RateInput, RupeeInput } from '../../components/Field'
-import { ScreenBody } from '../../components/Layout'
-import { TopBar } from '../../components/TopBar'
 import { HORIZON_MONTHS } from '../../engine/constants'
 import { amountToPutToWork } from '../../engine/options'
 import { formatINR } from '../../lib/format'
 import { useAppStore } from '../../state/store'
+import { Coin } from '../../ui/Coin'
+import { tap } from '../../ui/haptics'
+import { springPress, springSettle, STAGGER } from '../../ui/motion'
+import { NightField } from '../../ui/NightField'
+import { NightScreen } from '../../ui/NightScreen'
+import { SlabButton } from '../../ui/SlabButton'
 import { DEFAULT_NEXT_RUPEE } from './useNextRupee'
 
 const MAX_RETURN = 100
+const QUICK_RETURNS = ['8', '10', '12', '15']
 
 /** 06 Next rupee, inputs. Pre-filled so the first answer is one tap away. */
 export function NextRupeeInputs() {
@@ -37,53 +40,84 @@ export function NextRupeeInputs() {
     navigate('/plan/results')
   }
 
+  const rise = (i: number) => ({
+    initial: { opacity: 0, y: 18 },
+    animate: { opacity: 1, y: 0 },
+    transition: { ...springSettle, delay: i * STAGGER },
+  })
+
   return (
-    <>
-      <TopBar title="Next rupee" />
-      <ScreenBody>
-        <form noValidate onSubmit={submit} className="flex flex-1 flex-col gap-4">
-          <h2 className="text-2xl font-bold text-neutral-900">Where should this money go?</h2>
-          <p className="text-neutral-600">
+    <NightScreen title="Next rupee">
+      <form noValidate onSubmit={submit} className="flex flex-1 flex-col gap-5">
+        <motion.div {...rise(0)}>
+          <h2 className="text-[34px] leading-[0.95] font-black tracking-[-0.045em] text-balance">Where should this money go?</h2>
+          <p className="mt-3 text-[15px] leading-snug text-mauve">
             We compare every option over {HORIZON_MONTHS} months against leaving the money in savings.
           </p>
+        </motion.div>
 
-          <Field label="Money you have to use" hint="A bonus, savings, anything">
-            {(p) => <RupeeInput {...p} value={amount} onChange={setAmount} />}
-          </Field>
-          <Field label="Keep aside as a safety buffer" hint="We never count this money">
-            {(p) => <RupeeInput {...p} value={buffer} onChange={setBuffer} />}
-          </Field>
-          <Field
+        <motion.div {...rise(1)}>
+          <NightField size="hero" kind="rupees" label="Money you have to use" hint="A bonus, savings, anything" value={amount} onChange={setAmount} />
+        </motion.div>
+
+        <motion.div {...rise(2)}>
+          <NightField kind="rupees" label="Keep aside as a safety buffer" hint="We never count this money" value={buffer} onChange={setBuffer} />
+        </motion.div>
+
+        <motion.div {...rise(3)}>
+          <NightField
+            kind="rate"
             label="If invested, what yearly return would you assume?"
             hint="Not guaranteed. We don't recommend any product."
             error={tried ? returnError : undefined}
+            value={ret}
+            onChange={setRet}
           >
-            {(p) => <RateInput {...p} value={ret} onChange={setRet} />}
-          </Field>
-
-          <InfoBox>
-            <div role="status">
-              {L > 0 ? (
-                <>
-                  <p className="text-lg font-bold">{formatINR(L)} to put to work</p>
-                  <p className="text-xs text-neutral-600">
-                    {formatINR(input.amount)} minus your {formatINR(input.buffer)} buffer
-                  </p>
-                </>
-              ) : (
-                <>
-                  <p className="font-semibold">Nothing to put to work yet</p>
-                  <p className="text-xs text-neutral-600">Your buffer covers all of the money you have to use.</p>
-                </>
-              )}
+            <div className="flex gap-2" role="group" aria-label="Common returns">
+              {QUICK_RETURNS.map((r) => {
+                const on = r === ret
+                return (
+                  <motion.button
+                    key={r}
+                    type="button"
+                    aria-pressed={on}
+                    onClick={() => {
+                      tap()
+                      setRet(r)
+                    }}
+                    whileTap={{ scale: 0.94 }}
+                    transition={springPress}
+                    className={`h-11 flex-1 rounded-full text-[15px] font-bold ${on ? 'bg-marigold text-aubergine' : 'bg-aubergine text-ice'}`}
+                  >
+                    {r}%
+                  </motion.button>
+                )
+              })}
             </div>
-          </InfoBox>
+          </NightField>
+        </motion.div>
 
-          <div className="mt-auto pt-2">
-            <Button type="submit" disabled={L <= 0}>Compare options</Button>
+        <motion.div {...rise(4)} className="flex items-center gap-4 rounded-3xl border-2 border-dashed border-mauve/35 p-4">
+          <Coin pulse={L} />
+          <div role="status" className="min-w-0">
+            {L > 0 ? (
+              <>
+                <p className="text-[22px] leading-tight font-black tracking-[-0.03em]">{formatINR(L)} to put to work</p>
+                <p className="mt-1 text-[13px] text-mauve">{formatINR(input.amount)} minus your {formatINR(input.buffer)} buffer</p>
+              </>
+            ) : (
+              <>
+                <p className="text-lg font-bold">Nothing to put to work yet</p>
+                <p className="mt-1 text-[13px] text-mauve">Your buffer covers all of the money you have to use.</p>
+              </>
+            )}
           </div>
-        </form>
-      </ScreenBody>
-    </>
+        </motion.div>
+
+        <motion.div {...rise(5)} className="mt-auto pt-2">
+          <SlabButton type="submit" disabled={L <= 0}>Compare options</SlabButton>
+        </motion.div>
+      </form>
+    </NightScreen>
   )
 }

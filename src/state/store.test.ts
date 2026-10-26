@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { SCHEMA_VERSION, STORAGE_KEY } from './migrations'
-import { createAppStore, type DebtInput } from './store'
+import { createAppStore, newUuid, type DebtInput } from './store'
 
 const card: DebtInput = { type: 'credit_card', balance: 85000, apr: 42, monthlyPayment: 6000 }
 const loan: DebtInput = {
@@ -152,5 +152,19 @@ describe('app store', () => {
     expect(s.debts.map((d) => d.id)).toEqual(['ok'])
     expect(s.checkIns).toEqual([])
     expect(s.settings.shareUsageCounts).toBe(true)
+  })
+})
+
+describe('newUuid', () => {
+  it('makes v4 UUIDs even where crypto.randomUUID is missing (plain http)', () => {
+    const original = crypto.randomUUID
+    Object.defineProperty(crypto, 'randomUUID', { value: undefined, configurable: true })
+    try {
+      const id = newUuid()
+      expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/)
+      expect(newUuid()).not.toBe(id)
+    } finally {
+      Object.defineProperty(crypto, 'randomUUID', { value: original, configurable: true })
+    }
   })
 })
