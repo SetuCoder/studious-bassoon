@@ -34,6 +34,19 @@ export function answersFromDebt(debt: EngineDebt): ChargeCheckAnswers {
   }
 }
 
+/**
+ * The sanction date to quote in reasons and the lender message: the ledger's date, but only
+ * when it agrees with the user's answer to "on or after 1 January 2026?". If they disagree,
+ * the user's answer wins and no date is quoted.
+ */
+export function consistentSanctionDate(answers: ChargeCheckAnswers, sanctionedOn?: string): string | undefined {
+  if (!sanctionedOn) return undefined
+  const after = sanctionedOn >= RULE_START_DATE
+  if (answers.sanctionedOnOrAfter2026 === 'yes' && after) return sanctionedOn
+  if (answers.sanctionedOnOrAfter2026 === 'no' && !after) return sanctionedOn
+  return undefined
+}
+
 /** A definite "no" decides the result even when other answers are "Not sure". */
 export function isCovered(a: ChargeCheckAnswers): CoverageResult {
   if (a.rateType === 'fixed') return { coverage: 'not_covered', basis: 'fixed' }

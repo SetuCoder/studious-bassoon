@@ -2,6 +2,8 @@ import type { ReactNode } from 'react'
 import { Navigate, Route, Routes } from 'react-router'
 import { TabLayout } from './components/Layout'
 import { isActive } from './engine/ledger'
+import { ChargeCheckFlow } from './screens/charges/ChargeCheckFlow'
+import { ChargeResult } from './screens/charges/ChargeResult'
 import { ComingSoon } from './screens/ComingSoon'
 import { AddDebt } from './screens/debts/AddDebt'
 import { DebtEdit } from './screens/debts/DebtEdit'
@@ -43,6 +45,7 @@ export default function App() {
       <Routes>
         <Route path="/welcome" element={<WelcomeRoute />} />
         <Route path="/debts/new" element={<AddDebt />} />
+        <Route path="/charges" element={<NeedsDebts><ChargeCheckFlow /></NeedsDebts>} />
         <Route element={<TabLayout />}>
           <Route index element={<HomeRoute />} />
           <Route path="/debts" element={<DebtsTab />} />
@@ -50,7 +53,7 @@ export default function App() {
           <Route path="/plan" element={<NeedsDebts><NextRupeeInputs /></NeedsDebts>} />
           <Route path="/plan/results" element={<NeedsDebts><Results /></NeedsDebts>} />
           <Route path="/plan/results/:optionId" element={<NeedsDebts><OptionDetail /></NeedsDebts>} />
-          <Route path="/charges" element={<NeedsDebts><ComingSoon title="Check a closing quote" /></NeedsDebts>} />
+          <Route path="/charges/:checkId" element={<NeedsDebts><ChargeResult /></NeedsDebts>} />
           <Route path="/me" element={<ComingSoon title="Me" />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
