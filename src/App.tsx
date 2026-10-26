@@ -46,9 +46,9 @@ function ScrollToTop() {
 export default function App() {
   const storageAvailable = useAppStore((s) => s.storageAvailable)
   return (
-    <div className="mx-auto min-h-dvh max-w-[480px] bg-white text-neutral-900">
+    <div className="mx-auto min-h-dvh max-w-[480px] bg-silver text-aubergine">
       {!storageAvailable && (
-        <p role="status" className="bg-amber-100 px-5 py-2 text-sm text-amber-900">
+        <p role="status" className="bg-aubergine-deep px-5 py-2 text-sm font-semibold text-marigold">
           Your data won't be saved on this device.
         </p>
       )}

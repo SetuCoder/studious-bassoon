@@ -28,7 +28,8 @@ beforeEach(() => {
 describe('12 Home (M1)', () => {
   it('shows the total, the focus and the to-do list', async () => {
     const user = renderAt('/')
-    expect(screen.getByText('₹45,55,000 owed')).toBeInTheDocument()
+    expect(screen.getByText('₹45,55,000')).toBeInTheDocument() // the rolling total; screen readers hear "₹45,55,000 owed"
+    expect(screen.getByText('owed')).toBeInTheDocument()
     expect(screen.getByText('₹69,771')).toBeInTheDocument()
     expect(screen.getByText('₹37,430')).toBeInTheDocument()
     expect(screen.getByText('Credit card 1 costs the most at 42%. Any extra money should go there first.')).toBeInTheDocument()

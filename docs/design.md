@@ -6,7 +6,7 @@ The wireframes are low-fidelity on purpose: grey boxes, real words. Build the st
 
 ## Design language: Marigold
 
-Chosen 27 October 2026 from the team's inspiration board. The next-rupee flow (06–08) is the first part built in it; the other screens still use the wireframe styling until they are rebuilt.
+Chosen 27 October 2026 from the team's inspiration board. All twelve Milestone 1 screens are built in it. Surfaces by purpose: money moments (debts overview, next-rupee results and detail, the charge verdict, Home's hero) on the aubergine night surface; forms, questions and settings on calm ice silver.
 
 **Palette** (tokens in `src/index.css`):
 
