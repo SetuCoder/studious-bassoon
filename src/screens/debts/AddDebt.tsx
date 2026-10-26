@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { Button } from '../../components/Button'
-import { ScreenBody } from '../../components/Layout'
-import { TopBar } from '../../components/TopBar'
 import { useAppStore } from '../../state/store'
+import { DayScreen } from '../../ui/DayScreen'
+import { SlabButton } from '../../ui/SlabButton'
 import { DebtForm } from './DebtForm'
 import { emptyForm } from './debtFormState'
 import { UploadFakeDoor } from './UploadFakeDoor'
@@ -16,8 +15,7 @@ export function AddDebt() {
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <TopBar title="Add a debt" backTo="/debts" />
-      <ScreenBody>
+      <DayScreen title="Add a debt" backTo="/debts">
         <DebtForm
           initial={emptyForm()}
           submitLabel="Save debt"
@@ -26,12 +24,12 @@ export function AddDebt() {
             navigate('/debts')
           }}
           footer={
-            <Button variant="secondary" onClick={() => setUploadOpen(true)}>
+            <SlabButton variant="line" onClick={() => setUploadOpen(true)}>
               Upload a statement instead
-            </Button>
+            </SlabButton>
           }
         />
-      </ScreenBody>
+      </DayScreen>
       <UploadFakeDoor open={uploadOpen} onClose={() => setUploadOpen(false)} />
     </div>
   )

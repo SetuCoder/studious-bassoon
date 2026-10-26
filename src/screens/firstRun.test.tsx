@@ -49,7 +49,8 @@ describe('first run', () => {
 
     expect(screen.getByText('Total owed')).toBeInTheDocument()
     expect(screen.getAllByText('₹85,000')).not.toHaveLength(0)
-    expect(screen.getByText('42% a year · Card · costs the most')).toBeInTheDocument()
+    expect(screen.getByText('42% a year, card')).toBeInTheDocument()
+    expect(screen.getByText('Costs the most')).toBeInTheDocument()
     expect(screen.getByText('Share of take-home')).toBeInTheDocument()
     expect(screen.getByText('4%')).toBeInTheDocument() // 6,000 of 1,45,000
     // Cards only: no charge check yet.

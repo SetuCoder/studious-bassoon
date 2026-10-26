@@ -22,12 +22,12 @@ export function defaultDebtName(type: DebtType, existingOfType: number): string 
   return `${DEBT_TYPE_LABELS[type]} ${existingOfType + 1}`
 }
 
-/** Row meta on the overview: "42% a year · Card", "13% a year · Floating". */
+/** Row meta on the overview: "42% a year, card", "13% a year, floating". */
 export function debtMeta(debt: Pick<EngineDebt, 'type' | 'apr' | 'rateType'>): string {
-  const kind = debt.type === 'credit_card' ? 'Card'
+  const kind = debt.type === 'credit_card' ? 'card'
     : debt.type === 'bnpl' ? 'BNPL'
-    : debt.rateType === 'floating' ? 'Floating'
-    : debt.rateType === 'fixed' ? 'Fixed'
-    : DEBT_TYPE_LABELS[debt.type]
-  return `${formatRate(debt.apr)}% a year · ${kind}`
+    : debt.rateType === 'floating' ? 'floating'
+    : debt.rateType === 'fixed' ? 'fixed'
+    : DEBT_TYPE_LABELS[debt.type].toLowerCase()
+  return `${formatRate(debt.apr)}% a year, ${kind}`
 }

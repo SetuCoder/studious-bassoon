@@ -4,14 +4,19 @@ import { Link } from 'react-router'
 import { tap } from './haptics'
 import { springPress } from './motion'
 
-export type SlabVariant = 'marigold' | 'ice' | 'outline'
+export type SlabVariant = 'marigold' | 'ice' | 'ink' | 'outline' | 'line'
 
 // A raised pill: the hard shadow underneath is its thickness. Pressing pushes it down
 // onto that shadow, like a physical key.
 const look: Record<SlabVariant, { className: string; shadow: string }> = {
   marigold: { className: 'bg-marigold text-aubergine', shadow: 'var(--shadow-slab-marigold)' },
   ice: { className: 'bg-ice text-aubergine', shadow: '0 5px 0 0 #9AA5AF' },
+  /** Serious actions (delete): aubergine, so destroying data never wears the brand marigold. */
+  ink: { className: 'bg-aubergine text-ice', shadow: 'var(--shadow-slab)' },
+  /** Secondary on the night surface. */
   outline: { className: 'border-2 border-ice/70 text-ice', shadow: '0 0 0 0 transparent' },
+  /** Secondary on the day surface. */
+  line: { className: 'border-2 border-aubergine text-aubergine', shadow: '0 0 0 0 transparent' },
 }
 
 const base =
