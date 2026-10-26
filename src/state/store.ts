@@ -25,6 +25,8 @@ export interface AppActions {
   setWouldAct: (answer: NonNullable<AppData['feedback']['wouldAct']>) => void
   setRecommend: (answer: NonNullable<AppData['feedback']['recommend']>) => void
   setShareUsageCounts: (on: boolean) => void
+  /** "Get started" on Welcome. Session only: Welcome shows again on the next visit until a debt is saved. */
+  startOnboarding: () => void
   /** "Delete all my data": removes the storage key and resets everything. */
   deleteAllData: () => void
 }
@@ -32,6 +34,8 @@ export interface AppActions {
 export interface AppState extends AppData, AppActions {
   /** False when the browser won't save data; show "Your data won't be saved on this device." */
   storageAvailable: boolean
+  /** Not saved; see startOnboarding. */
+  onboardingStarted: boolean
 }
 
 export interface StoreDeps {
@@ -85,6 +89,7 @@ export function createAppStore(deps: Partial<StoreDeps> = {}) {
       (set) => ({
         ...emptyAppData(),
         storageAvailable: storage.available,
+        onboardingStarted: false,
 
         setTakeHome: (rupees) =>
           set((s) => ({ profile: { ...s.profile, takeHomeMonthly: rupees && rupees > 0 ? rupees : undefined } })),
@@ -122,9 +127,10 @@ export function createAppStore(deps: Partial<StoreDeps> = {}) {
         setWouldAct: (answer) => set((s) => ({ feedback: { ...s.feedback, wouldAct: answer } })),
         setRecommend: (answer) => set((s) => ({ feedback: { ...s.feedback, recommend: answer } })),
         setShareUsageCounts: (on) => set({ settings: { shareUsageCounts: on } }),
+        startOnboarding: () => set({ onboardingStarted: true }),
 
         deleteAllData: () => {
-          set({ ...emptyAppData(), lastNextRupee: undefined, plan: undefined })
+          set({ ...emptyAppData(), lastNextRupee: undefined, plan: undefined, onboardingStarted: false })
           // After the reset, which itself writes, so the key is really gone.
           storage.removeItem(STORAGE_KEY)
         },

@@ -1,4 +1,5 @@
-import type { DebtType } from '../engine/types'
+import type { DebtType, EngineDebt } from '../engine/types'
+import { formatRate } from './format'
 
 /** Chip order on "Add a debt"; the first is the default. */
 export const DEBT_TYPES: readonly DebtType[] = [
@@ -19,4 +20,14 @@ export const DEBT_TYPE_LABELS: Record<DebtType, string> = {
 /** "{Type} {n}", e.g. "Credit card 2" when one card already exists. */
 export function defaultDebtName(type: DebtType, existingOfType: number): string {
   return `${DEBT_TYPE_LABELS[type]} ${existingOfType + 1}`
+}
+
+/** Row meta on the overview: "42% a year · Card", "13% a year · Floating". */
+export function debtMeta(debt: Pick<EngineDebt, 'type' | 'apr' | 'rateType'>): string {
+  const kind = debt.type === 'credit_card' ? 'Card'
+    : debt.type === 'bnpl' ? 'BNPL'
+    : debt.rateType === 'floating' ? 'Floating'
+    : debt.rateType === 'fixed' ? 'Fixed'
+    : DEBT_TYPE_LABELS[debt.type]
+  return `${formatRate(debt.apr)}% a year · ${kind}`
 }
