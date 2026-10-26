@@ -37,11 +37,29 @@ export function PetalBurst({ play }: { play: boolean }) {
   )
 }
 
+const STAMP_TONES = {
+  /** Outlined marigold: a debt cleared. */
+  marigold: 'border-2 border-marigold text-marigold',
+  /** Solid marigold: a charge that doesn't add up. The loudest mark on the night surface. */
+  solid: 'border-2 border-marigold bg-marigold text-aubergine',
+  /** Outlined ice: something to ask about. */
+  ice: 'border-2 border-ice text-ice',
+} as const
+
+interface StampProps {
+  children: string
+  /** Seconds before it starts to fall. */
+  delay: number
+  tone: keyof typeof STAMP_TONES
+  /** Burst of petals on impact (celebrations only). */
+  petals?: boolean
+}
+
 /**
- * A "Cleared" stamp that lands on a debt after a delay, with a thud on phones that can
- * vibrate and a burst of petals. The word is always in the DOM for screen readers.
+ * A rubber stamp that lands after a delay, with a thud on phones that can vibrate. Its word
+ * is always in the DOM for screen readers; only the fall is decorative.
  */
-export function ClearedStamp({ delay }: { delay: number }) {
+export function Stamp({ children, delay, tone, petals = false }: StampProps) {
   const reduce = useReducedMotion()
   const [landed, setLanded] = useState(false)
 
@@ -59,14 +77,19 @@ export function ClearedStamp({ delay }: { delay: number }) {
   return (
     <span className="relative inline-flex">
       <motion.span
-        className="inline-flex -rotate-6 items-center rounded-md border-2 border-marigold px-2 py-0.5 text-[13px] font-extrabold tracking-[0.02em] text-marigold"
+        className={`inline-flex -rotate-6 items-center rounded-md px-2 py-0.5 text-[13px] font-extrabold tracking-[0.02em] ${STAMP_TONES[tone]}`}
         initial={reduce ? false : { scale: 2.4, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ ...springStamp, delay }}
       >
-        Cleared
+        {children}
       </motion.span>
-      <PetalBurst play={landed} />
+      {petals && <PetalBurst play={landed} />}
     </span>
   )
+}
+
+/** "Cleared", with petals: the moment a debt is paid off. */
+export function ClearedStamp({ delay }: { delay: number }) {
+  return <Stamp delay={delay} tone="marigold" petals>Cleared</Stamp>
 }

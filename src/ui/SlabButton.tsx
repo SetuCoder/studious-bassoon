@@ -30,9 +30,16 @@ interface CommonProps {
 const pressed = { y: 5, boxShadow: '0 0 0 0 rgba(0,0,0,0)' }
 
 export function SlabButton({
-  variant = 'marigold', children, disabled, type = 'button', onClick,
-}: CommonProps & { disabled?: boolean; type?: 'button' | 'submit'; onClick?: () => void }) {
+  variant = 'marigold', children, disabled, type = 'button', onClick, surface = 'night',
+}: CommonProps & {
+  disabled?: boolean
+  type?: 'button' | 'submit'
+  onClick?: () => void
+  /** Which ground it sits on; only changes how it looks when disabled. */
+  surface?: 'day' | 'night'
+}) {
   const v = look[variant]
+  const off = surface === 'day' ? 'bg-silver-line text-plum-muted' : 'bg-aubergine-raised text-mauve'
   return (
     <motion.button
       type={type}
@@ -41,7 +48,7 @@ export function SlabButton({
         tap()
         onClick?.()
       }}
-      className={`${base} ${disabled ? 'bg-aubergine-raised text-mauve' : v.className}`}
+      className={`${base} ${disabled ? off : v.className}`}
       style={{ boxShadow: disabled ? 'none' : v.shadow }}
       whileTap={disabled ? undefined : pressed}
       transition={springPress}

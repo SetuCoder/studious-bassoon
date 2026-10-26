@@ -1,18 +1,17 @@
+import { motion, useReducedMotion } from 'motion/react'
 import { useEffect, useState, type ReactNode } from 'react'
 import { useLocation, useNavigate } from 'react-router'
-import { Button, ButtonLink } from '../../components/Button'
-import { InfoBox } from '../../components/Cards'
-import { ChipGroup } from '../../components/Chip'
-import { Field, RupeeInput, TextInput } from '../../components/Field'
-import { ScreenBody } from '../../components/Layout'
-import { OptionList } from '../../components/OptionList'
-import { ProgressBar } from '../../components/ProgressBar'
-import { TopBar } from '../../components/TopBar'
 import type { ChargeKind, LenderType, Purpose, RateType, YesNoUnknown } from '../../engine/types'
 import { CHARGE_KINDS, CHARGE_KIND_LABELS, LENDER_TYPE_LABELS } from '../../lib/chargeLabels'
 import { debtMeta } from '../../lib/debtTypes'
 import { formatDate } from '../../lib/format'
 import { useAppStore } from '../../state/store'
+import { ChoiceList } from '../../ui/ChoiceList'
+import { DayField, DaySelect } from '../../ui/DayField'
+import { DayScreen } from '../../ui/DayScreen'
+import { springSettle } from '../../ui/motion'
+import { PillGroup } from '../../ui/PillGroup'
+import { SlabButton, SlabLink } from '../../ui/SlabButton'
 import {
   buildChargeCheck, checkableLoans, newLine, prefillFromDebt, stepIsAnswered, type ChargeCheckForm, type ChargeLineForm,
 } from './chargeCheckState'
@@ -38,6 +37,7 @@ const PURPOSE = [
 ] as const satisfies readonly { value: Purpose; label: string }[]
 
 const LENDERS = Object.entries(LENDER_TYPE_LABELS) as [LenderType, string][]
+const KINDS = CHARGE_KINDS.map((k) => [k, CHARGE_KIND_LABELS[k]] as const)
 
 /** 09 Charge check: five questions, one per screen, no tab bar. `?debt=<id>` picks the loan. */
 export function ChargeCheckFlow() {
@@ -46,6 +46,7 @@ export function ChargeCheckFlow() {
   const debts = useAppStore((s) => s.debts)
   const saveChargeCheck = useAppStore((s) => s.saveChargeCheck)
   const loans = checkableLoans(debts)
+  const reduce = useReducedMotion()
 
   const [form, setForm] = useState<ChargeCheckForm>(() => {
     const wanted = new URLSearchParams(location.search).get('debt')
@@ -54,6 +55,8 @@ export function ChargeCheckFlow() {
     return loan ? prefillFromDebt(start, loan) : start
   })
   const [step, setStep] = useState(1)
+  // +1 when going forward, -1 back: the next question slides in from that side.
+  const [direction, setDirection] = useState(1)
   const [nextKey, setNextKey] = useState(2)
 
   // Each question starts at the top, even after tapping Next at the bottom of a long one.
@@ -62,19 +65,20 @@ export function ChargeCheckFlow() {
   }, [step])
 
   const back = () => {
-    if (step > 1) setStep(step - 1)
-    else if (location.key !== 'default') navigate(-1)
+    if (step > 1) {
+      setDirection(-1)
+      setStep(step - 1)
+    } else if (location.key !== 'default') navigate(-1)
     else navigate('/debts')
   }
 
   if (loans.length === 0) {
     return (
       <div className="flex min-h-dvh flex-col">
-        <TopBar title="Check a closing quote" onBack={back} />
-        <ScreenBody>
-          <InfoBox>The charge check is for loans. Add a loan to check its closing quote.</InfoBox>
-          <ButtonLink to="/debts/new" variant="secondary">Add a loan</ButtonLink>
-        </ScreenBody>
+        <DayScreen title="Check a closing quote" onBack={back}>
+          <p className="rounded-3xl bg-white/70 p-5 text-[16px] leading-snug">The charge check is for loans. Add a loan to check its closing quote.</p>
+          <SlabLink to="/debts/new" variant="line">Add a loan</SlabLink>
+        </DayScreen>
       </div>
     )
   }
@@ -86,6 +90,7 @@ export function ChargeCheckFlow() {
 
   const next = () => {
     if (step < STEPS) {
+      setDirection(1)
       setStep(step + 1)
       return
     }
@@ -96,135 +101,150 @@ export function ChargeCheckFlow() {
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <TopBar title="Check a closing quote" onBack={back} />
-      <ScreenBody>
-        <ProgressBar step={step} of={STEPS} />
+      <DayScreen title="Check a closing quote" onBack={back}>
+        <Progress step={step} of={STEPS} />
 
-        {step === 1 && (
-          <Question title="Which loan is the quote for?" help="The charge check is for loans, not cards or BNPL.">
-            <OptionList
-              label="Which loan is the quote for?"
-              options={loans.map((d) => ({ value: d.id, label: d.name, meta: debtMeta(d) }))}
-              value={form.debtId}
-              onChange={(id) => setForm((f) => prefillFromDebt(f, loans.find((d) => d.id === id)!))}
-            />
-          </Question>
-        )}
+        <motion.div
+          key={step}
+          className="flex flex-col gap-5"
+          initial={reduce ? false : { opacity: 0, x: 40 * direction }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={springSettle}
+        >
+          {step === 1 && (
+            <Question title="Which loan is the quote for?" help="The charge check is for loans, not cards or BNPL.">
+              <ChoiceList
+                label="Which loan is the quote for?"
+                options={loans.map((d) => ({ value: d.id, label: d.name, meta: debtMeta(d) }))}
+                value={form.debtId}
+                onChange={(id) => setForm((f) => prefillFromDebt(f, loans.find((d) => d.id === id)!))}
+              />
+            </Question>
+          )}
 
-        {step === 2 && (
-          <Question title="Is this loan's interest rate fixed or floating?" help="It's on your sanction letter or loan statement.">
-            <OptionList label="Fixed or floating?" options={RATE} value={form.rateType} onChange={(v) => set({ rateType: v })} />
-            <InfoBox>
-              <p className="font-semibold">Why we ask</p>
-              <p className="mt-1">The RBI rule on prepayment charges only covers floating-rate loans.</p>
-            </InfoBox>
-          </Question>
-        )}
+          {step === 2 && (
+            <Question title="Is this loan's interest rate fixed or floating?" help="It's on your sanction letter or loan statement.">
+              <ChoiceList label="Fixed or floating?" options={RATE} value={form.rateType} onChange={(v) => set({ rateType: v })} />
+              <div className="rounded-3xl bg-aubergine p-4 text-ice">
+                <p className="text-[14px] font-extrabold text-marigold">Why we ask</p>
+                <p className="mt-1 text-[15px] leading-snug">The RBI rule on prepayment charges only covers floating-rate loans.</p>
+              </div>
+            </Question>
+          )}
 
-        {step === 3 && (
-          <Question
-            title="Was it sanctioned or renewed on or after 1 January 2026?"
-            help={debt?.sanctionedOn
-              ? `Your debt details say ${formatDate(debt.sanctionedOn)}.`
-              : "It's on your sanction letter, or on the latest renewal letter."}
-          >
-            <OptionList label="On or after 1 January 2026?" options={YES_NO} value={form.sanctionedOnOrAfter2026} onChange={(v) => set({ sanctionedOnOrAfter2026: v })} />
-          </Question>
-        )}
-
-        {step === 4 && (
-          <Question title="Is this loan for personal or business use?" help="The rule treats business loans differently.">
-            <OptionList label="Personal or business use?" options={PURPOSE} value={form.purpose} onChange={(v) => set({ purpose: v })} />
-            {form.purpose === 'business' && (
-              <>
-                <Field label="Who lent it?" hint="Your sanction letter names the lender. Not sure? Choose Not sure.">
-                  {(p) => (
-                    <select
-                      id={p.id}
-                      aria-describedby={p.describedBy}
-                      value={form.lenderType ?? ''}
-                      onChange={(e) => set({ lenderType: e.target.value as LenderType })}
-                      className="h-12 rounded-[10px] border border-neutral-300 bg-white px-3 text-base"
-                    >
-                      <option value="" disabled>Choose the type of lender</option>
-                      {LENDERS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                    </select>
-                  )}
-                </Field>
-                <ChipGroup
-                  label="Was the sanctioned amount ₹50 lakh or less?"
-                  options={YES_NO}
-                  value={form.sanctionedAmountUpTo50L}
-                  onChange={(v) => set({ sanctionedAmountUpTo50L: v })}
-                />
-              </>
-            )}
-          </Question>
-        )}
-
-        {step === 5 && (
-          <Question
-            title="Which charges are on the quote?"
-            help="Add each charge from the lender's closing quote. Leave out the principal and the interest."
-          >
-            <ol className="flex flex-col gap-3">
-              {form.lines.map((l, i) => (
-                <li key={l.key} aria-label={`Charge ${i + 1}`} className="flex flex-col gap-3 rounded-[10px] border border-neutral-300 p-4">
-                  <Field label="Type of charge">
-                    {(p) => (
-                      <select
-                        id={p.id}
-                        value={l.kind}
-                        onChange={(e) => setLine(l.key, { kind: e.target.value as ChargeKind })}
-                        className="h-12 rounded-[10px] border border-neutral-300 bg-white px-3 text-base"
-                      >
-                        {CHARGE_KINDS.map((k) => <option key={k} value={k}>{CHARGE_KIND_LABELS[k]}</option>)}
-                      </select>
-                    )}
-                  </Field>
-                  {l.kind === 'other' && (
-                    <Field label="What the quote calls it">
-                      {(p) => <TextInput {...p} value={l.name} onChange={(v) => setLine(l.key, { name: v })} placeholder="Optional" />}
-                    </Field>
-                  )}
-                  <Field label="Amount">
-                    {(p) => <RupeeInput {...p} value={l.amount} onChange={(v) => setLine(l.key, { amount: v })} />}
-                  </Field>
-                  {l.kind !== 'gst' && (
-                    <ChipGroup
-                      label="Is it listed in your sanction letter or Key Facts Statement?"
-                      options={YES_NO}
-                      value={l.disclosed}
-                      onChange={(v) => setLine(l.key, { disclosed: v })}
-                    />
-                  )}
-                  {form.lines.length > 1 && (
-                    <Button variant="text" onClick={() => set({ lines: form.lines.filter((x) => x.key !== l.key) })}>
-                      Remove this charge
-                    </Button>
-                  )}
-                </li>
-              ))}
-            </ol>
-            <Button
-              variant="text"
-              onClick={() => {
-                const used = new Set(form.lines.map((x) => x.kind))
-                set({ lines: [...form.lines, newLine(nextKey, CHARGE_KINDS.find((k) => !used.has(k)) ?? 'other')] })
-                setNextKey(nextKey + 1)
-              }}
+          {step === 3 && (
+            <Question
+              title="Was it sanctioned or renewed on or after 1 January 2026?"
+              help={debt?.sanctionedOn
+                ? `Your debt details say ${formatDate(debt.sanctionedOn)}.`
+                : "It's on your sanction letter, or on the latest renewal letter."}
             >
-              + Add another charge
-            </Button>
-          </Question>
-        )}
+              <ChoiceList label="On or after 1 January 2026?" options={YES_NO} value={form.sanctionedOnOrAfter2026} onChange={(v) => set({ sanctionedOnOrAfter2026: v })} />
+            </Question>
+          )}
+
+          {step === 4 && (
+            <Question title="Is this loan for personal or business use?" help="The rule treats business loans differently.">
+              <ChoiceList label="Personal or business use?" options={PURPOSE} value={form.purpose} onChange={(v) => set({ purpose: v })} />
+              {form.purpose === 'business' && (
+                <>
+                  <DaySelect
+                    label="Who lent it?"
+                    hint="Your sanction letter names the lender. Not sure? Choose Not sure."
+                    placeholder="Choose the type of lender"
+                    value={form.lenderType ?? ''}
+                    onChange={(v) => set({ lenderType: v })}
+                    options={LENDERS}
+                  />
+                  <PillGroup
+                    label="Was the sanctioned amount ₹50 lakh or less?"
+                    options={YES_NO}
+                    value={form.sanctionedAmountUpTo50L}
+                    onChange={(v) => set({ sanctionedAmountUpTo50L: v })}
+                  />
+                </>
+              )}
+            </Question>
+          )}
+
+          {step === 5 && (
+            <Question
+              title="Which charges are on the quote?"
+              help="Add each charge from the lender's closing quote. Leave out the principal and the interest."
+            >
+              <ol className="flex flex-col gap-3">
+                {form.lines.map((l, i) => (
+                  <motion.li
+                    key={l.key}
+                    aria-label={`Charge ${i + 1}`}
+                    className="flex flex-col gap-4 rounded-3xl bg-white/60 p-4"
+                    initial={reduce || i === 0 ? false : { opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={springSettle}
+                  >
+                    <DaySelect<ChargeKind> label="Type of charge" value={l.kind} onChange={(v) => setLine(l.key, { kind: v })} options={KINDS} />
+                    {l.kind === 'other' && (
+                      <DayField kind="text" label="What the quote calls it" placeholder="Optional" value={l.name} onChange={(v) => setLine(l.key, { name: v })} />
+                    )}
+                    <DayField kind="rupees" label="Amount" value={l.amount} onChange={(v) => setLine(l.key, { amount: v })} />
+                    {l.kind !== 'gst' && (
+                      <PillGroup
+                        label="Is it listed in your sanction letter or Key Facts Statement?"
+                        options={YES_NO}
+                        value={l.disclosed}
+                        onChange={(v) => setLine(l.key, { disclosed: v })}
+                      />
+                    )}
+                    {form.lines.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => set({ lines: form.lines.filter((x) => x.key !== l.key) })}
+                        className="mx-auto min-h-11 px-3 text-[14px] font-bold text-plum-muted underline underline-offset-4"
+                      >
+                        Remove this charge
+                      </button>
+                    )}
+                  </motion.li>
+                ))}
+              </ol>
+              <button
+                type="button"
+                onClick={() => {
+                  const used = new Set(form.lines.map((x) => x.kind))
+                  set({ lines: [...form.lines, newLine(nextKey, CHARGE_KINDS.find((k) => !used.has(k)) ?? 'other')] })
+                  setNextKey(nextKey + 1)
+                }}
+                className="mx-auto min-h-11 px-3 text-[15px] font-bold underline underline-offset-4"
+              >
+                + Add another charge
+              </button>
+            </Question>
+          )}
+        </motion.div>
 
         <div className="mt-auto pt-2">
-          <Button onClick={next} disabled={!stepIsAnswered(form, step)}>
+          <SlabButton surface="day" onClick={next} disabled={!stepIsAnswered(form, step)}>
             {step < STEPS ? 'Next' : 'Check the charges'}
-          </Button>
+          </SlabButton>
         </div>
-      </ScreenBody>
+      </DayScreen>
+    </div>
+  )
+}
+
+/** "Question 2 of 5" over an aubergine bar that grows with each step. */
+function Progress({ step, of }: { step: number; of: number }) {
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="text-[13px] font-semibold text-plum-muted">Question {step} of {of}</p>
+      <div role="progressbar" aria-label="Progress" aria-valuemin={1} aria-valuemax={of} aria-valuenow={step} className="h-2 rounded-full bg-white/70">
+        <motion.div
+          className="h-full rounded-full bg-aubergine"
+          initial={false}
+          animate={{ width: `${(step / of) * 100}%` }}
+          transition={springSettle}
+        />
+      </div>
     </div>
   )
 }
@@ -233,8 +253,8 @@ function Question({ title, help, children }: { title: string; help: string; chil
   return (
     <section aria-labelledby="question" className="flex flex-col gap-4">
       <div>
-        <h2 id="question" className="text-2xl leading-tight font-bold text-neutral-900">{title}</h2>
-        <p className="mt-2 text-sm text-neutral-600">{help}</p>
+        <h2 id="question" className="text-[28px] leading-[1.02] font-black tracking-[-0.03em] text-balance">{title}</h2>
+        <p className="mt-2 text-[15px] leading-snug text-plum-muted">{help}</p>
       </div>
       {children}
     </section>
