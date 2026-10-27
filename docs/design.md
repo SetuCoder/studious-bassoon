@@ -69,7 +69,7 @@ Screens 01 to 11 sit on the board "Beta flow · screens 01–11"; 12 to 19 on "T
 | WF Button (Primary, Secondary, Text) | `Button` with `variant` | Full width by default |
 | WF Input (label, value, hint) | `Field` | Hint optional; error text replaces the hint |
 | WF Top bar (title, back) | `TopBar` | |
-| WF Bottom nav (Home, Debts, Plan, Charges, Me) | `TabBar` | |
+| WF Bottom nav (Home, Debts, Plan, Charges, Me) | `TabBar` | Marigold: a floating, blurred aubergine pill; the active tab is a marigold puck that slides over and shows its name, the rest are icons (names kept for screen readers) |
 | WF Debt row (name, meta, amount) | `DebtRow` | Also used for allocation rows and rule-status rows |
 | WF Stat (label, value) | `StatTile` | Two per row |
 | WF Option card (Best, Default) | `OptionCard` | Bar width ∝ delta |
@@ -86,7 +86,7 @@ Screens 01 to 11 sit on the board "Beta flow · screens 01–11"; 12 to 19 on "T
 ## Layout rules from the wireframes
 
 - Phone frame 360 px wide, 20 px side padding, 16 px between blocks.
-- Top bar 56 px; tab bar 64 px.
+- Top bar 56 px; tab bar 64 px, floating 12 px above the bottom edge (plus the safe area) and 12 px in from the sides. Screens under it leave 76 px at the bottom.
 - Cards: 10 px radius, 1 px border; selected or "best" cards use a 2 px dark border.
 - Money is the largest text on any screen that shows a result.
 
