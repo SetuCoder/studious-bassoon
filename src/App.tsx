@@ -8,6 +8,7 @@ import { AddDebt } from './screens/debts/AddDebt'
 import { DebtEdit } from './screens/debts/DebtEdit'
 import { DebtsTab } from './screens/debts/DebtsTab'
 import { Home } from './screens/home/Home'
+import { HowItWorks } from './screens/howItWorks/HowItWorks'
 import { Me } from './screens/me/Me'
 import { NextRupeeInputs } from './screens/plan/NextRupeeInputs'
 import { OptionDetail } from './screens/plan/OptionDetail'
@@ -55,6 +56,7 @@ export default function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/welcome" element={<WelcomeRoute />} />
+        <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/debts/new" element={<AddDebt />} />
         <Route path="/charges" element={<NeedsDebts><ChargeCheckFlow /></NeedsDebts>} />
         <Route element={<TabLayout />}>

@@ -82,6 +82,7 @@ Screens 01 to 11 sit on the board "Beta flow · screens 01–11"; 12 to 19 on "T
 | WF Slider | `Slider` | M2. Known Figma issue: the three sliders on screen 16 show the knob in the same place; ignore it |
 | WF Check-in row | `CheckInRow` | M2 |
 | WF Progress | `ProgressBar` | |
+| (none in Figma) | `Tour` (`src/ui/Tour.tsx`) | Guided tours: dims the screen with a cut-out, a pulsing marigold halo glides between features marked `data-tour="…"`, and an ice card explains each. Card sits under the feature, or above it when there's no room. Reduced motion drops the pulse and smooth scrolling |
 
 ## Layout rules from the wireframes
 

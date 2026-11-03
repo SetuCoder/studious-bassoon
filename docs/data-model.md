@@ -6,7 +6,7 @@ All data lives in the browser under one localStorage key. Nothing is sent to a s
 
 - Key: `ro:v1`
 - Value: JSON of `{ state: AppData, version }` (below), written by the Zustand persist middleware. `version` equals `schemaVersion`.
-- `schemaVersion` starts at 1. Any change to the shape adds a migration in `src/state/migrations.ts` and bumps the version.
+- `schemaVersion` starts at 1. Any change to the shape adds a migration in `src/state/migrations.ts` and bumps the version. Version 2 (guided tours) added `settings.toursSeen`; the 1 → 2 step keeps everything else and starts it empty.
 - Every read and write is wrapped in try/catch. If storage is unavailable (private mode, blocked, or a write fails later, for example when full), the app still works for the session and shows a one-line notice: "Your data won't be saved on this device."
 - Damaged data never crashes the app: a value that isn't valid JSON, or comes from an unknown or newer version, starts fresh. Missing parts are filled with defaults, and stored debts without a numeric balance, rate and payment are dropped so the engine never sees `NaN`.
 - "Delete all my data" (screen 11) removes the key and resets the store, after a confirmation.
@@ -107,7 +107,7 @@ type LenderType =
   | 'nbfc_upper_layer' | 'nbfc_middle_layer' | 'nbfc_base_layer' | 'aifi' | 'unknown';
 
 interface AppData {
-  schemaVersion: 1;
+  schemaVersion: 2;
   profile: Profile;
   debts: Debt[];
   lastNextRupee?: NextRupeeInput;
@@ -115,7 +115,10 @@ interface AppData {
   checkIns: CheckIn[];
   chargeChecks: ChargeCheck[];
   feedback: { wouldAct?: 'yes' | 'maybe' | 'no'; recommend?: 'not_likely' | 'maybe' | 'very_likely' };
-  settings: { shareUsageCounts: boolean };   // Me tab "Share anonymous usage counts", default true
+  settings: {
+    shareUsageCounts: boolean;   // Me tab "Share anonymous usage counts", default true
+    toursSeen: TourId[];         // guided tours already shown: 'start' | 'overview' | 'results' | 'charge'
+  };
 }
 ```
 

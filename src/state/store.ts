@@ -2,7 +2,7 @@ import { useStore } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { createStore } from 'zustand/vanilla'
 import { isLoan } from '../engine/ledger'
-import type { AppData, ChargeCheck, Debt, NextRupeeInput } from '../engine/types'
+import type { AppData, ChargeCheck, Debt, NextRupeeInput, TourId } from '../engine/types'
 import { defaultDebtName } from '../lib/debtTypes'
 import { SCHEMA_VERSION, STORAGE_KEY, emptyAppData, migrate, normalise } from './migrations'
 import { createSafeStorage } from './storage'
@@ -25,6 +25,10 @@ export interface AppActions {
   setWouldAct: (answer: NonNullable<AppData['feedback']['wouldAct']>) => void
   setRecommend: (answer: NonNullable<AppData['feedback']['recommend']>) => void
   setShareUsageCounts: (on: boolean) => void
+  /** A first-visit guide finished or was skipped; it won't show again. */
+  markTourSeen: (id: TourId) => void
+  /** "Show me around again": every guide shows again on its screen. */
+  resetTours: () => void
   /** "Get started" on Welcome. Session only: Welcome shows again on the next visit until a debt is saved. */
   startOnboarding: () => void
   /** "Delete all my data": removes the storage key and resets everything. */
@@ -139,7 +143,10 @@ export function createAppStore(deps: Partial<StoreDeps> = {}) {
 
         setWouldAct: (answer) => set((s) => ({ feedback: { ...s.feedback, wouldAct: answer } })),
         setRecommend: (answer) => set((s) => ({ feedback: { ...s.feedback, recommend: answer } })),
-        setShareUsageCounts: (on) => set({ settings: { shareUsageCounts: on } }),
+        setShareUsageCounts: (on) => set((s) => ({ settings: { ...s.settings, shareUsageCounts: on } })),
+        markTourSeen: (id) =>
+          set((s) => (s.settings.toursSeen.includes(id) ? s : { settings: { ...s.settings, toursSeen: [...s.settings.toursSeen, id] } })),
+        resetTours: () => set((s) => ({ settings: { ...s.settings, toursSeen: [] } })),
         startOnboarding: () => set({ onboardingStarted: true }),
 
         deleteAllData: () => {

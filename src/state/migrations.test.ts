@@ -6,6 +6,23 @@ describe('migrate', () => {
     expect(migrate({ debts: [{ id: 'x' }] }, 0)).toEqual(emptyAppData())
   })
 
+  it('upgrades version 1 data, keeping everything and starting with no guides seen', () => {
+    const v1 = {
+      schemaVersion: 1,
+      profile: { takeHomeMonthly: 145000 },
+      debts: [{ id: 'a', name: 'A', type: 'credit_card', balance: 1, apr: 1, monthlyPayment: 1, createdAt: 'x', updatedAt: 'x' }],
+      checkIns: [],
+      chargeChecks: [],
+      feedback: { wouldAct: 'yes' },
+      settings: { shareUsageCounts: false },
+    }
+    const out = migrate(v1, 1)
+    expect(out.schemaVersion).toBe(2)
+    expect(out.debts).toHaveLength(1)
+    expect(out.feedback).toEqual({ wouldAct: 'yes' })
+    expect(out.settings).toEqual({ shareUsageCounts: false, toursSeen: [] })
+  })
+
   it('starts fresh on data from a newer app version', () => {
     expect(migrate({ debts: [] }, SCHEMA_VERSION + 1)).toEqual(emptyAppData())
   })
@@ -23,8 +40,12 @@ describe('normalise', () => {
       ...emptyAppData(),
       profile: { takeHomeMonthly: 145000 },
       debts: [{ id: 'a', name: 'A', type: 'credit_card' as const, balance: 1, apr: 1, monthlyPayment: 1, createdAt: 'x', updatedAt: 'x' }],
-      settings: { shareUsageCounts: false },
+      settings: { shareUsageCounts: false, toursSeen: ['overview' as const] },
     }
     expect(normalise(data)).toEqual(data)
+  })
+
+  it('drops unknown guide ids', () => {
+    expect(normalise({ settings: { shareUsageCounts: true, toursSeen: ['overview', 'nope', 3] } }).settings.toursSeen).toEqual(['overview'])
   })
 })
