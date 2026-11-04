@@ -2,6 +2,7 @@ import { MotionConfig } from 'motion/react'
 import { useEffect, type ReactNode } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router'
 import { TabLayout } from './components/Layout'
+import { isDemoDebts } from './demo/isDemo'
 import { isActive } from './engine/ledger'
 import { ChargeCheckFlow } from './screens/charges/ChargeCheckFlow'
 import { ChargeResult } from './screens/charges/ChargeResult'
@@ -21,6 +22,15 @@ import { useAppStore } from './state/store'
 function NeedsDebts({ children }: { children: ReactNode }) {
   const hasDebts = useAppStore((s) => s.debts.some(isActive))
   return hasDebts ? children : <Navigate to="/debts" replace />
+}
+
+/**
+ * The Charges tab. With the demo borrower loaded, it opens the demo's saved verdict, so a recording
+ * made in the Home Screen app (no address bar for ?demo=charge) can tap straight to it.
+ */
+function ChargesEntry() {
+  const demoCheck = useAppStore((s) => (isDemoDebts(s.debts) ? s.chargeChecks.at(-1)?.id : undefined))
+  return demoCheck ? <Navigate to={`/charges/${demoCheck}`} replace /> : <ChargeCheckFlow />
 }
 
 /** First run opens on Welcome; after "Get started" (or with debts), Home. */
@@ -62,7 +72,7 @@ export default function App() {
           <Route path="/welcome" element={<WelcomeRoute />} />
           <Route path="/how-it-works" element={<HowItWorks />} />
           <Route path="/debts/new" element={<AddDebt />} />
-          <Route path="/charges" element={<NeedsDebts><ChargeCheckFlow /></NeedsDebts>} />
+          <Route path="/charges" element={<NeedsDebts><ChargesEntry /></NeedsDebts>} />
           <Route element={<TabLayout />}>
             <Route index element={<HomeRoute />} />
             <Route path="/debts" element={<DebtsTab />} />

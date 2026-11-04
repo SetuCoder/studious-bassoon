@@ -1,5 +1,6 @@
 import { buildChargeCheck, newLine, prefillFromDebt } from '../screens/charges/chargeCheckState'
 import { TOUR_IDS } from '../state/migrations'
+import { isDemoDebts } from './isDemo'
 import type { AppStore } from '../state/store'
 
 // The sample borrower from docs/reference/engine-fixtures.json, for demos and phone testing.
@@ -45,8 +46,7 @@ export function loadDemo(store: AppStore): string {
 
 /** True when this browser holds exactly the sample borrower's debts. */
 export function isDemoData(store: AppStore): boolean {
-  const names = store.getState().debts.map((d) => d.name)
-  return names.length === SAMPLE_DEBTS.length && SAMPLE_DEBTS.every((d, i) => names[i] === d.name)
+  return isDemoDebts(store.getState().debts)
 }
 
 /**

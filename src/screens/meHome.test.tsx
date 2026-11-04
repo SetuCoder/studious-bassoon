@@ -1,7 +1,7 @@
-import { act, render, screen, within } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import App from '../App'
 import { SAMPLE_DEBTS } from '../engine/testDebts'
 import { STORAGE_KEY } from '../state/migrations'
@@ -120,6 +120,19 @@ describe('11 Me', () => {
     await user.click(screen.getByRole('tab', { name: 'Chapter 3' }))
     await user.click(screen.getByRole('button', { name: 'Back to the app' }))
     expect(screen.getByRole('heading', { name: 'Your account' })).toBeInTheDocument()
+  })
+
+  it('loads the demo after five quick taps on the version, once confirmed', async () => {
+    act(() => appStore.getState().deleteAllData())
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true)
+    const user = renderAt('/me')
+    const version = screen.getByText(/^Version /)
+    for (let i = 0; i < 4; i++) await user.click(version)
+    expect(confirm).not.toHaveBeenCalled()
+    await user.click(version)
+    await waitFor(() => expect(appStore.getState().debts).toHaveLength(6))
+    expect(appStore.getState().profile.name).toBe('Riya')
+    confirm.mockRestore()
   })
 
   it('keeps everything if you back out of deleting', async () => {
