@@ -7,6 +7,7 @@ import { track } from '../../lib/analytics'
 import { formatINR, formatRate } from '../../lib/format'
 import { useAppStore } from '../../state/store'
 import { DayField } from '../../ui/DayField'
+import { useEdges } from '../../ui/edges'
 import { tap } from '../../ui/haptics'
 import { MarigoldMark } from '../../ui/Marigold'
 import { springPress, springSettle, STAGGER } from '../../ui/motion'
@@ -29,6 +30,7 @@ export function Home() {
   const [takeHome, setTakeHomeText] = useState('')
   // Read once when Home opens, so the greeting doesn't change under the user.
   const [hour] = useState(() => new Date().getHours())
+  useEdges('home')
 
   const ledger = summariseLedger(debts, profile.takeHomeMonthly)
   const costliest = ledger.sortedByCost[0]

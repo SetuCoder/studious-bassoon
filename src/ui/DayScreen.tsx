@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router'
+import { useEdges } from './edges'
 
 /**
  * The calm ice-silver "day" surface for forms and reading: aubergine ink, no glare.
@@ -14,6 +15,7 @@ export function DayScreen({ title, backTo, onBack, children }: {
 }) {
   const navigate = useNavigate()
   const hasBack = backTo !== undefined || onBack !== undefined
+  useEdges('day')
   return (
     <div className="surface-day flex flex-1 flex-col text-aubergine">
       <header className="sticky top-0 z-10 flex h-14 items-center gap-1 bg-ice/60 px-2 backdrop-blur-xl [mask-image:linear-gradient(to_bottom,black_75%,transparent)]">

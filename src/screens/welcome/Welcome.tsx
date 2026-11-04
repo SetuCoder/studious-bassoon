@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router'
 import { track } from '../../lib/analytics'
 import { APP_NAME } from '../../lib/constants'
 import { useAppStore } from '../../state/store'
+import { useEdges } from '../../ui/edges'
 import { Marigold, MarigoldMark } from '../../ui/Marigold'
 import { springSettle, STAGGER } from '../../ui/motion'
 import { SlabButton } from '../../ui/SlabButton'
@@ -14,6 +15,7 @@ export function Welcome() {
   const navigate = useNavigate()
   const startOnboarding = useAppStore((s) => s.startOnboarding)
   const reduce = useReducedMotion()
+  useEdges('day')
 
   const rise = (i: number) => ({
     initial: { opacity: 0, y: 28 },

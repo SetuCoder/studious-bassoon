@@ -1,9 +1,11 @@
 import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router'
+import { useEdges } from './edges'
 
 /** The deep aubergine "night" surface the money moments live on. */
 export function NightScreen({ title, backTo, children }: { title: string; backTo?: string; children: ReactNode }) {
   const navigate = useNavigate()
+  useEdges('night')
   return (
     <div className="surface-night flex flex-1 flex-col text-ice">
       <header className="sticky top-0 z-10 flex h-14 items-center gap-1 bg-aubergine/45 px-2 backdrop-blur-xl [mask-image:linear-gradient(to_bottom,black_75%,transparent)]">
