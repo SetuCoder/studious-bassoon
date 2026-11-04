@@ -5,7 +5,8 @@ import { springPress, springSettle } from '../ui/motion'
 
 const ICONS: Record<string, string> = {
   Home: 'M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',
-  Debts: 'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01',
+  // A rupee sign: what you owe.
+  Debts: 'M7 4h10M7 8.5h10M9 4c3.5 0 5 1.8 5 4.3S12.5 13 9 13H7l7 7',
   Plan: 'M3 17l6-6 4 4 8-8M14 7h7v7',
   Charges: 'M6 2h12v20l-3-2-3 2-3-2-3 2zM9 7h6M9 11h6M9 15h4',
   Me: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0',
@@ -20,9 +21,10 @@ const TABS = [
 ] as const
 
 /**
- * Bottom nav: Home · Debts · Plan · Charges · Me, as a floating aubergine pill. The active tab
- * is a marigold puck that slides across and opens to show its name; the others are icons only
- * (their names stay in the DOM for screen readers).
+ * Bottom nav: Home · Debts · Plan · Charges · Me, as a floating aubergine pill. Five equal slots,
+ * so every icon stays in the same place on every screen. One name at a time: the active tab sits
+ * on a marigold puck that slides between the slots, with its name under its icon. The others are
+ * icons only (their names stay in the DOM for screen readers).
  */
 export function TabBar() {
   const { pathname } = useLocation()
@@ -35,13 +37,13 @@ export function TabBar() {
     >
       <ul
         data-tour="tabbar"
-        className="pointer-events-auto flex h-16 items-stretch gap-1 rounded-full bg-aubergine-deep/85 p-1.5 ring-1 ring-white/12 backdrop-blur-md"
+        className="pointer-events-auto grid h-16 grid-cols-5 gap-1 rounded-full bg-aubergine-deep/85 p-1.5 ring-1 ring-white/12 backdrop-blur-md"
         style={{ boxShadow: '0 5px 0 0 var(--color-aubergine-deep), 0 16px 32px -10px rgba(34, 8, 30, 0.55)' }}
       >
         {TABS.map((t) => {
           const on = isActive(t)
           return (
-            <motion.li key={t.to} layout transition={springSettle} className={on ? 'flex-[2.2]' : 'flex-1'}>
+            <li key={t.to}>
               <NavLink
                 to={t.to}
                 end={t.end}
@@ -58,7 +60,7 @@ export function TabBar() {
                 )}
                 <motion.span
                   layout="position"
-                  className={`relative flex items-center gap-1.5 ${on ? 'text-aubergine' : 'text-mauve'}`}
+                  className={`relative flex flex-col items-center gap-0.5 ${on ? 'text-aubergine' : 'text-mauve'}`}
                   whileTap={{ scale: 0.88 }}
                   transition={springPress}
                 >
@@ -66,10 +68,10 @@ export function TabBar() {
                     strokeWidth={on ? 2.3 : 1.8} strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                     <path d={ICONS[t.label]} />
                   </svg>
-                  <span className={on ? 'text-[14px] font-extrabold tracking-[-0.01em] whitespace-nowrap' : 'sr-only'}>{t.label}</span>
+                  <span className={on ? 'text-[11px] leading-none font-extrabold tracking-[-0.01em] whitespace-nowrap' : 'sr-only'}>{t.label}</span>
                 </motion.span>
               </NavLink>
-            </motion.li>
+            </li>
           )
         })}
       </ul>
