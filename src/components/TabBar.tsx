@@ -20,9 +20,9 @@ const TABS = [
 ] as const
 
 /**
- * Bottom nav: Home · Debts · Plan · Charges · Me, as a floating aubergine pill. The active tab
- * is a marigold puck that slides across and opens to show its name; the others are icons only
- * (their names stay in the DOM for screen readers).
+ * Bottom nav: Home · Debts · Plan · Charges · Me, as a floating aubergine pill. Five equal slots,
+ * so every icon stays in the same place on every screen; each shows its name under the icon. The
+ * active tab sits on a marigold puck that slides between the slots.
  */
 export function TabBar() {
   const { pathname } = useLocation()
@@ -35,13 +35,13 @@ export function TabBar() {
     >
       <ul
         data-tour="tabbar"
-        className="pointer-events-auto flex h-16 items-stretch gap-1 rounded-full bg-aubergine-deep/85 p-1.5 ring-1 ring-white/12 backdrop-blur-md"
+        className="pointer-events-auto grid h-16 grid-cols-5 gap-1 rounded-full bg-aubergine-deep/85 p-1.5 ring-1 ring-white/12 backdrop-blur-md"
         style={{ boxShadow: '0 5px 0 0 var(--color-aubergine-deep), 0 16px 32px -10px rgba(34, 8, 30, 0.55)' }}
       >
         {TABS.map((t) => {
           const on = isActive(t)
           return (
-            <motion.li key={t.to} layout transition={springSettle} className={on ? 'flex-[2.2]' : 'flex-1'}>
+            <li key={t.to}>
               <NavLink
                 to={t.to}
                 end={t.end}
@@ -57,8 +57,7 @@ export function TabBar() {
                   />
                 )}
                 <motion.span
-                  layout="position"
-                  className={`relative flex items-center gap-1.5 ${on ? 'text-aubergine' : 'text-mauve'}`}
+                  className={`relative flex flex-col items-center gap-0.5 ${on ? 'text-aubergine' : 'text-mauve'}`}
                   whileTap={{ scale: 0.88 }}
                   transition={springPress}
                 >
@@ -66,10 +65,10 @@ export function TabBar() {
                     strokeWidth={on ? 2.3 : 1.8} strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                     <path d={ICONS[t.label]} />
                   </svg>
-                  <span className={on ? 'text-[14px] font-extrabold tracking-[-0.01em] whitespace-nowrap' : 'sr-only'}>{t.label}</span>
+                  <span className={`text-[11px] leading-none tracking-[-0.01em] whitespace-nowrap ${on ? 'font-extrabold' : 'font-semibold'}`}>{t.label}</span>
                 </motion.span>
               </NavLink>
-            </motion.li>
+            </li>
           )
         })}
       </ul>

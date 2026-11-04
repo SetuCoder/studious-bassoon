@@ -80,7 +80,7 @@ Screens 01 to 11 sit on the board "Beta flow · screens 01–11"; 12 to 19 on "T
 | WF Button (Primary, Secondary, Text) | `Button` with `variant` | Full width by default |
 | WF Input (label, value, hint) | `Field` | Hint optional; error text replaces the hint |
 | WF Top bar (title, back) | `TopBar` | |
-| WF Bottom nav (Home, Debts, Plan, Charges, Me) | `TabBar` | Marigold: a floating, blurred aubergine pill; the active tab is a marigold puck that slides over and shows its name, the rest are icons (names kept for screen readers) |
+| WF Bottom nav (Home, Debts, Plan, Charges, Me) | `TabBar` | Marigold: a floating, blurred aubergine pill with five equal slots, so each icon sits in the same place on every screen. Every tab shows its name under its icon; the active one sits on a marigold puck that slides between slots |
 | WF Debt row (name, meta, amount) | `DebtRow` | Also used for allocation rows and rule-status rows |
 | WF Stat (label, value) | `StatTile` | Two per row |
 | WF Option card (Best, Default) | `OptionCard` | Bar width ∝ delta |
