@@ -1,4 +1,5 @@
 import { buildChargeCheck, newLine, prefillFromDebt } from '../screens/charges/chargeCheckState'
+import { TOUR_IDS } from '../state/migrations'
 import type { AppStore } from '../state/store'
 
 // The sample borrower from docs/reference/engine-fixtures.json, for demos and phone testing.
@@ -14,10 +15,14 @@ const SAMPLE_DEBTS = [
   { name: 'Buy now, pay later', type: 'bnpl', balance: 18000, apr: 30, monthlyPayment: 6000 },
 ] as const
 
-/** Replaces this browser's data with the sample borrower. */
+/**
+ * Replaces this browser's data with the sample borrower. The guides are marked seen, so nothing
+ * pops up over the screens while someone records or presents a demo.
+ */
 export function loadSampleBorrower(store: AppStore): void {
   const s = store.getState()
   s.deleteAllData()
+  for (const id of TOUR_IDS) s.markTourSeen(id)
   s.setName('Riya')
   s.setTakeHome(145000)
   for (const d of SAMPLE_DEBTS) s.addDebt(d)

@@ -6,7 +6,7 @@ export const STORAGE_KEY = 'vektrr:v1'
 export const LEGACY_STORAGE_KEY = 'ro:v1'
 export const SCHEMA_VERSION = 3
 
-const TOUR_IDS: readonly TourId[] = ['start', 'overview', 'results', 'charge']
+export const TOUR_IDS: readonly TourId[] = ['start', 'overview', 'results', 'charge']
 
 export function emptyAppData(): AppData {
   return {
