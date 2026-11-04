@@ -7,7 +7,7 @@ import { useAppStore } from '../../state/store'
 import { DayScreen } from '../../ui/DayScreen'
 import { MarigoldMark } from '../../ui/Marigold'
 import { PillGroup } from '../../ui/PillGroup'
-import { SlabButton } from '../../ui/SlabButton'
+import { SlabButton, SlabLink } from '../../ui/SlabButton'
 import { Switch } from '../../ui/Switch'
 
 const RECOMMEND = [
@@ -24,6 +24,8 @@ export function Me() {
   const shareUsageCounts = useAppStore((s) => s.settings.shareUsageCounts)
   const setShareUsageCounts = useAppStore((s) => s.setShareUsageCounts)
   const deleteAllData = useAppStore((s) => s.deleteAllData)
+  const resetTours = useAppStore((s) => s.resetTours)
+  const toursSeen = useAppStore((s) => s.settings.toursSeen.length)
   const [confirmOpen, setConfirmOpen] = useState(false)
 
   return (
@@ -51,6 +53,14 @@ export function Me() {
             track('recommend_answered', { answer })
           }}
         />
+      </section>
+
+      <section aria-labelledby="getting-around" className="flex flex-col gap-3">
+        <h2 id="getting-around" className="text-[17px] font-extrabold">Getting around</h2>
+        <SlabLink to="/how-it-works" state={{ from: 'me' }} variant="line">How it works</SlabLink>
+        <SlabButton variant="line" surface="day" disabled={toursSeen === 0} onClick={resetTours}>
+          {toursSeen === 0 ? 'The guide will show on each screen' : 'Show me around again'}
+        </SlabButton>
       </section>
 
       <section aria-labelledby="your-data" className="flex flex-col gap-4 rounded-3xl bg-white/60 p-5">

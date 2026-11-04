@@ -70,13 +70,31 @@ describe('first run', () => {
     expect(screen.getByRole('heading', { name: 'Home' })).toBeInTheDocument()
   })
 
-  it('explains how it works in a sheet', async () => {
+  it('walks through how it works, chapter by chapter, then starts', async () => {
     const user = renderAt('/welcome')
     await user.click(screen.getByRole('button', { name: 'How does it work?' }))
-    const sheet = screen.getByRole('dialog', { name: 'How it works' })
-    expect(within(sheet).getByText('Check charges')).toBeInTheDocument()
-    await user.keyboard('{Escape}')
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'See everything you owe.' })).toBeInTheDocument()
+    expect(screen.getByText('Example numbers')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+    expect(screen.getByRole('heading', { name: 'Know what your next rupee should do.' })).toBeInTheDocument()
+    expect(screen.getByText('+₹55,728')).toBeInTheDocument()
+
+    // The chapter bar jumps straight to any chapter.
+    await user.click(screen.getByRole('tab', { name: 'Chapter 3' }))
+    expect(screen.getByRole('heading', { name: 'Catch charges that don’t add up.' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Chapter 3' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByText('No bank login. No SMS access. Nothing leaves your phone. We’ll point things out as you go.')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Get started' }))
+    expect(screen.getByRole('heading', { name: 'No debts added yet' })).toBeInTheDocument()
+    expect(appStore.getState().onboardingStarted).toBe(true)
+  })
+
+  it('goes back to Welcome from how it works', async () => {
+    const user = renderAt('/how-it-works')
+    await user.click(screen.getByRole('button', { name: 'Back' }))
+    expect(screen.getByRole('heading', { name: /See everything you owe/ })).toBeInTheDocument()
   })
 })
 

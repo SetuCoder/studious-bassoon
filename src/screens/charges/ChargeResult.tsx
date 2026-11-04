@@ -14,6 +14,7 @@ import { NightScreen } from '../../ui/NightScreen'
 import { Odometer } from '../../ui/Odometer'
 import { SlabButton } from '../../ui/SlabButton'
 import { SmearIn } from '../../ui/SmearIn'
+import { Tour, type TourStep } from '../../ui/Tour'
 
 /** 10 Charge check, result: a verdict per charge and a message the user sends themselves. */
 export function ChargeResult() {
@@ -22,6 +23,12 @@ export function ChargeResult() {
   if (!check) return <Navigate to="/charges" replace />
   return <Result key={check.id} check={check} />
 }
+
+const CHARGE_TOUR: TourStep[] = [
+  { target: 'charge-total', title: 'What may not be allowed', body: 'The charges the RBI rule may bar on this loan, GST included.' },
+  { target: 'charge-row', title: 'Every charge, checked', body: '“Doesn’t add up” means the rule bars it for this loan. “Ask the lender” means only they can confirm it.' },
+  { target: 'lender-message', title: 'Your message, ready', body: 'A polite question for your lender. Edit it, then copy or share it. We never contact anyone.' },
+]
 
 // The verdict, in order (seconds): the total smears in, the charges stack up, then each
 // questionable charge gets stamped in turn.
@@ -63,7 +70,7 @@ function Result({ check }: { check: ChargeCheck }) {
 
   return (
     <NightScreen title="Your quote check" backTo="/debts">
-      <section>
+      <section data-tour="charge-total">
         {loanName && <p className="text-[14px] text-mauve">{loanName}, closing quote</p>}
         {nothingToAsk ? (
           <>
@@ -96,6 +103,7 @@ function Result({ check }: { check: ChargeCheck }) {
         {check.lines.map((l, i) => (
           <motion.li
             key={i}
+            data-tour={stampOrder[i] === 0 ? 'charge-row' : undefined}
             className="flex flex-col gap-2 rounded-3xl bg-aubergine-raised p-4 shadow-slab"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -118,6 +126,7 @@ function Result({ check }: { check: ChargeCheck }) {
 
       {!nothingToAsk && (
         <motion.section
+          data-tour="lender-message"
           className="flex flex-col gap-3"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -158,6 +167,7 @@ function Result({ check }: { check: ChargeCheck }) {
       )}
 
       <p className="text-xs text-mauve">A guide to what to ask, not legal advice.</p>
+      {!nothingToAsk && <Tour id="charge" steps={CHARGE_TOUR} delay={T.stamps + stamped * 0.35 + 0.6} />}
     </NightScreen>
   )
 }

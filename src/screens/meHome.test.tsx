@@ -69,6 +69,19 @@ describe('11 Me', () => {
     expect(screen.getByText('Beta 0.1. Shows the cost of each option. Not financial or legal advice.')).toBeInTheDocument()
   })
 
+  it('replays the guides and reopens how it works, coming back to Me', async () => {
+    act(() => appStore.getState().markTourSeen('overview'))
+    const user = renderAt('/me')
+    await user.click(screen.getByRole('button', { name: 'Show me around again' }))
+    expect(appStore.getState().settings.toursSeen).toEqual([])
+    expect(screen.getByRole('button', { name: 'The guide will show on each screen' })).toBeDisabled()
+
+    await user.click(screen.getByRole('link', { name: 'How it works' }))
+    await user.click(screen.getByRole('tab', { name: 'Chapter 3' }))
+    await user.click(screen.getByRole('button', { name: 'Back to the app' }))
+    expect(screen.getByRole('heading', { name: 'Help us build this' })).toBeInTheDocument()
+  })
+
   it('keeps everything if you back out of deleting', async () => {
     const user = renderAt('/me')
     await user.click(screen.getByRole('button', { name: 'Delete all my data' }))

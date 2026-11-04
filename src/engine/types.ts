@@ -103,8 +103,11 @@ export interface ChargeCheck {
   }
 }
 
+/** The first-visit guides (src/ui/Tour.tsx), one per screen that has one. */
+export type TourId = 'start' | 'overview' | 'results' | 'charge'
+
 export interface AppData {
-  schemaVersion: 1
+  schemaVersion: 2
   profile: Profile
   debts: Debt[]
   lastNextRupee?: NextRupeeInput
@@ -112,6 +115,10 @@ export interface AppData {
   checkIns: CheckIn[]
   chargeChecks: ChargeCheck[]
   feedback: { wouldAct?: 'yes' | 'maybe' | 'no'; recommend?: 'not_likely' | 'maybe' | 'very_likely' }
-  /** Me tab toggle "Share anonymous usage counts"; on by default. */
-  settings: { shareUsageCounts: boolean }
+  settings: {
+    /** Me tab toggle "Share anonymous usage counts"; on by default. */
+    shareUsageCounts: boolean
+    /** Guides already shown on this phone, so each runs once. "Show me around again" on Me clears it. */
+    toursSeen: TourId[]
+  }
 }

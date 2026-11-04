@@ -1,9 +1,13 @@
 import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
 import { MotionGlobalConfig } from 'motion/react'
-import { afterEach } from 'vitest'
+import { afterEach, vi } from 'vitest'
 
 afterEach(cleanup)
+
+// The first-visit guides dim the screen and take focus on a timer, which would land in the
+// middle of other screens' tests. They're tested on their own in src/ui/Tour.test.tsx.
+vi.mock('../ui/Tour', () => ({ Tour: () => null }))
 
 // Animations jump straight to their end state in tests, so the DOM shows final values.
 MotionGlobalConfig.skipAnimations = true

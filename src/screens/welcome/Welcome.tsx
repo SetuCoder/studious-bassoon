@@ -1,7 +1,5 @@
 import { motion, useReducedMotion } from 'motion/react'
-import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { Sheet } from '../../components/Sheet'
 import { track } from '../../lib/analytics'
 import { APP_NAME } from '../../lib/constants'
 import { useAppStore } from '../../state/store'
@@ -9,19 +7,12 @@ import { Marigold, MarigoldMark } from '../../ui/Marigold'
 import { springSettle, STAGGER } from '../../ui/motion'
 import { SlabButton } from '../../ui/SlabButton'
 
-const STEPS = [
-  { title: 'Add your debts', body: 'Five fields for each loan or card, about 30 seconds each.' },
-  { title: 'See your plan', body: 'We compare what your next rupee could do over 36 months, with the working shown.' },
-  { title: 'Check charges', body: "Before you close a loan, check the lender's quote against the RBI rule." },
-]
-
 const EASE_OUT = [0.16, 1, 0.3, 1] as const
 
 /** 01 Welcome: the poster from the inspiration board. First run only; no tab bar. */
 export function Welcome() {
   const navigate = useNavigate()
   const startOnboarding = useAppStore((s) => s.startOnboarding)
-  const [howOpen, setHowOpen] = useState(false)
   const reduce = useReducedMotion()
 
   const rise = (i: number) => ({
@@ -99,26 +90,11 @@ export function Welcome() {
             </span>
           </span>
         </SlabButton>
-        <button type="button" onClick={() => setHowOpen(true)} className="mx-auto min-h-11 px-3 text-[15px] font-bold underline underline-offset-4">
+        <button type="button" onClick={() => navigate('/how-it-works')} className="mx-auto min-h-11 px-3 text-[15px] font-bold underline underline-offset-4">
           How does it work?
         </button>
         <p className="text-center text-xs text-plum-muted">Beta. Shows the cost of each option; not financial advice.</p>
       </motion.div>
-
-      <Sheet open={howOpen} title="How it works" onClose={() => setHowOpen(false)}>
-        <ol className="flex flex-col gap-4">
-          {STEPS.map((s, i) => (
-            <li key={s.title} className="flex gap-3">
-              <span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center rounded-full bg-marigold text-[15px] font-black">{i + 1}</span>
-              <div>
-                <p className="text-[16px] font-extrabold">{s.title}</p>
-                <p className="text-[14px] leading-snug text-plum-muted">{s.body}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
-        <SlabButton variant="line" onClick={() => setHowOpen(false)}>Got it</SlabButton>
-      </Sheet>
     </main>
   )
 }

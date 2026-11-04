@@ -37,9 +37,26 @@ Flows without the tab bar: 01, 02, 09 question steps, 13.
 
 ### 01 Welcome
 - Logo placeholder, headline "See everything you owe. Know what to do with your next rupee.", one-line body, "Private by design" box ("No bank login. No SMS access. Your numbers stay on this phone.").
-- Buttons: **Get started** → 03. **How does it work?** → a short sheet with three steps (add debts, see your plan, check charges).
+- Buttons: **Get started** → 03. **How does it work?** → 01a.
 - Footer: "Beta. Shows the cost of each option; not financial advice."
 - Shown only on first run (until at least one debt is saved).
+
+### 01a How it works
+- Its own night screen, no tab bar, opened from Welcome or from Me. Back returns where it came from.
+- Three chapters, swiped or stepped with **Next**, with a chapter bar on top that jumps to any chapter: **See everything you owe** (a mini overview), **Know what your next rupee should do** (the top option with its rolling gain and allocation strip), **Catch charges that don't add up** (the verdict with stamps landing). Each scene uses the sample borrower's real engine results, labelled "Example numbers".
+- Last chapter: "No bank login. No SMS access. Nothing leaves your phone. We'll point things out as you go." Then **Get started** (→ 03, same as Welcome) or, with debts already saved, **Back to the app**.
+
+### Guided tours (all builds, no special mode)
+The first time someone reaches certain screens, the screen dims and a marigold halo rings one feature at a time, with a card saying what it does (**Next**, **Skip the tour**, **Got it** on the last; Escape skips). Each tour runs once per phone (`settings.toursSeen`). Me → **Show me around again** clears them so they replay. Steps whose feature isn't on screen are skipped (a cards-only borrower sees no charge-check step).
+
+| Tour | Screen | Steps |
+| --- | --- | --- |
+| `start` | 03 Debts, empty | Add your first debt · Take-home (optional) · The tab bar |
+| `overview` | 04 Debts overview | Total owed · The costliest debt · Next rupee · Charge check (loans only) · Add another debt |
+| `results` | 07 Results | The top option · Where the money goes · Every other option · Would you act on this? |
+| `charge` | 10 Charge check, result | What may not be allowed · A stamped charge · The message to your lender |
+
+Each waits for its screen's entrance to finish before dimming.
 
 ### 02 Add a debt
 - Type chips: Credit card, Personal loan, Home loan, Car loan, Education loan, BNPL, Gold loan, Other. Default: Credit card.
@@ -95,6 +112,7 @@ Flows without the tab bar: 01, 02, 09 question steps, 13.
 ### 11 Me
 - "Help us build this" with **Open the 2-minute feedback form** (opens `FEEDBACK_FORM_URL` in a new tab).
 - "How likely are you to recommend this to a friend?" chips.
+- Getting around: **How it works** (→ 01a) and **Show me around again** (replays the guided tours; reads "The guide will show on each screen" when none have been seen yet).
 - Your data: "Everything you entered is stored only on this phone. We can't see it." **Delete all my data** (confirm).
 - Toggle: "Share anonymous usage counts" (default on; when off, no events are sent).
 - About: "Beta 0.1. Shows the cost of each option. Not financial or legal advice."

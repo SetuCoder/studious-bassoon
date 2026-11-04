@@ -15,8 +15,23 @@ import { NightScreen } from '../../ui/NightScreen'
 import { Odometer } from '../../ui/Odometer'
 import { SlabLink } from '../../ui/SlabButton'
 import { SmearIn } from '../../ui/SmearIn'
+import { Tour, type TourStep } from '../../ui/Tour'
 
 const MotionLink = motion.create(Link)
+
+const START_TOUR: TourStep[] = [
+  { target: 'add-first-debt', title: 'Start here', body: 'Add a loan or card. Five fields, about 30 seconds each.' },
+  { target: 'take-home', title: 'Your take-home, if you like', body: 'It shows what share of your income goes to debt. It stays on this phone.' },
+  { target: 'tabbar', title: 'Everything else lives here', body: 'Home, Plan and Charges open up once you’ve added a debt. Me holds your data and feedback.' },
+]
+
+const OVERVIEW_TOUR: TourStep[] = [
+  { target: 'total', title: 'Everything you owe', body: 'All your loans and cards, added up. It updates whenever you edit a debt.' },
+  { target: 'costliest', title: 'The costliest one, on top', body: 'Sorted by interest rate. Tap any debt to edit it or see when it clears.' },
+  { target: 'next-rupee', title: 'Got some extra money?', body: 'Ask what it should do. We compare every option by what it costs you.' },
+  { target: 'charge-check', title: 'Closing a loan?', body: 'Check the lender’s quote against the RBI rule before you pay it.' },
+  { target: 'add-debt', title: 'Add the rest', body: 'The more of your debts you add, the better the answer gets.' },
+]
 
 /** Debts tab root: 03 when nothing is added yet, else 04. */
 export function DebtsTab() {
@@ -47,6 +62,7 @@ function DebtsEmpty() {
           Add your first loan or card. It takes about 30 seconds, and nothing leaves your phone.
         </p>
       </div>
+      <div data-tour="take-home">
       <DayField
         kind="rupees"
         label="Monthly take-home pay (optional)"
@@ -59,9 +75,11 @@ function DebtsEmpty() {
           setTakeHome(rupees)
         }}
       />
-      <div className="mt-auto pt-4">
-        <SlabLink to="/debts/new">Add your first debt</SlabLink>
       </div>
+      <div className="mt-auto pt-4">
+        <div data-tour="add-first-debt"><SlabLink to="/debts/new">Add your first debt</SlabLink></div>
+      </div>
+      <Tour id="start" steps={START_TOUR} delay={0.6} />
     </DayScreen>
   )
 }
@@ -88,7 +106,7 @@ function DebtsOverview() {
 
   return (
     <NightScreen title="Your debts">
-      <section aria-labelledby="total-owed">
+      <section aria-labelledby="total-owed" data-tour="total">
         <p id="total-owed" className="text-[14px] text-mauve">Total owed</p>
         <SmearIn ghost={total} delay={T.total} className="mt-1 text-[48px] leading-none font-black tracking-[-0.05em]">
           <Odometer value={total} delay={T.total + 0.1} />
@@ -125,6 +143,7 @@ function DebtsOverview() {
             return (
               <motion.li
                 key={d.id}
+                data-tour={top ? 'costliest' : undefined}
                 initial={{ opacity: 0, y: -28, rotate: i % 2 ? 1.5 : -1.5 }}
                 animate={{ opacity: 1, y: 0, rotate: 0 }}
                 transition={{ ...springSettle, delay: T.slabs + i * STAGGER }}
@@ -162,12 +181,13 @@ function DebtsOverview() {
       </section>
 
       <div className="flex flex-col gap-3">
-        <SlabLink to="/plan">What should my next rupee do?</SlabLink>
-        {hasLoan && <SlabLink to="/charges" state={{ entry: 'overview' }} variant="outline">Check a closing quote</SlabLink>}
-        <Link to="/debts/new" className="mx-auto flex min-h-11 items-center px-3 text-[15px] font-bold underline underline-offset-4">
+        <div data-tour="next-rupee"><SlabLink to="/plan">What should my next rupee do?</SlabLink></div>
+        {hasLoan && <div data-tour="charge-check"><SlabLink to="/charges" state={{ entry: 'overview' }} variant="outline">Check a closing quote</SlabLink></div>}
+        <Link to="/debts/new" data-tour="add-debt" className="mx-auto flex min-h-11 items-center px-3 text-[15px] font-bold underline underline-offset-4">
           + Add another debt
         </Link>
       </div>
+      <Tour id="overview" steps={OVERVIEW_TOUR} delay={1.3} />
     </NightScreen>
   )
 }

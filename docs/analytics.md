@@ -43,6 +43,8 @@ Money amounts, interest rates, balances, debt names, lender names, dates of loan
 | `feedback_form_opened` | Button on 11 | none |
 | `recommend_answered` | Chip on 11 | `answer` |
 | `data_deleted` | Confirmed delete | none |
+| `how_it_works_opened` | 01a shown | `from: 'welcome' \| 'me'` |
+| `tour_ended` | A guided tour finished or was skipped | `tour: 'start' \| 'overview' \| 'results' \| 'charge'`, `completed: boolean`, `step` (the step it ended on) |
 | M2: `checkin_saved` | Save on 13 | `changed_count`, `matched_all: boolean` |
 | M2: `plan_saved` | Save plan on 08 or 16 | `strategy` |
 | M2: `whatif_used` | Slider moved on 16 | none (send once per visit) |

@@ -34,6 +34,7 @@ export function TabBar() {
       className="pointer-events-none fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[480px] px-3 pb-[calc(12px+env(safe-area-inset-bottom))]"
     >
       <ul
+        data-tour="tabbar"
         className="pointer-events-auto flex h-16 items-stretch gap-1 rounded-full bg-aubergine-deep/85 p-1.5 ring-1 ring-white/12 backdrop-blur-md"
         style={{ boxShadow: '0 5px 0 0 var(--color-aubergine-deep), 0 16px 32px -10px rgba(34, 8, 30, 0.55)' }}
       >

@@ -1,6 +1,6 @@
 import type { PostHog } from 'posthog-js'
 import { useEffect, useRef } from 'react'
-import type { DebtType, OptionId } from '../engine/types'
+import type { DebtType, OptionId, TourId } from '../engine/types'
 import { appStore } from '../state/store'
 
 // The only file that talks to PostHog (docs/analytics.md). Events carry names and coarse
@@ -29,6 +29,8 @@ export interface AnalyticsEvents {
   feedback_form_opened: undefined
   recommend_answered: { answer: 'not_likely' | 'maybe' | 'very_likely' }
   data_deleted: undefined
+  how_it_works_opened: { from: 'welcome' | 'me' }
+  tour_ended: { tour: TourId; completed: boolean; step: number }
 }
 
 export type EventName = keyof AnalyticsEvents

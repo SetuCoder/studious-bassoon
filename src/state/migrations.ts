@@ -1,8 +1,10 @@
-import type { AppData, Debt } from '../engine/types'
+import type { AppData, Debt, TourId } from '../engine/types'
 
 /** The one localStorage key that holds everything (docs/data-model.md). */
 export const STORAGE_KEY = 'ro:v1'
-export const SCHEMA_VERSION = 1
+export const SCHEMA_VERSION = 2
+
+const TOUR_IDS: readonly TourId[] = ['start', 'overview', 'results', 'charge']
 
 export function emptyAppData(): AppData {
   return {
@@ -12,7 +14,7 @@ export function emptyAppData(): AppData {
     checkIns: [],
     chargeChecks: [],
     feedback: {},
-    settings: { shareUsageCounts: true },
+    settings: { shareUsageCounts: true, toursSeen: [] },
   }
 }
 
@@ -20,7 +22,10 @@ export function emptyAppData(): AppData {
  * One step per schema change: MIGRATIONS[n] turns version n data into version n + 1.
  * Add a step and bump SCHEMA_VERSION whenever the shape of AppData changes.
  */
-const MIGRATIONS: Record<number, (data: Record<string, unknown>) => Record<string, unknown>> = {}
+const MIGRATIONS: Record<number, (data: Record<string, unknown>) => Record<string, unknown>> = {
+  // 1 → 2: settings gains toursSeen. Nobody has seen a guide yet.
+  1: (data) => ({ ...data, settings: { ...(isRecord(data.settings) ? data.settings : {}), toursSeen: [] } }),
+}
 
 /** Called by the persist middleware when the stored version differs from SCHEMA_VERSION. */
 export function migrate(persisted: unknown, fromVersion: number): AppData {
@@ -56,6 +61,9 @@ export function normalise(persisted: unknown): AppData {
       shareUsageCounts: isRecord(p.settings) && typeof p.settings.shareUsageCounts === 'boolean'
         ? p.settings.shareUsageCounts
         : empty.settings.shareUsageCounts,
+      toursSeen: isRecord(p.settings) && Array.isArray(p.settings.toursSeen)
+        ? TOUR_IDS.filter((id) => (p.settings as { toursSeen: unknown[] }).toursSeen.includes(id))
+        : [],
     },
   }
 }

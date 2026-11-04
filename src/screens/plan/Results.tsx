@@ -14,9 +14,17 @@ import { NightScreen } from '../../ui/NightScreen'
 import { Odometer } from '../../ui/Odometer'
 import { SlabLink } from '../../ui/SlabButton'
 import { SmearIn } from '../../ui/SmearIn'
+import { Tour, type TourStep } from '../../ui/Tour'
 import { useNextRupee } from './useNextRupee'
 
 const MotionLink = motion.create(Link)
+
+const RESULTS_TOUR: TourStep[] = [
+  { target: 'top-option', title: 'The answer', body: 'The option that leaves you best off over 36 months, compared with keeping the money in savings.' },
+  { target: 'allocation', title: 'Where the money goes', body: 'Which debts it pays, and which ones it clears completely.' },
+  { target: 'other-options', title: 'Every other option', body: 'Ranked below. Tap any option to see its working, month by month.' },
+  { target: 'would-act', title: 'One tap for us', body: 'Would you act on this? Your answer helps us learn what’s useful.' },
+]
 
 const WOULD_ACT = [
   { value: 'yes', label: 'Yes' },
@@ -59,12 +67,13 @@ export function Results() {
           </motion.p>
 
           <ol aria-label="Options, best first" className="flex flex-col gap-3">
-            <li>
+            <li data-tour="top-option">
               <HeroOption option={best} debts={debts} assumedReturn={input.assumedReturn} L={result.L} />
             </li>
             {rest.map((o, i) => (
               <motion.li
                 key={o.id}
+                data-tour={i === 0 ? 'other-options' : undefined}
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...springSettle, delay: T.others + i * STAGGER }}
@@ -76,6 +85,7 @@ export function Results() {
 
           <motion.section
             aria-labelledby="would-act"
+            data-tour="would-act"
             className="flex flex-col gap-3 rounded-3xl bg-aubergine-raised p-4 shadow-slab"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
@@ -109,6 +119,7 @@ export function Results() {
         </>
       )}
       <p className="text-xs leading-relaxed text-mauve">Shows the cost of each option. Not financial advice. Tax benefits are not included.</p>
+      {result.L > 0 && <Tour id="results" steps={RESULTS_TOUR} delay={1.8} />}
     </NightScreen>
   )
 }
@@ -148,7 +159,7 @@ function HeroOption({ option, debts, assumedReturn, L }: HeroProps) {
       <p className="mt-2 text-[14px] leading-snug text-plum-muted">{optionNote(debts, option)}</p>
 
       {rows.length > 0 && (
-        <div className="mt-4">
+        <div className="mt-4" data-tour="allocation">
           <p className="text-[13px] font-semibold text-plum-muted">Where the {formatINR(L)} goes</p>
           <div aria-hidden="true" className="mt-2 flex h-3.5 gap-[3px] overflow-hidden rounded-full">
             {rows.map((r, i) => (
