@@ -141,6 +141,14 @@ describe('09 charge check questions → 10 result', () => {
     expect(screen.getByRole('radio', { name: 'Fixed' })).toHaveAttribute('aria-checked', 'true')
   })
 
+  it('opens the saved verdict from the Charges tab while the demo is loaded', async () => {
+    const { loadDemo } = await import('../demo/sampleBorrower')
+    act(() => { loadDemo(appStore) })
+    renderAt('/charges')
+    expect(screen.getByRole('heading', { name: 'Your quote check' })).toBeInTheDocument()
+    expect(screen.getByText('₹9,204')).toBeInTheDocument()
+  })
+
   it('says the check is for loans when there are only cards', () => {
     act(() => {
       appStore.getState().deleteAllData()

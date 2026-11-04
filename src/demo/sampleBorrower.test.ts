@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createAppStore, type AppStore } from '../state/store'
+import { DEMO_DEBT_NAMES } from './isDemo'
 import { isDemoData, loadDemo, startDemo } from './sampleBorrower'
 
 let store: AppStore
@@ -21,6 +22,11 @@ describe('demo data', () => {
     // No guides over the screens while recording or presenting.
     expect(s.settings.toursSeen).toEqual(['start', 'overview', 'results', 'charge'])
     expect(isDemoData(store)).toBe(true)
+  })
+
+  it('recognises the demo by the same names it loads', () => {
+    loadDemo(store)
+    expect(store.getState().debts.map((d) => d.name)).toEqual([...DEMO_DEBT_NAMES])
   })
 
   it('?demo replaces nothing of the user’s own without their yes', () => {
