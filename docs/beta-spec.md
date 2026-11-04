@@ -158,7 +158,7 @@ Follow the Figma screens and their notes. Key behaviours:
 
 ## Demo mode
 
-For live demos, any build accepts `?demo`: it loads the sample borrower from `docs/reference/engine-fixtures.json` (named Riya, with the two cards shown as HDFC Infinia and Axis Magnus, with limits and due dates; the numbers are the fixture's) plus a saved check of the fixture's personal-loan closing quote, and opens Debts. `?demo=charge` opens that saved check (loading the demo first if needed). The demo marks every guided tour as seen, so none pop up while recording or presenting (Me → **Show me around again** brings them back). If the browser holds someone's own debts, the app asks before replacing them and changes nothing on "Cancel". The dev server also keeps `?sample` (borrower only, opens Plan).
+For live demos, any build accepts `?demo`: it loads the sample borrower from `docs/reference/engine-fixtures.json` (named Riya, with the two cards shown as HDFC Infinia and Axis Magnus, with limits and due dates; the numbers are the fixture's) plus a saved check of the fixture's personal-loan closing quote, and opens Debts. `?demo=charge` opens that saved check (loading the demo first if needed). The demo marks every guided tour as seen, so none pop up while recording or presenting (Me → **Show me around again** brings them back). If the browser holds someone's own debts, the app asks before replacing them and changes nothing on "Cancel". The dev server also keeps `?sample` (borrower only, opens Plan). An app added to the iPhone Home Screen has its own storage and no address bar, so `?demo` can't reach it: there, five quick taps on **Version** in Me → About load the demo (after a confirm).
 
 ## Definition of done for M1
 

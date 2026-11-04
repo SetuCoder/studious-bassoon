@@ -1,10 +1,10 @@
-import { useState, type ReactNode } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router'
 import { Sheet } from '../../components/Sheet'
 import { isActive } from '../../engine/ledger'
 import { forgetAnalyticsId, track } from '../../lib/analytics'
 import { APP_NAME, APP_VERSION } from '../../lib/constants'
-import { useAppStore } from '../../state/store'
+import { appStore, useAppStore } from '../../state/store'
 import { DayField, DaySelect } from '../../ui/DayField'
 import { DayScreen } from '../../ui/DayScreen'
 import { MarigoldMark } from '../../ui/Marigold'
@@ -42,6 +42,17 @@ export function Me() {
   const deleteAllData = useAppStore((s) => s.deleteAllData)
   const resetTours = useAppStore((s) => s.resetTours)
   const [confirmOpen, setConfirmOpen] = useState(false)
+  const taps = useRef<number[]>([])
+
+  const versionTapped = async () => {
+    const now = Date.now()
+    taps.current = [...taps.current.filter((t) => now - t < 3000), now]
+    if (taps.current.length < 5) return
+    taps.current = []
+    if (!window.confirm('Load the demo borrower? It replaces the debts on this phone.')) return
+    const { startDemo } = await import('../../demo/sampleBorrower')
+    navigate(startDemo(appStore, '', () => true))
+  }
 
   return (
     <DayScreen title="Your account">
@@ -120,7 +131,9 @@ export function Me() {
           <MarigoldMark size={20} />
           About {APP_NAME}
         </h2>
-        <p className="text-[14px] text-plum-muted">Version {APP_VERSION}</p>
+        {/* Five quick taps load the demo borrower: an app added to the iPhone Home Screen has its own
+            storage and no address bar, so ?demo can't reach it. Hidden; it asks before replacing anything. */}
+        <p className="text-[14px] text-plum-muted select-none" onClick={versionTapped}>Version {APP_VERSION}</p>
         <p className="text-[14px] text-plum-muted">Shows the cost of each option. Not financial advice.</p>
         <p className="text-[14px] text-plum-muted">Charge checks are a guide to what to ask, not legal advice.</p>
       </section>
