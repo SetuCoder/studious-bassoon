@@ -132,7 +132,7 @@ Written for someone who has never heard of a closing quote. Questions and pre-fi
 
 ### 12 Home (M1 version)
 - "₹{totalOwed} owed", stat tiles (Paid each month, Interest this month).
-- Focus box: "{costliest debt} costs the most at {apr}%. Any extra money should go there first." with **See your options** → 06.
+- Focus box "Costs you the most": "{costliest debt}, at {apr}%: about ₹{its interest this month} in interest this month." with **See where extra money helps most** → 06. A fact, not a recommendation: whether extra money should go there depends on the comparison (an assumed return can beat a cheap loan).
 - "Needs your attention" list built from data: no take-home set → "Add your take-home pay"; any loan without rate type or sanction date → "Complete {loan} for the charge check"; always → "Bonus or extra cash coming? See what it should do" → 06.
 - M2 adds: progress since start, debts cleared, saved so far, check-in reminder, open lender questions.
 

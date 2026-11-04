@@ -96,8 +96,9 @@ Template sentences built from engine numbers only. No AI-generated numbers. `exp
 
 See `docs/rules.md` for the decision table. Totals:
 
-- `flaggedTotal = Σ amount of lines with status doesnt_add_up × (1 + GST_RATE)`
-- `toConfirmTotal = Σ amount of lines with status ask_lender × (1 + GST_RATE)`
+- `flaggedTotal = Σ amount of lines with status doesnt_add_up × (1 + GST_RATE)` when the quote has a GST line, else without the GST factor
+- `toConfirmTotal = Σ amount of lines with status ask_lender × (1 + GST_RATE)`, likewise
+- Why: GST only comes off with a charge if the quote charged GST. Before November 2026 the factor was always applied, which overstated the total for quotes with no GST line.
 - GST lines are never flagged themselves; they always get status `follows`. Reason: "Falls away on any charge that comes off." when any line it applies to is `doesnt_add_up` or `ask_lender`, otherwise "Applies only if the charge above stands."
 
 The lender message (`message.ts`) is built from the flagged and ask-lender lines. Template in `docs/rules.md`.

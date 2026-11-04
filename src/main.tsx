@@ -1,12 +1,11 @@
-import { StrictMode, type ReactNode } from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { MotionConfig } from 'motion/react'
 import { BrowserRouter } from 'react-router'
 import './index.css'
 import App from './App.tsx'
 import { track } from './lib/analytics.ts'
 import { APP_NAME } from './lib/constants.ts'
-import { appStore, useAppStore } from './state/store.ts'
+import { appStore } from './state/store.ts'
 
 document.title = APP_NAME
 
@@ -29,18 +28,10 @@ track('app_opened', {
   standalone: window.matchMedia?.('(display-mode: standalone)').matches || ('standalone' in navigator && navigator.standalone === true),
 })
 
-/** Respect the phone's "reduce motion" setting, or Me's "Calmer animations": transforms are dropped, fades stay. */
-function Motion({ children }: { children: ReactNode }) {
-  const calm = useAppStore((s) => s.settings.calmMotion)
-  return <MotionConfig reducedMotion={calm ? 'always' : 'user'}>{children}</MotionConfig>
-}
-
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Motion>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </Motion>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </StrictMode>,
 )

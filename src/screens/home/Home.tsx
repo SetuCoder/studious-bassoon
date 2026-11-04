@@ -2,7 +2,7 @@ import { motion } from 'motion/react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { Sheet } from '../../components/Sheet'
-import { summariseLedger } from '../../engine/ledger'
+import { monthlyInterest, summariseLedger } from '../../engine/ledger'
 import { track } from '../../lib/analytics'
 import { formatINR, formatRate } from '../../lib/format'
 import { useAppStore } from '../../state/store'
@@ -72,12 +72,14 @@ export function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...springSettle, delay: T.focus }}
           >
-            <h2 id="focus" className="text-[13px] font-extrabold">This month's focus</h2>
+            {/* A fact, not a recommendation: whether extra money should go here depends on the
+                comparison on Plan (an assumed return can beat a cheap loan). */}
+            <h2 id="focus" className="eyebrow">Costs you the most</h2>
             <p className="mt-1.5 text-[19px] leading-snug font-extrabold tracking-[-0.01em]">
-              {costliest.name} costs the most at {formatRate(costliest.apr)}%. Any extra money should go there first.
+              {costliest.name}, at {formatRate(costliest.apr)}%: about {formatINR(monthlyInterest(costliest))} in interest this month.
             </p>
             <Link to="/plan" onClick={() => tap()} className="mt-3 inline-flex min-h-11 items-center gap-2 text-[15px] font-extrabold underline underline-offset-4">
-              See your options
+              See where extra money helps most
             </Link>
           </motion.section>
         )}

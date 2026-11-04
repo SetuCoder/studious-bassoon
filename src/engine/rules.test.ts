@@ -56,7 +56,7 @@ describe('checkCharges', () => {
   it('asks the lender about an undisclosed charge on a loan the rule does not cover', () => {
     const r = checkCharges({ ...personal, rateType: 'fixed' }, [{ ...foreclosure, disclosed: 'no' }])
     expect(r.results[0].status).toBe('ask_lender')
-    expect(r.toConfirmTotal).toBeCloseTo(1180, 6)
+    expect(r.toConfirmTotal).toBe(1000) // no GST line on this quote, so none added
   })
 
   it('asks the lender when coverage is unknown', () => {
@@ -71,6 +71,13 @@ describe('checkCharges', () => {
       { kind: 'other', label: 'Mystery fee', amount: 100 },
     ])
     expect(r.results.map((x) => x.status)).toEqual(['matches', 'ask_lender', 'ask_lender'])
+  })
+
+  it('adds GST to the totals only when the quote charges GST', () => {
+    expect(checkCharges(personal, [foreclosure, gst], '2026-03-14')).toMatchObject({ withGst: true })
+    const noGst = checkCharges(personal, [foreclosure], '2026-03-14')
+    expect(noGst.withGst).toBe(false)
+    expect(noGst.flaggedTotal).toBe(foreclosure.amount)
   })
 
   it('keeps GST as "applies only if the charge above stands" when nothing comes off', () => {

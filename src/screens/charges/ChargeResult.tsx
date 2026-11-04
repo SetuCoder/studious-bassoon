@@ -25,7 +25,7 @@ export function ChargeResult() {
 }
 
 const CHARGE_TOUR: TourStep[] = [
-  { target: 'charge-total', title: 'What may not be allowed', body: 'The charges the RBI rule may bar on this loan, GST included.' },
+  { target: 'charge-total', title: 'What may not be allowed', body: 'The charges the RBI rule may bar on this loan, with their GST.' },
   { target: 'charge-row', title: 'Every charge, checked', body: '“Doesn’t add up” means the rule bars it for this loan. “Ask the lender” means only they can confirm it.' },
   { target: 'lender-message', title: 'Your message, ready', body: 'A polite question for your lender. Edit it, then copy or share it. We never contact anyone.' },
 ]
@@ -94,7 +94,9 @@ function Result({ check }: { check: ChargeCheck }) {
                 {formatINR(check.toConfirmTotal)} more to confirm with the lender
               </p>
             )}
-            <p className="mt-2 text-[13px] text-mauve">Includes GST at 18% on these charges.</p>
+            {check.lines.some((l) => l.kind === 'gst') && (
+              <p className="mt-2 text-[13px] text-mauve">Includes GST at 18% on these charges.</p>
+            )}
           </>
         )}
       </section>

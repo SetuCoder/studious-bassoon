@@ -32,8 +32,9 @@ describe('12 Home (M1)', () => {
     expect(screen.getByText('owed')).toBeInTheDocument()
     expect(screen.getByText('₹69,771')).toBeInTheDocument()
     expect(screen.getByText('₹37,430')).toBeInTheDocument()
-    expect(screen.getByText('Credit card 1 costs the most at 42%. Any extra money should go there first.')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'See your options' })).toHaveAttribute('href', '/plan')
+    expect(screen.getByText('Credit card 1, at 42%: about ₹2,975 in interest this month.')).toBeInTheDocument()
+    expect(screen.queryByText(/should go there first/)).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'See where extra money helps most' })).toHaveAttribute('href', '/plan')
 
     const todo = within(screen.getByRole('region', { name: 'Needs your attention' }))
     expect(todo.getAllByRole('listitem').map((li) => li.textContent)).toEqual([

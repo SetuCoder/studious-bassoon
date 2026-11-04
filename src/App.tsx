@@ -1,3 +1,4 @@
+import { MotionConfig } from 'motion/react'
 import { useEffect, type ReactNode } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router'
 import { TabLayout } from './components/Layout'
@@ -46,31 +47,35 @@ function ScrollToTop() {
 
 export default function App() {
   const storageAvailable = useAppStore((s) => s.storageAvailable)
+  const calm = useAppStore((s) => s.settings.calmMotion)
   return (
-    <div className="mx-auto min-h-dvh max-w-[480px] bg-silver text-aubergine">
-      {!storageAvailable && (
-        <p role="status" className="bg-aubergine-deep px-5 py-2 text-sm font-semibold text-marigold">
-          Your data won't be saved on this device.
-        </p>
-      )}
-      <ScrollToTop />
-      <Routes>
-        <Route path="/welcome" element={<WelcomeRoute />} />
-        <Route path="/how-it-works" element={<HowItWorks />} />
-        <Route path="/debts/new" element={<AddDebt />} />
-        <Route path="/charges" element={<NeedsDebts><ChargeCheckFlow /></NeedsDebts>} />
-        <Route element={<TabLayout />}>
-          <Route index element={<HomeRoute />} />
-          <Route path="/debts" element={<DebtsTab />} />
-          <Route path="/debts/:id" element={<DebtEdit />} />
-          <Route path="/plan" element={<NeedsDebts><NextRupeeInputs /></NeedsDebts>} />
-          <Route path="/plan/results" element={<NeedsDebts><Results /></NeedsDebts>} />
-          <Route path="/plan/results/:optionId" element={<NeedsDebts><OptionDetail /></NeedsDebts>} />
-          <Route path="/charges/:checkId" element={<NeedsDebts><ChargeResult /></NeedsDebts>} />
-          <Route path="/me" element={<Me />} />
-        </Route>
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </div>
+    // Respect the phone's "reduce motion" setting, or Me's "Calmer animations": transforms are dropped, fades stay.
+    <MotionConfig reducedMotion={calm ? 'always' : 'user'}>
+      <div className="mx-auto min-h-dvh max-w-[480px] bg-silver text-aubergine">
+        {!storageAvailable && (
+          <p role="status" className="bg-aubergine-deep px-5 py-2 text-sm font-semibold text-marigold">
+            Your data won't be saved on this device.
+          </p>
+        )}
+        <ScrollToTop />
+        <Routes>
+          <Route path="/welcome" element={<WelcomeRoute />} />
+          <Route path="/how-it-works" element={<HowItWorks />} />
+          <Route path="/debts/new" element={<AddDebt />} />
+          <Route path="/charges" element={<NeedsDebts><ChargeCheckFlow /></NeedsDebts>} />
+          <Route element={<TabLayout />}>
+            <Route index element={<HomeRoute />} />
+            <Route path="/debts" element={<DebtsTab />} />
+            <Route path="/debts/:id" element={<DebtEdit />} />
+            <Route path="/plan" element={<NeedsDebts><NextRupeeInputs /></NeedsDebts>} />
+            <Route path="/plan/results" element={<NeedsDebts><Results /></NeedsDebts>} />
+            <Route path="/plan/results/:optionId" element={<NeedsDebts><OptionDetail /></NeedsDebts>} />
+            <Route path="/charges/:checkId" element={<NeedsDebts><ChargeResult /></NeedsDebts>} />
+            <Route path="/me" element={<Me />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
+    </MotionConfig>
   )
 }

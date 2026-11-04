@@ -57,7 +57,7 @@ Pre-fill from the debt where known; the user can change answers. Questions 2–4
 | follows | Follows the charges | If a line it applies to is flagged or to be asked: "Falls away on any charge that comes off." Otherwise: "Applies only if the charge above stands." |
 | matches | Matches | "Listed in your sanction letter." |
 
-Summary line on screen 10: "₹{flaggedTotal} of charges on this quote may not be allowed" and, if any, "₹{toConfirmTotal} more to confirm with the lender". GST at 18% is included in both totals.
+Summary line on screen 10: "₹{flaggedTotal} of charges on this quote may not be allowed" and, if any, "₹{toConfirmTotal} more to confirm with the lender". GST at 18% is included in both totals when the quote has a GST line (and the screen says so); without one, no GST is added. The lender message asks how GST was recalculated only when the quote charged it.
 
 ## Lender message template
 

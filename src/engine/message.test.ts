@@ -48,6 +48,8 @@ Loan account: [number]`,
     expect(msg).not.toContain('Your quote includes')
     expect(msg).not.toContain("RBI's directions")
     expect(msg).not.toContain('Please also')
+    // No GST line on this quote, so no question about GST.
+    expect(msg).toContain('Please send a revised quote.\n')
   })
 
   it('builds a WhatsApp share link', () => {
