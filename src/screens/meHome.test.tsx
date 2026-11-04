@@ -109,7 +109,7 @@ describe('11 Me', () => {
     await user.click(within(screen.getByRole('dialog', { name: 'Delete all your data?' })).getByRole('button', { name: 'Delete everything' }))
     expect(appStore.getState().debts).toHaveLength(0)
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull()
-    expect(screen.getByRole('heading', { name: /See everything you owe/ })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /All your debts\. One clear picture\./ })).toBeInTheDocument()
   })
 
   it('works before any debt is added', () => {

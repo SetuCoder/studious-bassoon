@@ -10,7 +10,7 @@ export type SlabVariant = 'marigold' | 'ice' | 'ink' | 'outline' | 'line'
 // onto that shadow, like a physical key.
 const look: Record<SlabVariant, { className: string; shadow: string }> = {
   marigold: { className: 'bg-marigold bg-linear-to-b from-marigold-light via-marigold to-[#DD9300] text-aubergine', shadow: 'var(--shadow-slab-marigold)' },
-  ice: { className: 'gloss-ice text-aubergine', shadow: '0 5px 0 0 #9AA5AF' },
+  ice: { className: 'gloss-ice text-aubergine', shadow: '0 5px 0 0 var(--color-ice-edge)' },
   /** Serious actions (delete): aubergine, so destroying data never wears the brand marigold. */
   ink: { className: 'bg-aubergine text-ice', shadow: 'var(--shadow-slab)' },
   /** Secondary on the night surface. */

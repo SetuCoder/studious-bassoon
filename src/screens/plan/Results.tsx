@@ -145,7 +145,7 @@ function HeroOption({ option, debts, assumedReturn, L }: HeroProps) {
         track('option_opened', { option_id: option.id, rank: 1 })
       }}
       className="gloss-ice block rounded-[28px] bg-ice p-5 text-aubergine"
-      style={{ boxShadow: '0 6px 0 0 #9AA5AF' }}
+      style={{ boxShadow: '0 6px 0 0 var(--color-ice-edge)' }}
       initial={{ opacity: 0, y: 40, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       whileTap={{ y: 6, boxShadow: '0 0 0 0 rgba(0,0,0,0)' }}

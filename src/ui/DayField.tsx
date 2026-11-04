@@ -31,7 +31,7 @@ export function DayField({ label, hint, error, kind, value, onChange, ...rest }:
         className={`flex h-14 items-center gap-2 rounded-2xl bg-white px-4 focus-within:outline-2 focus-within:outline-aubergine ${
           error ? 'outline-2 outline-brick' : ''
         }`}
-        style={{ boxShadow: '0 3px 0 0 #C5CCD3' }}
+        style={{ boxShadow: '0 3px 0 0 var(--color-silver-line)' }}
       >
         {kind === 'rupees' && <span aria-hidden="true" className="text-lg font-bold text-plum-muted">₹</span>}
         <input
@@ -85,7 +85,7 @@ export function DaySelect<T extends string>({ label, hint, value, onChange, opti
           value={value}
           onChange={(e) => onChange(e.target.value as T)}
           className="h-14 w-full appearance-none rounded-2xl bg-white pr-11 pl-4 text-[17px] font-semibold text-aubergine focus:outline-2 focus:outline-aubergine"
-          style={{ boxShadow: '0 3px 0 0 #C5CCD3' }}
+          style={{ boxShadow: '0 3px 0 0 var(--color-silver-line)' }}
         >
           {placeholder && <option value="" disabled>{placeholder}</option>}
           {options.map(([v, l, off]) => <option key={v} value={v} disabled={off}>{l}</option>)}

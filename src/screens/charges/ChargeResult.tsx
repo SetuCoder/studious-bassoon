@@ -138,7 +138,7 @@ function Result({ check }: { check: ChargeCheck }) {
           <h2 className="text-[17px] font-extrabold">Message to your lender</h2>
           <p className="text-[13px] text-mauve">Edit it if you like. We don't send anything; you do.</p>
           {/* The draft as a sheet of paper: ice on the night surface. */}
-          <div className="rounded-3xl bg-ice p-1 shadow-[0_5px_0_0_#9AA5AF]">
+          <div className="rounded-3xl bg-ice p-1 shadow-[0_5px_0_0_var(--color-ice-edge)]">
             <label htmlFor={messageId} className="sr-only">Message to your lender</label>
             <textarea
               id={messageId}

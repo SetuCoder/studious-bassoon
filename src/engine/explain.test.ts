@@ -44,7 +44,7 @@ describe('explain', () => {
     const high = rankOptions(SAMPLE_DEBTS, { ...input, assumedReturn: 45 })
     expect(explainOption(SAMPLE_DEBTS, high.options[0], high.L, 45)[0]).toMatch(/Returns are not guaranteed and the debt cost is\.$/)
     expect(topLabel(high.options[0])).toBe('Comes out ahead')
-    expect(topLabel(ranked.options[0])).toBe('Saves the most')
+    expect(topLabel(ranked.options[0])).toBe('Best for you')
   })
 
   it('explains the savings baseline', () => {

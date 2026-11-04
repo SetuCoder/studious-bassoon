@@ -144,7 +144,7 @@ function Stat({ label, value }: { label: string; value: number }) {
 /** A white card holding one group of settings, under a heading. */
 function Group({ id, title, note, children }: { id: string; title: string; note?: string; children: ReactNode }) {
   return (
-    <section aria-labelledby={id} className="flex flex-col gap-4 rounded-[28px] bg-white/70 p-5 ring-1 ring-white" style={{ boxShadow: '0 3px 0 0 #C5CCD3' }}>
+    <section aria-labelledby={id} className="flex flex-col gap-4 rounded-[28px] bg-white/70 p-5 ring-1 ring-white" style={{ boxShadow: '0 3px 0 0 var(--color-silver-line)' }}>
       <div>
         <h2 id={id} className="text-[17px] font-extrabold">{title}</h2>
         {note && <p className="mt-0.5 text-[14px] leading-snug text-plum-muted">{note}</p>}

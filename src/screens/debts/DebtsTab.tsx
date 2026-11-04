@@ -134,7 +134,7 @@ function DebtsOverview() {
 
       <section aria-labelledby="costliest" className="flex flex-col gap-3">
         <div>
-          <h2 id="costliest" className="text-[17px] font-extrabold">Most expensive first</h2>
+          <h2 id="costliest" className="text-[17px] font-extrabold">Costing you the most, on top</h2>
           <p className="text-[13px] text-mauve">Sorted by interest rate</p>
         </div>
         <ul className="flex flex-col gap-3">
@@ -152,7 +152,7 @@ function DebtsOverview() {
                   to={`/debts/${d.id}`}
                   onClick={() => tap()}
                   className={`block rounded-3xl px-4 py-3.5 ${top ? 'gloss-ice bg-ice text-aubergine' : 'bg-aubergine-raised bg-linear-to-b from-white/[0.06] to-transparent shadow-slab ring-1 ring-white/[0.06]'}`}
-                  style={top ? { boxShadow: '0 5px 0 0 #9AA5AF' } : undefined}
+                  style={top ? { boxShadow: '0 5px 0 0 var(--color-ice-edge)' } : undefined}
                   whileTap={{ y: 5, boxShadow: '0 0 0 0 rgba(0,0,0,0)' }}
                   transition={springPress}
                 >
@@ -181,8 +181,8 @@ function DebtsOverview() {
       </section>
 
       <div className="flex flex-col gap-3">
-        <div data-tour="next-rupee"><SlabLink to="/plan">What should my next rupee do?</SlabLink></div>
-        {hasLoan && <div data-tour="charge-check"><SlabLink to="/charges" state={{ entry: 'overview' }} variant="outline">Check a closing quote</SlabLink></div>}
+        <div data-tour="next-rupee"><SlabLink to="/plan">Got extra money? See where it helps most</SlabLink></div>
+        {hasLoan && <div data-tour="charge-check"><SlabLink to="/charges" state={{ entry: 'overview' }} variant="outline">Closing a loan early? Verify your charges</SlabLink></div>}
         <Link to="/debts/new" data-tour="add-debt" className="mx-auto flex min-h-11 items-center px-3 text-[15px] font-bold underline underline-offset-4">
           + Add another debt
         </Link>

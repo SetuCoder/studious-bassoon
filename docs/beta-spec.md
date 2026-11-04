@@ -36,14 +36,14 @@ Flows without the tab bar: 01, 02, 09 question steps, 13.
 ## Screens
 
 ### 01 Welcome
-- Logo placeholder, headline "See everything you owe. Know what to do with your next rupee.", one-line body, "Private by design" box ("No bank login. No SMS access. Your numbers stay on this phone.").
+- Logo placeholder, headline "All your debts. One clear picture." with the line "And where your next ₹₹₹ should go.", body "Add your loans and cards in two minutes. We'll show what each one really costs you.", "Private by design" box ("No bank login. No SMS access. Your numbers stay on this phone.").
 - One button: **Get started** → 01a How it works, then 03.
 - Footer: "Beta. Shows the cost of each option; not financial advice."
 - Shown only on first run (until at least one debt is saved).
 
 ### 01a How it works
 - Its own night screen, no tab bar, opened by **Get started** on Welcome or from Me. Back returns where it came from. From Welcome, **Skip to adding my debts** under Next goes straight to 03.
-- Three chapters, swiped or stepped with **Next**, with a chapter bar on top that jumps to any chapter: **See everything you owe** (a mini overview), **Know what your next rupee should do** (the top option with its rolling gain and allocation strip), **Catch charges that don't add up** (the verdict with stamps landing). Each scene uses the sample borrower's real engine results, labelled "Example numbers".
+- Three chapters, swiped or stepped with **Next**, with a chapter bar on top that jumps to any chapter: **See everything you owe** (a mini overview), **Know what your next rupee should do** (the top option with its rolling gain and allocation strip), **Closing a loan? Don't pay what you don't owe.** (the verdict with stamps landing). Each scene uses the sample borrower's real engine results, labelled "Example numbers".
 - Last chapter: "No bank login. No SMS access. Nothing leaves your phone. We'll point things out as you go." Then **Add my first debt** (→ 03) or, with debts already saved, **Back to the app**.
 
 ### Guided tours (all builds, no special mode)
@@ -80,9 +80,9 @@ Each waits for its screen's entrance to finish before dimming.
 
 ### 04 Debts overview
 - Stat tiles: Total owed, Paid each month, Share of take-home (hidden if no take-home), Interest this month.
-- "Most expensive first" list from `ledger.sortedByCost`; the first row's meta ends "· costs the most".
+- "Costing you the most, on top" list from `ledger.sortedByCost`; the first row's meta ends "· costs the most".
 - Row tap → 05 (M1) or 17 (M2).
-- Buttons: **What should my next rupee do?** → 06. **Check a closing quote** → 09 (only if at least one loan exists). **+ Add another debt** → 02.
+- Buttons: **Got extra money? See where it helps most** → 06. **Closing a loan early? Verify your charges** → 09 (only if at least one loan exists). **+ Add another debt** → 02.
 
 ### 05 Debt edit (M1)
 - Same fields as 02, pre-filled, More details open. Info box: "At ₹{payment} a month, this clears in about {n} months." (or the never-clears warning) and "Interest this month: ₹{x}". Then, when the details allow: "Using {x}% of your ₹{limit} limit.", "Bill due on the {nth} of each month.", "You've repaid {x}% of the ₹{original} you borrowed.", "Your lender says {n} EMIs left; at this payment we work out about {m}."

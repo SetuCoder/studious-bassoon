@@ -31,7 +31,7 @@ beforeEach(() => {
 describe('first run', () => {
   it('goes Welcome → empty debts → add a debt → overview', async () => {
     const user = renderAt('/')
-    expect(screen.getByRole('heading', { name: /See everything you owe/ })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /All your debts\. One clear picture\./ })).toBeInTheDocument()
     expect(screen.getByText('No bank login. No SMS access. Your numbers stay on this phone.')).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Get started' }))
@@ -58,7 +58,7 @@ describe('first run', () => {
     expect(screen.getByText('Share of take-home')).toBeInTheDocument()
     expect(screen.getByText('4%')).toBeInTheDocument() // 6,000 of 1,45,000
     // Cards only: no charge check yet.
-    expect(screen.queryByRole('link', { name: 'Check a closing quote' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Closing a loan early? Verify your charges' })).not.toBeInTheDocument()
   })
 
   it('sends Home back to Debts after Get started, not to Welcome again', async () => {
@@ -88,7 +88,7 @@ describe('first run', () => {
 
     // The chapter bar jumps straight to any chapter.
     await user.click(screen.getByRole('tab', { name: 'Chapter 3' }))
-    expect(screen.getByRole('heading', { name: 'Catch charges that don’t add up.' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Closing a loan? Don’t pay what you don’t owe.' })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'Chapter 3' })).toHaveAttribute('aria-selected', 'true')
     expect(screen.getByText('No bank login. No SMS access. Nothing leaves your phone. We’ll point things out as you go.')).toBeInTheDocument()
 
@@ -101,7 +101,7 @@ describe('first run', () => {
   it('goes back to Welcome from how it works', async () => {
     const user = renderAt('/how-it-works')
     await user.click(screen.getByRole('button', { name: 'Back' }))
-    expect(screen.getByRole('heading', { name: /See everything you owe/ })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /All your debts\. One clear picture\./ })).toBeInTheDocument()
   })
 })
 
@@ -137,7 +137,7 @@ describe('add a debt', () => {
     expect(appStore.getState().debts[0]).toMatchObject({
       name: 'Personal loan 1', type: 'personal_loan', rateType: 'floating', sanctionedOn: '2026-03-14', purpose: 'personal',
     })
-    expect(screen.getByRole('link', { name: 'Check a closing quote' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Closing a loan early? Verify your charges' })).toBeInTheDocument()
   })
 
   it('words the fields for the type, and keeps only that type\'s optional details', async () => {

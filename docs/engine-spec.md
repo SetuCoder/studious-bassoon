@@ -75,7 +75,7 @@ delta = (base.remaining − s.remaining) + (s.spare − base.spare) − used × 
 
 **Split option.** Let `above` = debts with `apr > assumedReturn`, by `apr` descending. For `k = 1 … above.length`: allocate `L` across the first `k` debts; skip if nothing is used or everything is used (`used ≥ L − 0.5`); `delta = debt-part delta + (L − used) × (fv(assumedReturn) − fv(SAVINGS_RATE))`. Keep the best `k`. Show the split option only if its `delta > 1.05 × bestDebtDelta` (the best of `apr`, `size`, `home`) and `bestDebtDelta > 0`.
 
-Sort all options by `delta` descending (stable). The first is labelled "Saves the most" (or "Comes out ahead" for `invest`).
+Sort all options by `delta` descending (stable). The first is labelled "Best for you" (or "Comes out ahead" for `invest`, so investing is never called best for anyone).
 
 If `L = 0`, every option's delta is 0. Show: "There is nothing left to put to work after the cash you are keeping aside."
 

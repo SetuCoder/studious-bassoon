@@ -28,7 +28,7 @@ export function ChoiceList<T extends string>({ label, options, value, onChange }
             whileTap={{ scale: 0.98, y: 2 }}
             transition={springPress}
             className={`flex min-h-14 items-center gap-3 rounded-2xl px-4 py-3 text-left ${on ? 'bg-aubergine text-ice' : 'bg-white text-aubergine'}`}
-            style={{ boxShadow: on ? 'var(--shadow-slab)' : '0 3px 0 0 #C5CCD3' }}
+            style={{ boxShadow: on ? 'var(--shadow-slab)' : '0 3px 0 0 var(--color-silver-line)' }}
           >
             <span className="min-w-0 flex-1">
               <span className="block text-[17px] font-bold">{o.label}</span>

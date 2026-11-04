@@ -151,7 +151,7 @@ function ActionSlab({ action, onTakeHome }: { action: HomeAction; onTakeHome: ()
     </>
   )
   const box = 'flex min-h-16 w-full items-center gap-3 rounded-3xl bg-white px-4 py-3 text-left'
-  const shadow = { boxShadow: '0 3px 0 0 #C5CCD3' }
+  const shadow = { boxShadow: '0 3px 0 0 var(--color-silver-line)' }
   const pressed = { y: 3, boxShadow: '0 0 0 0 rgba(0,0,0,0)' }
   return action.kind === 'link'
     ? <MotionLink to={action.to} onClick={() => tap()} className={box} style={shadow} whileTap={pressed} transition={springPress}>{body}</MotionLink>

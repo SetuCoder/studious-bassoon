@@ -2,8 +2,8 @@
 @import "@fontsource-variable/schibsted-grotesk";
 
 /* Marigold design language. Contrast pairs checked (WCAG):
-   aubergine on silver 12.5:1 · ice on aubergine 14.6:1 · mauve on aubergine 8.8:1
-   marigold on aubergine 7.9:1 · plum-muted on silver 6.7:1.
+   aubergine on silver 12.7:1 · ice on aubergine 14.6:1 · mauve on aubergine 8.8:1
+   marigold on aubergine 7.9:1 · plum-muted on silver 6.8:1.
    Marigold is never text on a light ground (2:1). */
 @theme {
   --color-aubergine: #3A0F34;
@@ -12,9 +12,12 @@
   --color-marigold: #EAAA00;
   --color-marigold-light: #F7C944;
   --color-marigold-deep: #B57E00;
-  --color-silver: #DDE3E8;
-  --color-silver-line: #C5CCD3;
-  --color-ice: #F1F4F6;
+  /* Silver with a mild hint of cream: still a calm, solid ground. */
+  --color-silver: #E5E4DF;
+  --color-silver-line: #CFCCC4;
+  --color-ice: #F5F4F0;
+  /* The raised edge under ice slabs. */
+  --color-ice-edge: #A9A49A;
   --color-mauve: #CDB9C9;
   --color-plum-muted: #5A4558;
   /* Errors and "doesn't add up" on light grounds: 8.5:1 on white, 7:1 on silver. */
@@ -65,7 +68,10 @@ html {
     linear-gradient(180deg, var(--color-ice) 0%, var(--color-silver) 55%);
 }
 
-/* A marigold-to-orange glow behind the answer on a screen, like the lily's light. */
+/* A halo of marigold light under the answer on a screen, the same light as under the marigold
+   buttons. Kept saturated and low, below the digits: thin warm colour spread over aubergine turns
+   brown, and a glow straight behind white digits washes them out. No blur filter or text-shadow
+   (the rolling digits clip shadows into boxes); the gradient is soft on its own. */
 .bloom {
   position: relative;
   isolation: isolate;
@@ -74,13 +80,8 @@ html {
   content: "";
   position: absolute;
   z-index: -1;
-  inset: -70% -20% -80% -25%;
-  background:
-    radial-gradient(34% 38% at 26% 58%, rgb(247 190 40 / 0.85), transparent 74%),
-    radial-gradient(30% 36% at 66% 50%, rgb(255 105 20 / 0.6), transparent 74%),
-    radial-gradient(50% 50% at 50% 50%, rgb(120 30 90 / 0.5), transparent 80%);
-  /* No blur filter: the gradients are already soft, and a filtered pseudo behind text is costly on phones. */
-  opacity: 0.8;
+  inset: 10% -6% -70% -8%;
+  background: radial-gradient(46% 40% at 40% 48%, rgb(247 175 0 / 0.62), rgb(240 140 0 / 0.26) 46%, rgb(234 120 0 / 0.08) 64%, transparent 76%);
   pointer-events: none;
 }
 
@@ -94,7 +95,7 @@ html {
 
 /* Glossy ice tile: the palette cards' soft bevel and lift. */
 .gloss-ice {
-  background-image: linear-gradient(180deg, #FFFFFF 0%, var(--color-ice) 45%, #E4E9ED 100%);
+  background-image: linear-gradient(180deg, #FFFFFF 0%, var(--color-ice) 45%, #EAE8E2 100%);
 }
 
 /* Film grain over everything. Fixed and click-through; drawn once by the GPU. */

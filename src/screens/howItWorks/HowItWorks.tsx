@@ -23,7 +23,7 @@ const CHAPTERS = [
     vignette: <NextRupee />,
   },
   {
-    title: 'Catch charges that don’t add up.',
+    title: 'Closing a loan? Don’t pay what you don’t owe.',
     body: 'Check a closing quote against the RBI rule, and get a polite question for your lender.',
     vignette: <Charges />,
   },
@@ -146,7 +146,7 @@ function MiniSlab({ i, top, children }: { i: number; top?: boolean; children: Re
   return (
     <motion.div
       className={`flex items-center justify-between gap-3 rounded-2xl px-4 py-3 ${top ? 'gloss-ice bg-ice text-aubergine' : 'bg-aubergine-raised bg-linear-to-b from-white/[0.06] to-transparent shadow-slab ring-1 ring-white/[0.06]'}`}
-      style={top ? { boxShadow: '0 4px 0 0 #9AA5AF' } : undefined}
+      style={top ? { boxShadow: '0 4px 0 0 var(--color-ice-edge)' } : undefined}
       initial={{ opacity: 0, y: -24, rotate: i % 2 ? 1.5 : -1.5 }}
       animate={{ opacity: 1, y: 0, rotate: 0 }}
       transition={{ ...springSettle, delay: 0.35 + i * STAGGER }}
@@ -190,8 +190,8 @@ const SPLIT = [
 
 function NextRupee() {
   return (
-    <div className="gloss-ice rounded-3xl bg-ice p-5 text-aubergine" style={{ boxShadow: '0 5px 0 0 #9AA5AF' }}>
-      <p className="inline-flex rounded-full bg-marigold px-2.5 py-0.5 text-xs font-extrabold">Saves the most</p>
+    <div className="gloss-ice rounded-3xl bg-ice p-5 text-aubergine" style={{ boxShadow: '0 5px 0 0 var(--color-ice-edge)' }}>
+      <p className="inline-flex rounded-full bg-marigold px-2.5 py-0.5 text-xs font-extrabold">Best for you</p>
       <p className="mt-2 text-[16px] font-bold">Highest rate first</p>
       <p className="mt-1 text-[42px] leading-none font-black tracking-[-0.05em]"><Odometer value="+₹55,728" delay={0.3} /></p>
       <p className="mt-2 text-[13px] text-plum-muted">Over 36 months, compared with keeping ₹1,20,000 in savings</p>

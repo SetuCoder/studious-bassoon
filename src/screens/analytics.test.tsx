@@ -125,7 +125,7 @@ describe('charge check', () => {
 
   it('knows the check was opened from the overview', async () => {
     const user = renderAt('/debts')
-    await user.click(screen.getByRole('link', { name: 'Check a closing quote' }))
+    await user.click(screen.getByRole('link', { name: 'Closing a loan early? Verify your charges' }))
     await expectSent('charge_check_started', { entry: 'overview' })
   })
 
