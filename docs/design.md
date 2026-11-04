@@ -34,6 +34,7 @@ Contrast rule: marigold is never text on a light ground (2:1). It is a fill unde
 - Gloss: marigold buttons are a lit gradient with a highlight edge and a warm glow under the slab shadow; ice slabs (`gloss-ice`) and raised aubergine slabs catch light on their top edge.
 - `eyebrow`: the board's small letter-spaced captions, for labels like "TOTAL OWED", never sentences.
 - Sticky headers are translucent and blurred, fading out at their bottom edge.
+- Edge to edge in mobile browsers: each screen sets `theme-color` to its top colour and the page background to its bottom colour (`useEdges` in `src/ui/edges.ts`), so Safari's status-bar strip and floating toolbar take on the screen's colours instead of framing it with flat bands. The grain overlay reaches past the viewport for the same reason.
 
 **Motion** (Motion for React, presets in `src/ui/motion.ts`). One set of springs everywhere. Each money screen has one ritual:
 - the answer figure arrives with the motion smear (`SmearIn`) and its digits roll in (`Odometer`);
