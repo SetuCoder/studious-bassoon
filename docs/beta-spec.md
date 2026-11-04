@@ -122,6 +122,10 @@ Follow the Figma screens and their notes. Key behaviours:
 - No loans (cards only): hide charge-check entry points and show "The charge check is for loans."
 - Very large numbers: format with Indian grouping; never wrap a rupee amount across lines.
 
+## Demo mode
+
+For live demos, any build accepts `?demo`: it loads the sample borrower from `docs/reference/engine-fixtures.json` plus a saved check of the fixture's personal-loan closing quote, and opens Debts. `?demo=charge` opens that saved check (loading the demo first if needed). If the browser holds someone's own debts, the app asks before replacing them and changes nothing on "Cancel". The dev server also keeps `?sample` (borrower only, opens Plan).
+
 ## Definition of done for M1
 
 - [ ] All M1 screens built per this spec and checked on a 360 px phone.
