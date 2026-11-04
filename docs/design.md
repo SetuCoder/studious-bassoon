@@ -25,6 +25,15 @@ Contrast rule: marigold is never text on a light ground (2:1). It is a fill unde
 
 **Material:** raised slabs and pills with a hard offset shadow as their thickness (`shadow-slab`); pressing pushes them down onto it. Large radii (24–28px) on slabs, full pills on buttons.
 
+**Atmosphere** (`src/index.css`). The inspiration board never shows a flat fill: light blooms through the colour, marigold burns to orange at its edges, and everything sits under film grain. The same six hexes, given light and texture:
+- `surface-night`: aubergine lit by a marigold glow at the top right and an ember on the left, deepening to aubergine-deep at the bottom. `NightScreen` and Home's top band use it.
+- `surface-day`: ice settling into silver with a faint marigold warmth in one corner. `DayScreen`, Home and Welcome use it.
+- `bloom`: a marigold-to-orange glow behind the one answer figure on a screen (Debts total, Home total, option detail, charge verdict). Soft radial gradients, no blur filter (cheap on phones).
+- Film grain over everything (`body::after`), off when the phone asks for reduced transparency.
+- Gloss: marigold buttons are a lit gradient with a highlight edge and a warm glow under the slab shadow; ice slabs (`gloss-ice`) and raised aubergine slabs catch light on their top edge.
+- `eyebrow`: the board's small letter-spaced captions, for labels like "TOTAL OWED", never sentences.
+- Sticky headers are translucent and blurred, fading out at their bottom edge.
+
 **Motion** (Motion for React, presets in `src/ui/motion.ts`). One set of springs everywhere. Each money screen has one ritual:
 - the answer figure arrives with the motion smear (`SmearIn`) and its digits roll in (`Odometer`);
 - money visibly moves: the allocation strip fills, balances drain to what is left;

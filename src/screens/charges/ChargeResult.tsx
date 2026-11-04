@@ -83,7 +83,7 @@ function Result({ check }: { check: ChargeCheck }) {
           <>
             {check.flaggedTotal >= 0.5 && (
               <>
-                <SmearIn ghost={flagged} delay={T.figure} className="mt-1 text-[56px] leading-none font-black tracking-[-0.05em] text-marigold">
+                <SmearIn ghost={flagged} delay={T.figure} className="bloom mt-1 text-[56px] leading-none font-black tracking-[-0.05em] text-marigold">
                   <Odometer value={flagged} delay={T.figure + 0.1} />
                 </SmearIn>
                 <p className="mt-2 text-[16px] font-semibold">of charges on this quote may not be allowed</p>

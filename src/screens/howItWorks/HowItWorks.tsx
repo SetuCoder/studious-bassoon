@@ -145,7 +145,7 @@ export function HowItWorks() {
 function MiniSlab({ i, top, children }: { i: number; top?: boolean; children: ReactNode }) {
   return (
     <motion.div
-      className={`flex items-center justify-between gap-3 rounded-2xl px-4 py-3 ${top ? 'bg-ice text-aubergine' : 'bg-aubergine-raised shadow-slab'}`}
+      className={`flex items-center justify-between gap-3 rounded-2xl px-4 py-3 ${top ? 'gloss-ice bg-ice text-aubergine' : 'bg-aubergine-raised bg-linear-to-b from-white/[0.06] to-transparent shadow-slab ring-1 ring-white/[0.06]'}`}
       style={top ? { boxShadow: '0 4px 0 0 #9AA5AF' } : undefined}
       initial={{ opacity: 0, y: -24, rotate: i % 2 ? 1.5 : -1.5 }}
       animate={{ opacity: 1, y: 0, rotate: 0 }}
@@ -190,7 +190,7 @@ const SPLIT = [
 
 function NextRupee() {
   return (
-    <div className="rounded-3xl bg-ice p-5 text-aubergine" style={{ boxShadow: '0 5px 0 0 #9AA5AF' }}>
+    <div className="gloss-ice rounded-3xl bg-ice p-5 text-aubergine" style={{ boxShadow: '0 5px 0 0 #9AA5AF' }}>
       <p className="inline-flex rounded-full bg-marigold px-2.5 py-0.5 text-xs font-extrabold">Saves the most</p>
       <p className="mt-2 text-[16px] font-bold">Highest rate first</p>
       <p className="mt-1 text-[42px] leading-none font-black tracking-[-0.05em]"><Odometer value="+₹55,728" delay={0.3} /></p>

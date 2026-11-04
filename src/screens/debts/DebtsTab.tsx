@@ -107,8 +107,8 @@ function DebtsOverview() {
   return (
     <NightScreen title="Your debts">
       <section aria-labelledby="total-owed" data-tour="total">
-        <p id="total-owed" className="text-[14px] text-mauve">Total owed</p>
-        <SmearIn ghost={total} delay={T.total} className="mt-1 text-[48px] leading-none font-black tracking-[-0.05em]">
+        <p id="total-owed" className="eyebrow text-mauve">Total owed</p>
+        <SmearIn ghost={total} delay={T.total} className="bloom mt-1 text-[48px] leading-none font-black tracking-[-0.05em]">
           <Odometer value={total} delay={T.total + 0.1} />
         </SmearIn>
         {costliest && (
@@ -119,7 +119,7 @@ function DebtsOverview() {
       </section>
 
       <motion.dl
-        className={`grid gap-3 rounded-3xl bg-aubergine-deep p-4 ${stats.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}
+        className={`grid gap-3 rounded-3xl bg-aubergine-deep/70 p-4 ring-1 ring-white/8 backdrop-blur-sm ${stats.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ...springSettle, delay: T.stats }}
@@ -151,7 +151,7 @@ function DebtsOverview() {
                 <MotionLink
                   to={`/debts/${d.id}`}
                   onClick={() => tap()}
-                  className={`block rounded-3xl px-4 py-3.5 ${top ? 'bg-ice text-aubergine' : 'bg-aubergine-raised shadow-slab'}`}
+                  className={`block rounded-3xl px-4 py-3.5 ${top ? 'gloss-ice bg-ice text-aubergine' : 'bg-aubergine-raised bg-linear-to-b from-white/[0.06] to-transparent shadow-slab ring-1 ring-white/[0.06]'}`}
                   style={top ? { boxShadow: '0 5px 0 0 #9AA5AF' } : undefined}
                   whileTap={{ y: 5, boxShadow: '0 0 0 0 rgba(0,0,0,0)' }}
                   transition={springPress}

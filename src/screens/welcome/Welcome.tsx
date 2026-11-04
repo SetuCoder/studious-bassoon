@@ -22,7 +22,7 @@ export function Welcome() {
   })
 
   return (
-    <main className="relative flex min-h-dvh flex-col overflow-hidden bg-silver px-5 pt-5 pb-6 text-aubergine">
+    <main className="surface-day relative flex min-h-dvh flex-col overflow-hidden px-5 pt-5 pb-6 text-aubergine">
       {/* The board's column rules. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 grid grid-cols-4">
         <div className="border-r border-silver-line" />

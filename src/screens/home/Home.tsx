@@ -36,25 +36,25 @@ export function Home() {
   const total = formatINR(ledger.totalOwed)
 
   return (
-    <div className="flex flex-1 flex-col bg-silver text-aubergine">
+    <div className="surface-day flex flex-1 flex-col text-aubergine">
       {/* The night band: where you stand, at a glance. */}
-      <section className="rounded-b-[32px] bg-aubergine px-5 pt-3 pb-6 text-ice">
+      <section className="surface-night rounded-b-[32px] px-5 pt-3 pb-6 text-ice shadow-[0_18px_40px_-20px_rgb(34_8_30/0.7)]">
         <header className="flex h-11 items-center gap-2">
           <MarigoldMark />
           <h1 className="text-lg font-bold">Home</h1>
         </header>
         <p className="mt-4 text-[14px] text-mauve">{greeting(hour)}</p>
-        <SmearIn ghost={total} delay={T.total} className="mt-1 text-[40px] leading-none font-black tracking-[-0.045em]">
+        <SmearIn ghost={total} delay={T.total} className="bloom mt-1 text-[40px] leading-none font-black tracking-[-0.045em]">
           <p className="whitespace-nowrap">
             <Odometer value={total} delay={T.total + 0.1} /> <span className="text-[24px] tracking-[-0.02em] text-mauve">owed</span>
           </p>
         </SmearIn>
         <dl className="mt-5 grid grid-cols-2 gap-3">
-          <div className="rounded-2xl bg-aubergine-raised px-4 py-3">
+          <div className="rounded-2xl bg-white/[0.07] px-4 py-3 ring-1 ring-white/10 backdrop-blur-sm">
             <dt className="text-[12px] text-mauve">Paid each month</dt>
             <dd className="mt-0.5 text-[20px] font-extrabold tracking-[-0.02em]">{formatINR(ledger.monthlyPayments)}</dd>
           </div>
-          <div className="rounded-2xl bg-aubergine-raised px-4 py-3">
+          <div className="rounded-2xl bg-white/[0.07] px-4 py-3 ring-1 ring-white/10 backdrop-blur-sm">
             <dt className="text-[12px] text-mauve">Interest this month</dt>
             <dd className="mt-0.5 text-[20px] font-extrabold tracking-[-0.02em]">{formatINR(ledger.interestThisMonth)}</dd>
           </div>
@@ -66,7 +66,7 @@ export function Home() {
           // The one marigold surface on the screen: this month's focus.
           <motion.section
             aria-labelledby="focus"
-            className="rounded-3xl bg-marigold p-5 text-aubergine"
+            className="rounded-3xl bg-marigold bg-linear-to-br from-marigold-light via-marigold to-[#DD9300] p-5 text-aubergine"
             style={{ boxShadow: 'var(--shadow-slab-marigold)' }}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
