@@ -18,6 +18,8 @@ describe('demo data', () => {
     expect(s.debts.filter((d) => d.type === 'credit_card').map((d) => d.name)).toEqual(['HDFC Infinia', 'Axis Magnus'])
     expect(s.chargeChecks).toHaveLength(1)
     expect(s.chargeChecks[0]).toMatchObject({ id, flaggedTotal: 9204, toConfirmTotal: 885 })
+    // No guides over the screens while recording or presenting.
+    expect(s.settings.toursSeen).toEqual(['start', 'overview', 'results', 'charge'])
     expect(isDemoData(store)).toBe(true)
   })
 
