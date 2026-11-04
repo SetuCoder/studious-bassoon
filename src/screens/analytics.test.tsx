@@ -58,6 +58,8 @@ describe('first run', () => {
     const user = renderAt('/')
     await user.click(screen.getByRole('button', { name: 'Get started' }))
     await expectSent('onboarding_started', {})
+    await expectSent('how_it_works_opened', { from: 'welcome' })
+    await user.click(screen.getByRole('button', { name: 'Skip to adding my debts' }))
 
     await user.type(screen.getByLabelText('Monthly take-home pay (optional)'), '145000')
     await user.click(screen.getByRole('link', { name: 'Add your first debt' }))

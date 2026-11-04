@@ -2,7 +2,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useState, type ReactNode } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { isActive } from '../../engine/ledger'
-import { track, useTrackOnMount } from '../../lib/analytics'
+import { useTrackOnMount } from '../../lib/analytics'
 import { useAppStore } from '../../state/store'
 import { Stamp } from '../../ui/Celebrate'
 import { springSettle, STAGGER } from '../../ui/motion'
@@ -29,7 +29,7 @@ const CHAPTERS = [
   },
 ] as const
 
-/** 01a How it works: three chapters, each with a small live scene, then Get started. From Welcome or Me. */
+/** 01a How it works: three chapters, each with a small live scene. Opens from Get started on Welcome, or from Me. */
 export function HowItWorks() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -42,6 +42,11 @@ export function HowItWorks() {
   useTrackOnMount('how_it_works_opened', { from })
 
   const last = page === CHAPTERS.length - 1
+  // Get started on Welcome already started onboarding; this also covers a reload on this screen.
+  const addFirstDebt = () => {
+    startOnboarding()
+    navigate('/debts')
+  }
   const go = (to: number) => {
     if (to < 0 || to >= CHAPTERS.length) return
     setDirection(to > page ? 1 : -1)
@@ -123,15 +128,12 @@ export function HowItWorks() {
           ) : hasDebts ? (
             <SlabButton onClick={() => navigate(from === 'me' ? '/me' : '/')}>Back to the app</SlabButton>
           ) : (
-            <SlabButton
-              onClick={() => {
-                startOnboarding()
-                track('onboarding_started')
-                navigate('/debts')
-              }}
-            >
-              Get started
-            </SlabButton>
+            <SlabButton onClick={addFirstDebt}>Add my first debt</SlabButton>
+          )}
+          {!last && !hasDebts && (
+            <button type="button" onClick={addFirstDebt} className="mx-auto min-h-11 px-3 text-[15px] font-bold text-mauve underline underline-offset-4">
+              Skip to adding my debts
+            </button>
           )}
         </div>
       </NightScreen>

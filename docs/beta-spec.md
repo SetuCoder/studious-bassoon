@@ -37,14 +37,14 @@ Flows without the tab bar: 01, 02, 09 question steps, 13.
 
 ### 01 Welcome
 - Logo placeholder, headline "See everything you owe. Know what to do with your next rupee.", one-line body, "Private by design" box ("No bank login. No SMS access. Your numbers stay on this phone.").
-- Buttons: **Get started** → 03. **How does it work?** → 01a.
+- One button: **Get started** → 01a How it works, then 03.
 - Footer: "Beta. Shows the cost of each option; not financial advice."
 - Shown only on first run (until at least one debt is saved).
 
 ### 01a How it works
-- Its own night screen, no tab bar, opened from Welcome or from Me. Back returns where it came from.
+- Its own night screen, no tab bar, opened by **Get started** on Welcome or from Me. Back returns where it came from. From Welcome, **Skip to adding my debts** under Next goes straight to 03.
 - Three chapters, swiped or stepped with **Next**, with a chapter bar on top that jumps to any chapter: **See everything you owe** (a mini overview), **Know what your next rupee should do** (the top option with its rolling gain and allocation strip), **Catch charges that don't add up** (the verdict with stamps landing). Each scene uses the sample borrower's real engine results, labelled "Example numbers".
-- Last chapter: "No bank login. No SMS access. Nothing leaves your phone. We'll point things out as you go." Then **Get started** (→ 03, same as Welcome) or, with debts already saved, **Back to the app**.
+- Last chapter: "No bank login. No SMS access. Nothing leaves your phone. We'll point things out as you go." Then **Add my first debt** (→ 03) or, with debts already saved, **Back to the app**.
 
 ### Guided tours (all builds, no special mode)
 The first time someone reaches certain screens, the screen dims and a marigold halo rings one feature at a time, with a card saying what it does (**Next**, **Skip the tour**, **Got it** on the last; Escape skips). Each tour runs once per phone (`settings.toursSeen`). Me → **Show me around again** clears them so they replay. Steps whose feature isn't on screen are skipped (a cards-only borrower sees no charge-check step).

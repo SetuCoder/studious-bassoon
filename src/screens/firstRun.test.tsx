@@ -33,6 +33,8 @@ describe('first run', () => {
     expect(screen.getByText('No bank login. No SMS access. Your numbers stay on this phone.')).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Get started' }))
+    expect(screen.getByRole('heading', { name: 'See everything you owe.' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Skip to adding my debts' }))
     expect(screen.getByRole('heading', { name: 'No debts added yet' })).toBeInTheDocument()
     expect(screen.getByRole('navigation', { name: 'Main' })).toBeInTheDocument()
 
@@ -60,6 +62,7 @@ describe('first run', () => {
   it('sends Home back to Debts after Get started, not to Welcome again', async () => {
     const user = renderAt('/')
     await user.click(screen.getByRole('button', { name: 'Get started' }))
+    await user.click(screen.getByRole('button', { name: 'Skip to adding my debts' }))
     await user.click(screen.getByRole('link', { name: 'Home' }))
     expect(screen.getByRole('heading', { name: 'No debts added yet' })).toBeInTheDocument()
   })
@@ -70,9 +73,10 @@ describe('first run', () => {
     expect(screen.getByRole('heading', { name: 'Home' })).toBeInTheDocument()
   })
 
-  it('walks through how it works, chapter by chapter, then starts', async () => {
+  it('opens how it works from Get started, chapter by chapter, then starts', async () => {
     const user = renderAt('/welcome')
-    await user.click(screen.getByRole('button', { name: 'How does it work?' }))
+    expect(screen.queryByRole('button', { name: 'How does it work?' })).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Get started' }))
     expect(screen.getByRole('heading', { name: 'See everything you owe.' })).toBeInTheDocument()
     expect(screen.getByText('Example numbers')).toBeInTheDocument()
 
@@ -86,7 +90,8 @@ describe('first run', () => {
     expect(screen.getByRole('tab', { name: 'Chapter 3' })).toHaveAttribute('aria-selected', 'true')
     expect(screen.getByText('No bank login. No SMS access. Nothing leaves your phone. We’ll point things out as you go.')).toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: 'Get started' }))
+    expect(screen.queryByRole('button', { name: 'Skip to adding my debts' })).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Add my first debt' }))
     expect(screen.getByRole('heading', { name: 'No debts added yet' })).toBeInTheDocument()
     expect(appStore.getState().onboardingStarted).toBe(true)
   })

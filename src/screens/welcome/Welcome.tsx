@@ -78,7 +78,7 @@ export function Welcome() {
           onClick={() => {
             startOnboarding()
             track('onboarding_started')
-            navigate('/debts')
+            navigate('/how-it-works')
           }}
         >
           <span className="flex w-full items-center justify-between">
@@ -90,9 +90,6 @@ export function Welcome() {
             </span>
           </span>
         </SlabButton>
-        <button type="button" onClick={() => navigate('/how-it-works')} className="mx-auto min-h-11 px-3 text-[15px] font-bold underline underline-offset-4">
-          How does it work?
-        </button>
         <p className="text-center text-xs text-plum-muted">Beta. Shows the cost of each option; not financial advice.</p>
       </motion.div>
     </main>
