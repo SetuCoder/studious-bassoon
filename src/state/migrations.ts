@@ -4,7 +4,7 @@ import type { AppData, Debt, TourId } from '../engine/types'
 export const STORAGE_KEY = 'vektrr:v1'
 /** Where data lived before the app was named Vektrr. Moved to STORAGE_KEY on first open. */
 export const LEGACY_STORAGE_KEY = 'ro:v1'
-export const SCHEMA_VERSION = 2
+export const SCHEMA_VERSION = 3
 
 const TOUR_IDS: readonly TourId[] = ['start', 'overview', 'results', 'charge']
 
@@ -16,7 +16,7 @@ export function emptyAppData(): AppData {
     checkIns: [],
     chargeChecks: [],
     feedback: {},
-    settings: { shareUsageCounts: true, toursSeen: [] },
+    settings: { shareUsageCounts: true, toursSeen: [], haptics: true, calmMotion: false },
   }
 }
 
@@ -27,6 +27,8 @@ export function emptyAppData(): AppData {
 const MIGRATIONS: Record<number, (data: Record<string, unknown>) => Record<string, unknown>> = {
   // 1 → 2: settings gains toursSeen. Nobody has seen a guide yet.
   1: (data) => ({ ...data, settings: { ...(isRecord(data.settings) ? data.settings : {}), toursSeen: [] } }),
+  // 2 → 3: settings gains the Me preferences, at their defaults.
+  2: (data) => ({ ...data, settings: { ...(isRecord(data.settings) ? data.settings : {}), haptics: true, calmMotion: false } }),
 }
 
 /** Called by the persist middleware when the stored version differs from SCHEMA_VERSION. */
@@ -60,14 +62,18 @@ export function normalise(persisted: unknown): AppData {
     chargeChecks: Array.isArray(p.chargeChecks) ? (p.chargeChecks as AppData['chargeChecks']) : [],
     feedback: isRecord(p.feedback) ? (p.feedback as AppData['feedback']) : empty.feedback,
     settings: {
-      shareUsageCounts: isRecord(p.settings) && typeof p.settings.shareUsageCounts === 'boolean'
-        ? p.settings.shareUsageCounts
-        : empty.settings.shareUsageCounts,
+      shareUsageCounts: flag(p.settings, 'shareUsageCounts', empty.settings.shareUsageCounts),
+      haptics: flag(p.settings, 'haptics', empty.settings.haptics),
+      calmMotion: flag(p.settings, 'calmMotion', empty.settings.calmMotion),
       toursSeen: isRecord(p.settings) && Array.isArray(p.settings.toursSeen)
         ? TOUR_IDS.filter((id) => (p.settings as { toursSeen: unknown[] }).toursSeen.includes(id))
         : [],
     },
   }
+}
+
+function flag(settings: unknown, key: string, fallback: boolean): boolean {
+  return isRecord(settings) && typeof settings[key] === 'boolean' ? settings[key] : fallback
 }
 
 function isUsableDebt(d: unknown): d is Debt {

@@ -58,15 +58,28 @@ describe('12 Home (M1)', () => {
 })
 
 describe('11 Me', () => {
-  it('saves the recommend answer and the usage-counts setting', async () => {
+  it('is an account page: counts, linked accounts coming soon, and working preferences', async () => {
     const user = renderAt('/me')
-    await user.click(screen.getByRole('radio', { name: 'Very likely' }))
-    expect(appStore.getState().feedback.recommend).toBe('very_likely')
-    const toggle = screen.getByRole('switch', { name: /Share anonymous usage counts/ })
-    expect(toggle).toHaveAttribute('aria-checked', 'true')
-    await user.click(toggle)
-    expect(appStore.getState().settings.shareUsageCounts).toBe(false)
-    expect(screen.getByText('Beta 0.1. Shows the cost of each option. Not financial or legal advice.')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Your account' })).toBeInTheDocument()
+    expect(screen.queryByText(/testers|feedback/i)).not.toBeInTheDocument()
+    expect(screen.getByText('Debts tracked').nextSibling).toHaveTextContent('6')
+    expect(within(screen.getByRole('region', { name: 'Linked accounts' })).getAllByText('Soon')).toHaveLength(3)
+
+    const currency = screen.getByLabelText('Currency')
+    expect(currency).toHaveValue('INR')
+    expect(within(currency).getByRole('option', { name: '$ US dollar (soon)' })).toBeDisabled()
+
+    for (const [name, key, before] of [
+      [/Share anonymous usage counts/, 'shareUsageCounts', true],
+      [/Vibrate on taps/, 'haptics', true],
+      [/Calmer animations/, 'calmMotion', false],
+    ] as const) {
+      const toggle = screen.getByRole('switch', { name })
+      expect(toggle).toHaveAttribute('aria-checked', String(before))
+      await user.click(toggle)
+      expect(appStore.getState().settings[key]).toBe(!before)
+    }
+    expect(screen.getByText('Shows the cost of each option. Not financial advice.')).toBeInTheDocument()
   })
 
   it('replays the guides and reopens how it works, coming back to Me', async () => {
@@ -79,7 +92,7 @@ describe('11 Me', () => {
     await user.click(screen.getByRole('link', { name: 'How it works' }))
     await user.click(screen.getByRole('tab', { name: 'Chapter 3' }))
     await user.click(screen.getByRole('button', { name: 'Back to the app' }))
-    expect(screen.getByRole('heading', { name: 'Help us build this' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Your account' })).toBeInTheDocument()
   })
 
   it('keeps everything if you back out of deleting', async () => {

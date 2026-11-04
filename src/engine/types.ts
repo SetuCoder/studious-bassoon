@@ -107,7 +107,7 @@ export interface ChargeCheck {
 export type TourId = 'start' | 'overview' | 'results' | 'charge'
 
 export interface AppData {
-  schemaVersion: 2
+  schemaVersion: 3
   profile: Profile
   debts: Debt[]
   lastNextRupee?: NextRupeeInput
@@ -120,5 +120,9 @@ export interface AppData {
     shareUsageCounts: boolean
     /** Guides already shown on this phone, so each runs once. "Show me around again" on Me clears it. */
     toursSeen: TourId[]
+    /** Me → "Vibrate on taps"; on by default. Only phones with a vibration motor notice. */
+    haptics: boolean
+    /** Me → "Calmer animations": the same as the phone's reduce-motion setting, for this app only. */
+    calmMotion: boolean
   }
 }

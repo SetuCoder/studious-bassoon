@@ -1,3 +1,5 @@
+import { appStore } from '../state/store'
+
 /**
  * Short buzzes on phones that support them (Android Chrome). iOS Safari has no vibration
  * API, so these do nothing there. Never the only feedback for anything.
@@ -6,6 +8,7 @@
  * opened straight from a link stays silent instead of logging an error.
  */
 function buzz(pattern: number | number[]): void {
+  if (!appStore.getState().settings.haptics) return
   try {
     if (navigator.userActivation && !navigator.userActivation.hasBeenActive) return
     navigator.vibrate?.(pattern)

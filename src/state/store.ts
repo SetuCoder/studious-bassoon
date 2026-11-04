@@ -23,8 +23,9 @@ export interface AppActions {
   /** Returns the saved check's id. */
   saveChargeCheck: (check: Omit<ChargeCheck, 'id' | 'createdAt'>) => string
   setWouldAct: (answer: NonNullable<AppData['feedback']['wouldAct']>) => void
-  setRecommend: (answer: NonNullable<AppData['feedback']['recommend']>) => void
   setShareUsageCounts: (on: boolean) => void
+  setHaptics: (on: boolean) => void
+  setCalmMotion: (on: boolean) => void
   /** A first-visit guide finished or was skipped; it won't show again. */
   markTourSeen: (id: TourId) => void
   /** "Show me around again": every guide shows again on its screen. */
@@ -144,8 +145,9 @@ export function createAppStore(deps: Partial<StoreDeps> = {}) {
         },
 
         setWouldAct: (answer) => set((s) => ({ feedback: { ...s.feedback, wouldAct: answer } })),
-        setRecommend: (answer) => set((s) => ({ feedback: { ...s.feedback, recommend: answer } })),
         setShareUsageCounts: (on) => set((s) => ({ settings: { ...s.settings, shareUsageCounts: on } })),
+        setHaptics: (on) => set((s) => ({ settings: { ...s.settings, haptics: on } })),
+        setCalmMotion: (on) => set((s) => ({ settings: { ...s.settings, calmMotion: on } })),
         markTourSeen: (id) =>
           set((s) => (s.settings.toursSeen.includes(id) ? s : { settings: { ...s.settings, toursSeen: [...s.settings.toursSeen, id] } })),
         resetTours: () => set((s) => ({ settings: { ...s.settings, toursSeen: [] } })),

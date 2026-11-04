@@ -108,15 +108,17 @@ describe('app store', () => {
     expect(store.getState().profile.takeHomeMonthly).toBeUndefined()
   })
 
-  it('remembers which guides were seen, keeps the usage toggle, and forgets them on reset', () => {
+  it('remembers which guides were seen, keeps the other settings, and forgets them on reset', () => {
     const store = makeStore()
     store.getState().markTourSeen('overview')
     store.getState().markTourSeen('overview')
     store.getState().setShareUsageCounts(false)
-    expect(store.getState().settings).toEqual({ shareUsageCounts: false, toursSeen: ['overview'] })
+    store.getState().setHaptics(false)
+    store.getState().setCalmMotion(true)
+    expect(store.getState().settings).toEqual({ shareUsageCounts: false, toursSeen: ['overview'], haptics: false, calmMotion: true })
     expect(stored().state.settings.toursSeen).toEqual(['overview'])
     store.getState().resetTours()
-    expect(store.getState().settings).toEqual({ shareUsageCounts: false, toursSeen: [] })
+    expect(store.getState().settings).toEqual({ shareUsageCounts: false, toursSeen: [], haptics: false, calmMotion: true })
   })
 
   it('deletes all data: removes the key and resets the store', () => {

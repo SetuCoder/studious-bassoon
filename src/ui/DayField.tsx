@@ -65,7 +65,8 @@ interface DaySelectProps<T extends string> {
   hint?: ReactNode
   value: T | ''
   onChange: (value: T) => void
-  options: readonly (readonly [T, string])[]
+  /** [value, label], or [value, label, true] for a choice shown but not available yet. */
+  options: readonly (readonly [T, string, boolean?])[]
   /** Shown while nothing is chosen. */
   placeholder?: string
 }
@@ -87,7 +88,7 @@ export function DaySelect<T extends string>({ label, hint, value, onChange, opti
           style={{ boxShadow: '0 3px 0 0 #C5CCD3' }}
         >
           {placeholder && <option value="" disabled>{placeholder}</option>}
-          {options.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+          {options.map(([v, l, off]) => <option key={v} value={v} disabled={off}>{l}</option>)}
         </select>
         <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"
           className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2">

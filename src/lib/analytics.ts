@@ -26,8 +26,6 @@ export interface AnalyticsEvents {
   charge_check_completed: { covered: 'yes' | 'no' | 'unknown'; flag_count: number; ask_count: number; line_count: number }
   lender_message_copied: undefined
   lender_message_shared: undefined
-  feedback_form_opened: undefined
-  recommend_answered: { answer: 'not_likely' | 'maybe' | 'very_likely' }
   data_deleted: undefined
   how_it_works_opened: { from: 'welcome' | 'me' }
   tour_ended: { tour: TourId; completed: boolean; step: number }

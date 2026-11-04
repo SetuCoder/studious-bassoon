@@ -40,8 +40,6 @@ Money amounts, interest rates, balances, debt names, lender names, dates of loan
 | `charge_check_completed` | "Check the charges" on 09, as 10 opens (not on revisits) | `covered: 'yes' \| 'no' \| 'unknown'`, `flag_count` (doesn't add up), `ask_count` (ask the lender), `line_count` |
 | `lender_message_copied` | Copy on 10 | none |
 | `lender_message_shared` | WhatsApp on 10 | none |
-| `feedback_form_opened` | Button on 11 | none |
-| `recommend_answered` | Chip on 11 | `answer` |
 | `data_deleted` | Confirmed delete | none |
 | `how_it_works_opened` | 01a shown | `from: 'welcome' \| 'me'` |
 | `tour_ended` | A guided tour finished or was skipped | `tour: 'start' \| 'overview' \| 'results' \| 'charge'`, `completed: boolean`, `step` (the step it ended on) |
@@ -52,6 +50,6 @@ Money amounts, interest rates, balances, debt names, lender names, dates of loan
 
 ## The beta funnel
 
-`app_opened` → `onboarding_started` → `debt_added` (at least 2) → `overview_viewed` → `next_rupee_compared` → `would_act_answered` → `charge_check_completed` → `feedback_form_opened`.
+`app_opened` → `onboarding_started` → `debt_added` (at least 2) → `overview_viewed` → `next_rupee_compared` → `would_act_answered` → `charge_check_completed`.
 
 Also watch: share answering "yes" to `would_act_answered`, and `upload_fake_door_tapped` per tester (demand for statement upload).

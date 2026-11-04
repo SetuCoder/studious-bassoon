@@ -109,13 +109,13 @@ Each waits for its screen's entrance to finish before dimming.
 - Footer: "A guide to what to ask, not legal advice."
 - The check is saved to `chargeChecks`.
 
-### 11 Me
-- "Help us build this" with **Open the 2-minute feedback form** (opens `FEEDBACK_FORM_URL` in a new tab).
-- "How likely are you to recommend this to a friend?" chips.
-- Getting around: **How it works** (→ 01a) and **Show me around again** (replays the guided tours; reads "The guide will show on each screen" when none have been seen yet).
-- Your data: "Everything you entered is stored only on this phone. We can't see it." **Delete all my data** (confirm).
-- Toggle: "Share anonymous usage counts" (default on; when off, no events are sent).
-- About: "Beta 0.1. Shows the cost of each option. Not financial or legal advice."
+### 11 Me ("Your account")
+- A night card: "Your Vektrr", "Saved on this phone. No sign-in needed.", with counts of debts tracked and charge checks.
+- Linked accounts, each marked **Soon**: bank accounts (Account Aggregator), credit report, card and loan statements. Not built; nothing to tap.
+- Preferences: **Currency** (₹ Indian rupee; US dollar, UAE dirham and British pound listed but disabled, "soon"), **Vibrate on taps** (default on; turns off every buzz), **Calmer animations** (default off; same effect as the phone's reduce-motion setting).
+- Help: **How it works** (→ 01a) and **Show me around again** (replays the guided tours; reads "The guide will show on each screen" when none have been seen yet).
+- Privacy and your data: "Everything you enter stays on this phone. We can't see it." Toggle "Share anonymous usage counts" (default on; when off, no events are sent). **Delete all my data** (confirm).
+- About: version, "Shows the cost of each option. Not financial advice." and "Charge checks are a guide to what to ask, not legal advice."
 
 ### 12 Home (M1 version)
 - "₹{totalOwed} owed", stat tiles (Paid each month, Interest this month).

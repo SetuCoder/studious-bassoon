@@ -155,14 +155,11 @@ async function addCharge(user: User, n: number, kind: string, amount: string, di
 }
 
 describe('Me', () => {
-  it('sends the recommend answer only while usage counts are on', async () => {
+  it('sends nothing once usage counts are turned off', async () => {
     const user = renderAt('/me')
-    await user.click(screen.getByRole('radio', { name: 'Very likely' }))
-    await expectSent('recommend_answered', { answer: 'very_likely' })
-
     await user.click(screen.getByRole('switch', { name: /Share anonymous usage counts/ }))
     posthog.capture.mockClear()
-    await user.click(screen.getByRole('radio', { name: 'Maybe' }))
+    await user.click(screen.getByRole('link', { name: 'How it works' }))
     await new Promise((r) => setTimeout(r, 0))
     expect(posthog.capture).not.toHaveBeenCalled()
   })

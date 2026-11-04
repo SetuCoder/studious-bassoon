@@ -17,10 +17,15 @@ describe('migrate', () => {
       settings: { shareUsageCounts: false },
     }
     const out = migrate(v1, 1)
-    expect(out.schemaVersion).toBe(2)
+    expect(out.schemaVersion).toBe(3)
     expect(out.debts).toHaveLength(1)
     expect(out.feedback).toEqual({ wouldAct: 'yes' })
-    expect(out.settings).toEqual({ shareUsageCounts: false, toursSeen: [] })
+    expect(out.settings).toEqual({ shareUsageCounts: false, toursSeen: [], haptics: true, calmMotion: false })
+  })
+
+  it('upgrades version 2 data, keeping the guides seen and adding the preferences at their defaults', () => {
+    const out = migrate({ debts: [], settings: { shareUsageCounts: true, toursSeen: ['overview'] } }, 2)
+    expect(out.settings).toEqual({ shareUsageCounts: true, toursSeen: ['overview'], haptics: true, calmMotion: false })
   })
 
   it('starts fresh on data from a newer app version', () => {
@@ -40,7 +45,7 @@ describe('normalise', () => {
       ...emptyAppData(),
       profile: { takeHomeMonthly: 145000 },
       debts: [{ id: 'a', name: 'A', type: 'credit_card' as const, balance: 1, apr: 1, monthlyPayment: 1, createdAt: 'x', updatedAt: 'x' }],
-      settings: { shareUsageCounts: false, toursSeen: ['overview' as const] },
+      settings: { shareUsageCounts: false, toursSeen: ['overview' as const], haptics: false, calmMotion: true },
     }
     expect(normalise(data)).toEqual(data)
   })
