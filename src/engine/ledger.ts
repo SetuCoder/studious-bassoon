@@ -18,6 +18,22 @@ export function sortByCost<T extends EngineDebt>(debts: readonly T[]): T[] {
   return [...debts].sort(compareByCost)
 }
 
+/** Share of a card's limit in use: 0.57 means 57%. Undefined without a limit. */
+export function cardUsage(debt: Pick<EngineDebt, 'balance'> & { creditLimit?: number }): number | undefined {
+  return debt.creditLimit && debt.creditLimit > 0 ? debt.balance / debt.creditLimit : undefined
+}
+
+/** Share of a loan already repaid, 0 to 1. Undefined without the original amount. */
+export function repaidShare(debt: Pick<EngineDebt, 'balance'> & { originalAmount?: number }): number | undefined {
+  if (!debt.originalAmount || debt.originalAmount <= 0) return undefined
+  return Math.min(1, Math.max(0, 1 - debt.balance / debt.originalAmount))
+}
+
+/** Interest one debt adds this month, at its rate. */
+export function monthlyInterest(debt: Pick<EngineDebt, 'balance' | 'apr'>): number {
+  return (debt.balance * debt.apr) / 1200
+}
+
 export interface LedgerSummary<T extends EngineDebt> {
   totalOwed: number
   monthlyPayments: number

@@ -15,8 +15,8 @@ export function DayScreen({ title, backTo, onBack, children }: {
   const navigate = useNavigate()
   const hasBack = backTo !== undefined || onBack !== undefined
   return (
-    <div className="flex flex-1 flex-col bg-silver text-aubergine">
-      <header className="sticky top-0 z-10 flex h-14 items-center gap-1 bg-silver px-2">
+    <div className="surface-day flex flex-1 flex-col text-aubergine">
+      <header className="sticky top-0 z-10 flex h-14 items-center gap-1 bg-ice/60 px-2 backdrop-blur-xl [mask-image:linear-gradient(to_bottom,black_75%,transparent)]">
         {hasBack && (
           <button
             type="button"

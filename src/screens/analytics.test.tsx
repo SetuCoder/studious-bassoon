@@ -58,15 +58,17 @@ describe('first run', () => {
     const user = renderAt('/')
     await user.click(screen.getByRole('button', { name: 'Get started' }))
     await expectSent('onboarding_started', {})
+    await expectSent('how_it_works_opened', { from: 'welcome' })
+    await user.click(screen.getByRole('button', { name: 'Skip to adding my debts' }))
 
     await user.type(screen.getByLabelText('Monthly take-home pay (optional)'), '145000')
     await user.click(screen.getByRole('link', { name: 'Add your first debt' }))
     await expectSent('take_home_set', {})
 
-    await user.type(screen.getByLabelText('Name'), 'HDFC Millennia card')
-    await user.type(screen.getByLabelText('How much do you owe?'), '85000')
+    await user.type(screen.getByLabelText('Card name'), 'HDFC Millennia card')
+    await user.type(screen.getByLabelText('How much is on the card?'), '85000')
     await user.type(screen.getByLabelText('Interest rate (% a year)'), '42')
-    await user.type(screen.getByLabelText('What you pay each month'), '6000')
+    await user.type(screen.getByLabelText('What you usually pay each month'), '6000')
     await user.click(screen.getByRole('button', { name: 'Save debt' }))
 
     await expectSent('debt_added', { type: 'credit_card', has_rate_type: false, has_sanction_date: false, debt_count: 1 })
@@ -80,9 +82,9 @@ describe('first run', () => {
 
   it('counts a debt saved while its payment is below the interest', async () => {
     const user = renderAt('/debts/new')
-    await user.type(screen.getByLabelText('How much do you owe?'), '85000')
+    await user.type(screen.getByLabelText('How much is on the card?'), '85000')
     await user.type(screen.getByLabelText('Interest rate (% a year)'), '42')
-    await user.type(screen.getByLabelText('What you pay each month'), '500')
+    await user.type(screen.getByLabelText('What you usually pay each month'), '500')
     await user.click(screen.getByRole('button', { name: 'Save debt' }))
     await expectSent('debt_payment_below_interest', { type: 'credit_card' })
   })
@@ -123,16 +125,17 @@ describe('charge check', () => {
 
   it('knows the check was opened from the overview', async () => {
     const user = renderAt('/debts')
-    await user.click(screen.getByRole('link', { name: 'Check a closing quote' }))
+    await user.click(screen.getByRole('link', { name: 'Closing a loan early? Verify your charges' }))
     await expectSent('charge_check_started', { entry: 'overview' })
   })
 
   it('sends the verdict as counts, then the copy and the share', async () => {
     const user = renderAt(`/charges?debt=${ids.personal}`)
     await expectSent('charge_check_started', { entry: 'tab' })
-    for (let i = 0; i < 4; i++) await user.click(screen.getByRole('button', { name: 'Next' }))
-    await addCharge(user, 1, 'Foreclosure charge', '6300', 'Yes')
-    await addCharge(user, 2, 'Admin or documentation fee', '750', 'No')
+    await user.click(screen.getByRole('button', { name: 'Start the check' }))
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+    await addCharge(user, 1, 'Foreclosure', '6300', 'Yes')
+    await addCharge(user, 2, 'Admin fee', '750', 'No')
     await addCharge(user, 3, 'GST', '1539')
     await user.click(screen.getByRole('button', { name: 'Check the charges' }))
     await expectSent('charge_check_completed', { covered: 'yes', flag_count: 1, ask_count: 1, line_count: 3 })
@@ -147,20 +150,17 @@ describe('charge check', () => {
 async function addCharge(user: User, n: number, kind: string, amount: string, disclosed?: 'Yes' | 'No') {
   if (n > 1) await user.click(screen.getByRole('button', { name: '+ Add another charge' }))
   const line = screen.getByRole('listitem', { name: `Charge ${n}` })
-  await user.selectOptions(within(line).getByLabelText('Type of charge'), kind)
+  await user.click(within(within(line).getByRole('radiogroup', { name: 'Type of charge' })).getByRole('radio', { name: kind }))
   await user.type(within(line).getByLabelText('Amount'), amount)
   if (disclosed) await user.click(within(line).getByRole('radio', { name: disclosed }))
 }
 
 describe('Me', () => {
-  it('sends the recommend answer only while usage counts are on', async () => {
+  it('sends nothing once usage counts are turned off', async () => {
     const user = renderAt('/me')
-    await user.click(screen.getByRole('radio', { name: 'Very likely' }))
-    await expectSent('recommend_answered', { answer: 'very_likely' })
-
     await user.click(screen.getByRole('switch', { name: /Share anonymous usage counts/ }))
     posthog.capture.mockClear()
-    await user.click(screen.getByRole('radio', { name: 'Maybe' }))
+    await user.click(screen.getByRole('link', { name: 'How it works' }))
     await new Promise((r) => setTimeout(r, 0))
     expect(posthog.capture).not.toHaveBeenCalled()
   })

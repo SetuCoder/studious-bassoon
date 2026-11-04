@@ -22,7 +22,7 @@ export function Welcome() {
   })
 
   return (
-    <main className="relative flex min-h-dvh flex-col overflow-hidden bg-silver px-5 pt-5 pb-6 text-aubergine">
+    <main className="surface-day relative flex min-h-dvh flex-col overflow-hidden px-5 pt-5 pb-6 text-aubergine">
       {/* The board's column rules. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 grid grid-cols-4">
         <div className="border-r border-silver-line" />
@@ -49,23 +49,22 @@ export function Welcome() {
 
       {/* Each line is its own block for the staggered rise; the spaces keep it one sentence for screen readers. */}
       <h1 className="relative font-black tracking-[-0.05em]">
-        <motion.span {...rise(0)} className="block text-[54px] leading-[0.9]">See</motion.span>{' '}
-        <motion.span {...rise(1)} className="block text-[54px] leading-[0.9]">everything</motion.span>{' '}
+        <motion.span {...rise(0)} className="block text-[52px] leading-[0.9]">All your debts.</motion.span>{' '}
         <motion.span
-          {...rise(2)}
-          className="block text-[54px] leading-[0.9]"
+          {...rise(1)}
+          className="mt-1 block text-[52px] leading-[0.9]"
           style={{ textShadow: '-10px 0 8px rgba(58,15,52,0.35), -24px 0 14px rgba(58,15,52,0.2), -40px 0 22px rgba(234,170,0,0.45)' }}
         >
-          you owe.
+          One clear picture.
         </motion.span>{' '}
-        <motion.span {...rise(3)} className="mt-3 block text-[22px] leading-tight font-extrabold tracking-[-0.02em]">
-          Know what to do with your next rupee.
+        <motion.span {...rise(2)} className="mt-3 block text-[22px] leading-tight font-extrabold tracking-[-0.02em] text-balance">
+          And where your next ₹₹₹ should go.
         </motion.span>
       </h1>
 
-      <motion.div {...rise(4)} className="relative mt-4 flex flex-col gap-3">
+      <motion.div {...rise(3)} className="relative mt-4 flex flex-col gap-3">
         <p className="text-[15px] leading-snug text-plum-muted">
-          Add your loans and cards in about two minutes. Get a ranked answer to where your next rupee should go, and check your loan charges.
+          Add your loans and cards in two minutes. We’ll show what each one really costs you.
         </p>
         <div className="rounded-2xl bg-white/70 px-4 py-3">
           <p className="text-[14px] font-extrabold">Private by design</p>
@@ -73,12 +72,12 @@ export function Welcome() {
         </div>
       </motion.div>
 
-      <motion.div {...rise(5)} className="relative mt-5 flex flex-col gap-1">
+      <motion.div {...rise(4)} className="relative mt-5 flex flex-col gap-1">
         <SlabButton
           onClick={() => {
             startOnboarding()
             track('onboarding_started')
-            navigate('/debts')
+            navigate('/how-it-works')
           }}
         >
           <span className="flex w-full items-center justify-between">
@@ -90,10 +89,7 @@ export function Welcome() {
             </span>
           </span>
         </SlabButton>
-        <button type="button" onClick={() => navigate('/how-it-works')} className="mx-auto min-h-11 px-3 text-[15px] font-bold underline underline-offset-4">
-          How does it work?
-        </button>
-        <p className="text-center text-xs text-plum-muted">Beta. Shows the cost of each option; not financial advice.</p>
+        <p className="mt-3 text-center text-xs text-plum-muted">Beta. Shows the cost of each option; not financial advice.</p>
       </motion.div>
     </main>
   )

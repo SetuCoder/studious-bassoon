@@ -1,15 +1,22 @@
 import { useStore } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { createStore } from 'zustand/vanilla'
-import { isLoan } from '../engine/ledger'
 import type { AppData, ChargeCheck, Debt, NextRupeeInput, TourId } from '../engine/types'
-import { defaultDebtName } from '../lib/debtTypes'
-import { SCHEMA_VERSION, STORAGE_KEY, emptyAppData, migrate, normalise } from './migrations'
+import { DEBT_TYPE_LABELS, defaultDebtName } from '../lib/debtTypes'
+import { LEGACY_STORAGE_KEY, SCHEMA_VERSION, STORAGE_KEY, emptyAppData, migrate, normalise } from './migrations'
 import { createSafeStorage } from './storage'
 
 /** What the add-a-debt and edit forms hand over. Name is optional; it defaults from the type. */
 export type DebtInput = Pick<Debt, 'type' | 'balance' | 'apr' | 'monthlyPayment'> &
-  Partial<Pick<Debt, 'name' | 'rateType' | 'sanctionedOn' | 'purpose'>>
+  Partial<Pick<Debt, 'name' | 'rateType' | 'sanctionedOn' | 'purpose' | 'originalAmount' | 'lender' | 'monthsLeft' | 'creditLimit' | 'dueDay'>>
+
+/** The optional fields each kind of debt keeps; anything else is dropped on save. */
+const KEEPS: Record<'card' | 'bnpl' | 'loan', readonly (keyof Debt)[]> = {
+  card: ['creditLimit', 'dueDay'],
+  bnpl: ['lender', 'monthsLeft'],
+  loan: ['rateType', 'sanctionedOn', 'purpose', 'originalAmount', 'lender', 'monthsLeft'],
+}
+const OPTIONAL: readonly (keyof Debt)[] = ['rateType', 'sanctionedOn', 'purpose', 'originalAmount', 'lender', 'monthsLeft', 'creditLimit', 'dueDay']
 
 export interface AppActions {
   setTakeHome: (rupees: number | undefined) => void
@@ -23,8 +30,9 @@ export interface AppActions {
   /** Returns the saved check's id. */
   saveChargeCheck: (check: Omit<ChargeCheck, 'id' | 'createdAt'>) => string
   setWouldAct: (answer: NonNullable<AppData['feedback']['wouldAct']>) => void
-  setRecommend: (answer: NonNullable<AppData['feedback']['recommend']>) => void
   setShareUsageCounts: (on: boolean) => void
+  setHaptics: (on: boolean) => void
+  setCalmMotion: (on: boolean) => void
   /** A first-visit guide finished or was skipped; it won't show again. */
   markTourSeen: (id: TourId) => void
   /** "Show me around again": every guide shows again on its screen. */
@@ -82,14 +90,18 @@ function pickData(s: AppState): AppData {
   }
 }
 
-/** Cards and BNPL keep no loan-only fields; a blank name falls back to "{Type} {n}". */
+/**
+ * Each kind of debt keeps only its own details (a card has no sanction date; a loan no credit
+ * limit), and empty ones are dropped. A blank name falls back to "{Type} {n}".
+ */
 function tidyDebt(debt: Debt, others: readonly Debt[]): Debt {
   const tidy: Debt = { ...debt, name: debt.name?.trim() ?? '' }
-  if (!isLoan(tidy.type)) {
-    delete tidy.rateType
-    delete tidy.sanctionedOn
-    delete tidy.purpose
+  const keeps = KEEPS[tidy.type === 'credit_card' ? 'card' : tidy.type === 'bnpl' ? 'bnpl' : 'loan']
+  if (typeof tidy.lender === 'string') tidy.lender = tidy.lender.trim()
+  for (const key of OPTIONAL) {
+    if (!keeps.includes(key) || tidy[key] === undefined || tidy[key] === '') delete tidy[key]
   }
+  if (!tidy.name && tidy.lender) tidy.name = `${tidy.lender} ${tidy.type === 'other' ? 'loan' : DEBT_TYPE_LABELS[tidy.type].toLowerCase()}`
   if (!tidy.name) tidy.name = defaultDebtName(tidy.type, others.filter((d) => d.type === tidy.type).length)
   return tidy
 }
@@ -100,6 +112,8 @@ export function createAppStore(deps: Partial<StoreDeps> = {}) {
   // so the flag is also synced once after creation.
   let store: ReturnType<typeof build> | undefined
   const storage = createSafeStorage<AppData>(getStorage, () => store?.setState({ storageAvailable: false }))
+  // Data saved before the rename to Vektrr; moved before the store reads it.
+  storage.moveItem(LEGACY_STORAGE_KEY, STORAGE_KEY)
 
   const build = () => createStore<AppState>()(
     persist(
@@ -142,8 +156,9 @@ export function createAppStore(deps: Partial<StoreDeps> = {}) {
         },
 
         setWouldAct: (answer) => set((s) => ({ feedback: { ...s.feedback, wouldAct: answer } })),
-        setRecommend: (answer) => set((s) => ({ feedback: { ...s.feedback, recommend: answer } })),
         setShareUsageCounts: (on) => set((s) => ({ settings: { ...s.settings, shareUsageCounts: on } })),
+        setHaptics: (on) => set((s) => ({ settings: { ...s.settings, haptics: on } })),
+        setCalmMotion: (on) => set((s) => ({ settings: { ...s.settings, calmMotion: on } })),
         markTourSeen: (id) =>
           set((s) => (s.settings.toursSeen.includes(id) ? s : { settings: { ...s.settings, toursSeen: [...s.settings.toursSeen, id] } })),
         resetTours: () => set((s) => ({ settings: { ...s.settings, toursSeen: [] } })),

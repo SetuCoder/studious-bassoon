@@ -45,7 +45,9 @@ export function draftLenderMessage({ loanName, rateType, sanctionedOn, lines, re
   }
   out.push(
     '',
-    'Please send a revised quote, including how GST has been recalculated.',
+    lines.some((l) => l.kind === 'gst')
+      ? 'Please send a revised quote, including how GST has been recalculated.'
+      : 'Please send a revised quote.',
     '',
     'Thank you,',
     '[Your name]',

@@ -21,7 +21,7 @@ export function optionName(id: OptionId, assumedReturn: number): string {
 
 /** Badge for the top-ranked option. */
 export function topLabel(option: NextRupeeOption): string {
-  return option.kind === 'invest' ? 'Comes out ahead' : 'Saves the most'
+  return option.kind === 'invest' ? 'Comes out ahead' : 'Best for you'
 }
 
 export const NOTHING_TO_PUT_TO_WORK = 'There is nothing left to put to work after the cash you are keeping aside.'

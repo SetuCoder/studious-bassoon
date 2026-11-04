@@ -75,7 +75,7 @@ delta = (base.remaining − s.remaining) + (s.spare − base.spare) − used × 
 
 **Split option.** Let `above` = debts with `apr > assumedReturn`, by `apr` descending. For `k = 1 … above.length`: allocate `L` across the first `k` debts; skip if nothing is used or everything is used (`used ≥ L − 0.5`); `delta = debt-part delta + (L − used) × (fv(assumedReturn) − fv(SAVINGS_RATE))`. Keep the best `k`. Show the split option only if its `delta > 1.05 × bestDebtDelta` (the best of `apr`, `size`, `home`) and `bestDebtDelta > 0`.
 
-Sort all options by `delta` descending (stable). The first is labelled "Saves the most" (or "Comes out ahead" for `invest`).
+Sort all options by `delta` descending (stable). The first is labelled "Best for you" (or "Comes out ahead" for `invest`, so investing is never called best for anyone).
 
 If `L = 0`, every option's delta is 0. Show: "There is nothing left to put to work after the cash you are keeping aside."
 
@@ -96,8 +96,9 @@ Template sentences built from engine numbers only. No AI-generated numbers. `exp
 
 See `docs/rules.md` for the decision table. Totals:
 
-- `flaggedTotal = Σ amount of lines with status doesnt_add_up × (1 + GST_RATE)`
-- `toConfirmTotal = Σ amount of lines with status ask_lender × (1 + GST_RATE)`
+- `flaggedTotal = Σ amount of lines with status doesnt_add_up × (1 + GST_RATE)` when the quote has a GST line, else without the GST factor
+- `toConfirmTotal = Σ amount of lines with status ask_lender × (1 + GST_RATE)`, likewise
+- Why: GST only comes off with a charge if the quote charged GST. Before November 2026 the factor was always applied, which overstated the total for quotes with no GST line.
 - GST lines are never flagged themselves; they always get status `follows`. Reason: "Falls away on any charge that comes off." when any line it applies to is `doesnt_add_up` or `ask_lender`, otherwise "Applies only if the charge above stands."
 
 The lender message (`message.ts`) is built from the flagged and ask-lender lines. Template in `docs/rules.md`.

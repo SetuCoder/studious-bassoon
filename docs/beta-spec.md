@@ -36,15 +36,15 @@ Flows without the tab bar: 01, 02, 09 question steps, 13.
 ## Screens
 
 ### 01 Welcome
-- Logo placeholder, headline "See everything you owe. Know what to do with your next rupee.", one-line body, "Private by design" box ("No bank login. No SMS access. Your numbers stay on this phone.").
-- Buttons: **Get started** → 03. **How does it work?** → 01a.
+- Logo placeholder, headline "All your debts. One clear picture." with the line "And where your next ₹₹₹ should go.", body "Add your loans and cards in two minutes. We'll show what each one really costs you.", "Private by design" box ("No bank login. No SMS access. Your numbers stay on this phone.").
+- One button: **Get started** → 01a How it works, then 03.
 - Footer: "Beta. Shows the cost of each option; not financial advice."
 - Shown only on first run (until at least one debt is saved).
 
 ### 01a How it works
-- Its own night screen, no tab bar, opened from Welcome or from Me. Back returns where it came from.
-- Three chapters, swiped or stepped with **Next**, with a chapter bar on top that jumps to any chapter: **See everything you owe** (a mini overview), **Know what your next rupee should do** (the top option with its rolling gain and allocation strip), **Catch charges that don't add up** (the verdict with stamps landing). Each scene uses the sample borrower's real engine results, labelled "Example numbers".
-- Last chapter: "No bank login. No SMS access. Nothing leaves your phone. We'll point things out as you go." Then **Get started** (→ 03, same as Welcome) or, with debts already saved, **Back to the app**.
+- Its own night screen, no tab bar, opened by **Get started** on Welcome or from Me. Back returns where it came from. From Welcome, **Skip to adding my debts** under Next goes straight to 03.
+- Three chapters, swiped or stepped with **Next**, with a chapter bar on top that jumps to any chapter: **See everything you owe** (a mini overview), **Know what your next rupee should do** (the top option with its rolling gain and allocation strip), **Closing a loan? Don't pay what you don't owe.** (the verdict with stamps landing). Each scene uses the sample borrower's real engine results, labelled "Example numbers".
+- Last chapter: "No bank login. No SMS access. Nothing leaves your phone. We'll point things out as you go." Then **Add my first debt** (→ 03) or, with debts already saved, **Back to the app**.
 
 ### Guided tours (all builds, no special mode)
 The first time someone reaches certain screens, the screen dims and a marigold halo rings one feature at a time, with a card saying what it does (**Next**, **Skip the tour**, **Got it** on the last; Escape skips). Each tour runs once per phone (`settings.toursSeen`). Me → **Show me around again** clears them so they replay. Steps whose feature isn't on screen are skipped (a cards-only borrower sees no charge-check step).
@@ -60,8 +60,18 @@ Each waits for its screen's entrance to finish before dimming.
 
 ### 02 Add a debt
 - Type chips: Credit card, Personal loan, Home loan, Car loan, Education loan, BNPL, Gold loan, Other. Default: Credit card.
-- Fields: Name (optional; default "{Type} {n}"), How much do you owe? (₹), Interest rate (% a year), What you pay each month (₹).
-- Loans only (hidden for credit card and BNPL): Fixed / Floating / Not sure chips; Sanctioned or renewed on (date, optional, hint "Needed for the charge check"); Personal / Business use chips.
+- The same four required numbers, worded for the type:
+
+  | | Card | BNPL | Loans |
+  | --- | --- | --- | --- |
+  | Name | Card name | App or store | Name (optional) |
+  | Balance | How much is on the card? | How much is left to pay? | How much is left on the loan? ("principal outstanding") |
+  | Rate | Interest rate (% a year), hint "usually 36–45%… 3–3.75% a month" | Interest or fee rate, hint "Enter 0 if it's interest-free" | Interest rate, with the type's usual range as a hint |
+  | Payment | What you usually pay each month ("Paying only the minimum due? Enter that.") | Monthly instalment | Your EMI (gold loans: "Paying only the interest each month? Enter that.") |
+
+- Default name "{Type} {n}", or "{Lender} {type}" when a loan's lender is given ("SBI home loan").
+- "About this loan" (loans only): Fixed / Floating / Not sure chips; Sanctioned or renewed on (date, optional); Personal / Business use chips (not asked for home and education loans, which are saved as personal).
+- **More details (optional)**, folded on 02 and open on 05: cards: Credit limit, Bill due on (day of the month); BNPL: Instalments left; loans: Lender, Amount you first borrowed, EMIs left. A mistake in them unfolds the section. Each type keeps only its own details when saved.
 - Validation per `docs/data-model.md`. The "payment doesn't cover interest" case is a warning, not a block.
 - **Save debt** → 04. **Upload a statement instead** → fake-door sheet.
 
@@ -70,12 +80,12 @@ Each waits for its screen's entrance to finish before dimming.
 
 ### 04 Debts overview
 - Stat tiles: Total owed, Paid each month, Share of take-home (hidden if no take-home), Interest this month.
-- "Most expensive first" list from `ledger.sortedByCost`; the first row's meta ends "· costs the most".
+- "Costing you the most, on top" list from `ledger.sortedByCost`; the first row's meta ends "· costs the most".
 - Row tap → 05 (M1) or 17 (M2).
-- Buttons: **What should my next rupee do?** → 06. **Check a closing quote** → 09 (only if at least one loan exists). **+ Add another debt** → 02.
+- Buttons: **Got extra money? See where it helps most** → 06. **Closing a loan early? Verify your charges** → 09 (only if at least one loan exists). **+ Add another debt** → 02.
 
 ### 05 Debt edit (M1)
-- Same fields as 02, pre-filled. Info box: "At ₹{payment} a month, this clears in about {n} months." (or the never-clears warning) and "Interest this month: ₹{x}".
+- Same fields as 02, pre-filled, More details open. Info box: "At ₹{payment} a month, this clears in about {n} months." (or the never-clears warning) and "Interest this month: ₹{x}". Then, when the details allow: "Using {x}% of your ₹{limit} limit.", "Bill due on the {nth} of each month.", "You've repaid {x}% of the ₹{original} you borrowed.", "Your lender says {n} EMIs left; at this payment we work out about {m}."
 - **Save changes**, **Delete this debt** (confirm first).
 
 ### 06 Next rupee, inputs
@@ -98,9 +108,12 @@ Each waits for its screen's entrance to finish before dimming.
 - **Done** → Home. M2 adds **Save as my plan**.
 
 ### 09 Charge check, questions
-- One question per screen with a progress bar ("Question 2 of 5"), Back and Next. Questions and pre-fills in `docs/rules.md`.
-- Step 5 lets the user add charge lines (type, amount, disclosed?) with "+ Add another charge". At least one line is required.
-- "Why we ask" box on the rate question: "The RBI rule on prepayment charges only covers floating-rate loans."
+Written for someone who has never heard of a closing quote. Questions and pre-fills in `docs/rules.md`.
+- **Explainer** (the person's first check only): "Make sure you're not overcharged.", what a closing quote is and that RBI bars many closing charges since 2026, a night card "What you get" (a verdict per charge, how much may not be allowed, a message for the lender), and "You'll need the closing quote" (also called a foreclosure letter or closure statement; where to ask for it). **Start the check**.
+- **Which loan are you closing?** Only when there are several loans and none was chosen by the link.
+- **About your {loan}**: the three things the rule depends on, on one screen, each with a line on why it matters, pre-filled from the debt's details.
+- **What charges are on the quote?** Charge lines: the type as chips (Foreclosure, Prepayment fee, Admin fee, GST, Something else) with a one-line explanation of the chosen one, the amount, and "Is this charge written in your loan papers?" (explained as the sanction letter or Key Facts Statement). "+ Add another charge". At least one line is required.
+- Progress reads "Step 1 of 2" (the explainer isn't counted). Back steps through the screens.
 
 ### 10 Charge check, result
 - Summary: "₹{flaggedTotal} of charges on this quote may not be allowed" and "₹{toConfirmTotal} more to confirm with the lender" (each line hidden when 0).
@@ -109,17 +122,17 @@ Each waits for its screen's entrance to finish before dimming.
 - Footer: "A guide to what to ask, not legal advice."
 - The check is saved to `chargeChecks`.
 
-### 11 Me
-- "Help us build this" with **Open the 2-minute feedback form** (opens `FEEDBACK_FORM_URL` in a new tab).
-- "How likely are you to recommend this to a friend?" chips.
-- Getting around: **How it works** (→ 01a) and **Show me around again** (replays the guided tours; reads "The guide will show on each screen" when none have been seen yet).
-- Your data: "Everything you entered is stored only on this phone. We can't see it." **Delete all my data** (confirm).
-- Toggle: "Share anonymous usage counts" (default on; when off, no events are sent).
-- About: "Beta 0.1. Shows the cost of each option. Not financial or legal advice."
+### 11 Me ("Your account")
+- A night card: "Your Vektrr", "Saved on this phone. No sign-in needed.", with counts of debts tracked and charge checks.
+- Linked accounts, each marked **Soon**: bank accounts (Account Aggregator), credit report, card and loan statements. Not built; nothing to tap.
+- Preferences: **Currency** (₹ Indian rupee; US dollar, UAE dirham and British pound listed but disabled, "soon"), **Vibrate on taps** (default on; turns off every buzz), **Calmer animations** (default off; same effect as the phone's reduce-motion setting).
+- Help: **How it works** (→ 01a) and **Show me around again** (replays the guided tours; reads "The guide will show on each screen" when none have been seen yet).
+- Privacy and your data: "Everything you enter stays on this phone. We can't see it." Toggle "Share anonymous usage counts" (default on; when off, no events are sent). **Delete all my data** (confirm).
+- About: version, "Shows the cost of each option. Not financial advice." and "Charge checks are a guide to what to ask, not legal advice."
 
 ### 12 Home (M1 version)
 - "₹{totalOwed} owed", stat tiles (Paid each month, Interest this month).
-- Focus box: "{costliest debt} costs the most at {apr}%. Any extra money should go there first." with **See your options** → 06.
+- Focus box "Costs you the most": "{costliest debt}, at {apr}%: about ₹{its interest this month} in interest this month." with **See where extra money helps most** → 06. A fact, not a recommendation: whether extra money should go there depends on the comparison (an assumed return can beat a cheap loan).
 - "Needs your attention" list built from data: no take-home set → "Add your take-home pay"; any loan without rate type or sanction date → "Complete {loan} for the charge check"; always → "Bonus or extra cash coming? See what it should do" → 06.
 - M2 adds: progress since start, debts cleared, saved so far, check-in reminder, open lender questions.
 

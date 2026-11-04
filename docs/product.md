@@ -4,7 +4,7 @@ As of 21 October 2026. The full team manual (17 sections: research, market, busi
 
 ## One line
 
-A repayment optimiser for people juggling several loans and cards: see everything you owe in one place, get a ranked plan for your next rupee, and catch charges that do not add up.
+Vektrr is for people juggling several loans and cards: see everything you owe in one place, get a ranked plan for your next rupee, and catch charges that do not add up.
 
 ## Who it is for
 

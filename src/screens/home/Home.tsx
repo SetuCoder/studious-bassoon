@@ -2,7 +2,7 @@ import { motion } from 'motion/react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { Sheet } from '../../components/Sheet'
-import { summariseLedger } from '../../engine/ledger'
+import { monthlyInterest, summariseLedger } from '../../engine/ledger'
 import { track } from '../../lib/analytics'
 import { formatINR, formatRate } from '../../lib/format'
 import { useAppStore } from '../../state/store'
@@ -36,25 +36,25 @@ export function Home() {
   const total = formatINR(ledger.totalOwed)
 
   return (
-    <div className="flex flex-1 flex-col bg-silver text-aubergine">
+    <div className="surface-day flex flex-1 flex-col text-aubergine">
       {/* The night band: where you stand, at a glance. */}
-      <section className="rounded-b-[32px] bg-aubergine px-5 pt-3 pb-6 text-ice">
+      <section className="surface-night rounded-b-[32px] px-5 pt-3 pb-6 text-ice shadow-[0_18px_40px_-20px_rgb(34_8_30/0.7)]">
         <header className="flex h-11 items-center gap-2">
           <MarigoldMark />
           <h1 className="text-lg font-bold">Home</h1>
         </header>
         <p className="mt-4 text-[14px] text-mauve">{greeting(hour)}</p>
-        <SmearIn ghost={total} delay={T.total} className="mt-1 text-[40px] leading-none font-black tracking-[-0.045em]">
+        <SmearIn ghost={total} delay={T.total} className="bloom mt-1 text-[40px] leading-none font-black tracking-[-0.045em]">
           <p className="whitespace-nowrap">
             <Odometer value={total} delay={T.total + 0.1} /> <span className="text-[24px] tracking-[-0.02em] text-mauve">owed</span>
           </p>
         </SmearIn>
         <dl className="mt-5 grid grid-cols-2 gap-3">
-          <div className="rounded-2xl bg-aubergine-raised px-4 py-3">
+          <div className="rounded-2xl bg-white/[0.07] px-4 py-3 ring-1 ring-white/10 backdrop-blur-sm">
             <dt className="text-[12px] text-mauve">Paid each month</dt>
             <dd className="mt-0.5 text-[20px] font-extrabold tracking-[-0.02em]">{formatINR(ledger.monthlyPayments)}</dd>
           </div>
-          <div className="rounded-2xl bg-aubergine-raised px-4 py-3">
+          <div className="rounded-2xl bg-white/[0.07] px-4 py-3 ring-1 ring-white/10 backdrop-blur-sm">
             <dt className="text-[12px] text-mauve">Interest this month</dt>
             <dd className="mt-0.5 text-[20px] font-extrabold tracking-[-0.02em]">{formatINR(ledger.interestThisMonth)}</dd>
           </div>
@@ -66,18 +66,20 @@ export function Home() {
           // The one marigold surface on the screen: this month's focus.
           <motion.section
             aria-labelledby="focus"
-            className="rounded-3xl bg-marigold p-5 text-aubergine"
+            className="rounded-3xl bg-marigold bg-linear-to-br from-marigold-light via-marigold to-[#DD9300] p-5 text-aubergine"
             style={{ boxShadow: 'var(--shadow-slab-marigold)' }}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...springSettle, delay: T.focus }}
           >
-            <h2 id="focus" className="text-[13px] font-extrabold">This month's focus</h2>
+            {/* A fact, not a recommendation: whether extra money should go here depends on the
+                comparison on Plan (an assumed return can beat a cheap loan). */}
+            <h2 id="focus" className="eyebrow">Costs you the most</h2>
             <p className="mt-1.5 text-[19px] leading-snug font-extrabold tracking-[-0.01em]">
-              {costliest.name} costs the most at {formatRate(costliest.apr)}%. Any extra money should go there first.
+              {costliest.name}, at {formatRate(costliest.apr)}%: about {formatINR(monthlyInterest(costliest))} in interest this month.
             </p>
             <Link to="/plan" onClick={() => tap()} className="mt-3 inline-flex min-h-11 items-center gap-2 text-[15px] font-extrabold underline underline-offset-4">
-              See your options
+              See where extra money helps most
             </Link>
           </motion.section>
         )}
@@ -149,7 +151,7 @@ function ActionSlab({ action, onTakeHome }: { action: HomeAction; onTakeHome: ()
     </>
   )
   const box = 'flex min-h-16 w-full items-center gap-3 rounded-3xl bg-white px-4 py-3 text-left'
-  const shadow = { boxShadow: '0 3px 0 0 #C5CCD3' }
+  const shadow = { boxShadow: '0 3px 0 0 var(--color-silver-line)' }
   const pressed = { y: 3, boxShadow: '0 0 0 0 rgba(0,0,0,0)' }
   return action.kind === 'link'
     ? <MotionLink to={action.to} onClick={() => tap()} className={box} style={shadow} whileTap={pressed} transition={springPress}>{body}</MotionLink>

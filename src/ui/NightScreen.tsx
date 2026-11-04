@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router'
 export function NightScreen({ title, backTo, children }: { title: string; backTo?: string; children: ReactNode }) {
   const navigate = useNavigate()
   return (
-    <div className="flex flex-1 flex-col bg-aubergine text-ice">
-      <header className="sticky top-0 z-10 flex h-14 items-center gap-1 bg-aubergine px-2">
+    <div className="surface-night flex flex-1 flex-col text-ice">
+      <header className="sticky top-0 z-10 flex h-14 items-center gap-1 bg-aubergine/45 px-2 backdrop-blur-xl [mask-image:linear-gradient(to_bottom,black_75%,transparent)]">
         {backTo && (
           <button
             type="button"

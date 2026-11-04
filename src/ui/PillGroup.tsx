@@ -36,7 +36,7 @@ export function PillGroup<T extends string>({ label, hideLabel, options, value, 
               whileTap={{ scale: 0.94 }}
               transition={springPress}
               className={`min-h-11 rounded-full px-4 text-[15px] font-semibold ${selected ? on : off}`}
-              style={selected || surface === 'night' ? undefined : { boxShadow: '0 2px 0 0 #C5CCD3' }}
+              style={selected || surface === 'night' ? undefined : { boxShadow: '0 2px 0 0 var(--color-silver-line)' }}
             >
               {o.label}
             </motion.button>

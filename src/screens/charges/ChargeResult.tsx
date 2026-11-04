@@ -25,7 +25,7 @@ export function ChargeResult() {
 }
 
 const CHARGE_TOUR: TourStep[] = [
-  { target: 'charge-total', title: 'What may not be allowed', body: 'The charges the RBI rule may bar on this loan, GST included.' },
+  { target: 'charge-total', title: 'What may not be allowed', body: 'The charges the RBI rule may bar on this loan, with their GST.' },
   { target: 'charge-row', title: 'Every charge, checked', body: '“Doesn’t add up” means the rule bars it for this loan. “Ask the lender” means only they can confirm it.' },
   { target: 'lender-message', title: 'Your message, ready', body: 'A polite question for your lender. Edit it, then copy or share it. We never contact anyone.' },
 ]
@@ -83,7 +83,7 @@ function Result({ check }: { check: ChargeCheck }) {
           <>
             {check.flaggedTotal >= 0.5 && (
               <>
-                <SmearIn ghost={flagged} delay={T.figure} className="mt-1 text-[56px] leading-none font-black tracking-[-0.05em] text-marigold">
+                <SmearIn ghost={flagged} delay={T.figure} className="bloom mt-1 text-[56px] leading-none font-black tracking-[-0.05em] text-marigold">
                   <Odometer value={flagged} delay={T.figure + 0.1} />
                 </SmearIn>
                 <p className="mt-2 text-[16px] font-semibold">of charges on this quote may not be allowed</p>
@@ -94,7 +94,9 @@ function Result({ check }: { check: ChargeCheck }) {
                 {formatINR(check.toConfirmTotal)} more to confirm with the lender
               </p>
             )}
-            <p className="mt-2 text-[13px] text-mauve">Includes GST at 18% on these charges.</p>
+            {check.lines.some((l) => l.kind === 'gst') && (
+              <p className="mt-2 text-[13px] text-mauve">Includes GST at 18% on these charges.</p>
+            )}
           </>
         )}
       </section>
@@ -136,7 +138,7 @@ function Result({ check }: { check: ChargeCheck }) {
           <h2 className="text-[17px] font-extrabold">Message to your lender</h2>
           <p className="text-[13px] text-mauve">Edit it if you like. We don't send anything; you do.</p>
           {/* The draft as a sheet of paper: ice on the night surface. */}
-          <div className="rounded-3xl bg-ice p-1 shadow-[0_5px_0_0_#9AA5AF]">
+          <div className="rounded-3xl bg-ice p-1 shadow-[0_5px_0_0_var(--color-ice-edge)]">
             <label htmlFor={messageId} className="sr-only">Message to your lender</label>
             <textarea
               id={messageId}

@@ -70,7 +70,7 @@ describe('07 results and 08 option detail', () => {
     cards.forEach((card, i) => {
       for (const text of expected[i]) expect(within(card).getByText(text)).toBeInTheDocument()
     })
-    expect(within(cards[0]).getByText('Saves the most')).toBeInTheDocument()
+    expect(within(cards[0]).getByText('Best for you')).toBeInTheDocument()
     expect(within(cards[0]).getByText('Credit card 1, cleared')).toBeInTheDocument()
     expect(within(cards[0]).getByText('Buy now, pay later, part')).toBeInTheDocument()
 

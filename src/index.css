@@ -2,8 +2,8 @@
 @import "@fontsource-variable/schibsted-grotesk";
 
 /* Marigold design language. Contrast pairs checked (WCAG):
-   aubergine on silver 12.5:1 · ice on aubergine 14.6:1 · mauve on aubergine 8.8:1
-   marigold on aubergine 7.9:1 · plum-muted on silver 6.7:1.
+   aubergine on silver 12.7:1 · ice on aubergine 14.6:1 · mauve on aubergine 8.8:1
+   marigold on aubergine 7.9:1 · plum-muted on silver 6.8:1.
    Marigold is never text on a light ground (2:1). */
 @theme {
   --color-aubergine: #3A0F34;
@@ -12,9 +12,12 @@
   --color-marigold: #EAAA00;
   --color-marigold-light: #F7C944;
   --color-marigold-deep: #B57E00;
-  --color-silver: #DDE3E8;
-  --color-silver-line: #C5CCD3;
-  --color-ice: #F1F4F6;
+  /* Silver with a mild hint of cream: still a calm, solid ground. */
+  --color-silver: #E5E4DF;
+  --color-silver-line: #CFCCC4;
+  --color-ice: #F5F4F0;
+  /* The raised edge under ice slabs. */
+  --color-ice-edge: #A9A49A;
   --color-mauve: #CDB9C9;
   --color-plum-muted: #5A4558;
   /* Errors and "doesn't add up" on light grounds: 8.5:1 on white, 7:1 on silver. */
@@ -22,9 +25,10 @@
 
   --font-display: "Schibsted Grotesk Variable", system-ui, sans-serif;
 
-  /* The hard offset shadow that makes a slab look raised. */
-  --shadow-slab: 0 5px 0 0 var(--color-aubergine-deep);
-  --shadow-slab-marigold: 0 5px 0 0 var(--color-marigold-deep);
+  /* The hard offset shadow that makes a slab look raised, a light catch on its top edge,
+     and a soft fall-off below so it floats off the ground (the gloss on the board's tiles). */
+  --shadow-slab: inset 0 1px 0 rgb(255 255 255 / 0.09), 0 5px 0 0 var(--color-aubergine-deep), 0 16px 28px -14px rgb(0 0 0 / 0.6);
+  --shadow-slab-marigold: inset 0 1px 0 rgb(255 255 255 / 0.5), 0 5px 0 0 var(--color-marigold-deep), 0 14px 30px -10px rgb(234 170 0 / 0.55);
 }
 
 html {
@@ -38,4 +42,73 @@ html {
    in Schibsted Grotesk the tabular setting widens commas, so ₹1,50,000 reads "1 , 50 , 000". */
 .num {
   font-variant-numeric: tabular-nums;
+}
+
+/* ---- The board's atmosphere (docs/design.md "Atmosphere") ----
+   The reference never shows a flat colour: light blooms through it, marigold burns to orange at
+   its edges, everything sits under a fine film grain. Same six hexes, given light and texture. */
+
+/* Night: aubergine lit from the top right by a marigold glow, an ember low on the left, and
+   deepening to aubergine-deep at the bottom. */
+.surface-night {
+  background-color: var(--color-aubergine);
+  background-image:
+    radial-gradient(120% 46% at 105% -4%, rgb(234 170 0 / 0.30), transparent 62%),
+    radial-gradient(80% 36% at -5% 22%, rgb(255 110 20 / 0.14), transparent 70%),
+    radial-gradient(120% 60% at 50% 115%, rgb(34 8 30 / 0.9), transparent 72%),
+    linear-gradient(180deg, #431340 0%, var(--color-aubergine) 38%, #2C0B28 100%);
+}
+
+/* Day: ice at the top settling into silver, with a faint marigold warmth in one corner. */
+.surface-day {
+  background-color: var(--color-silver);
+  background-image:
+    radial-gradient(90% 38% at 100% 0%, rgb(234 170 0 / 0.11), transparent 65%),
+    radial-gradient(80% 40% at 0% 100%, rgb(58 15 52 / 0.06), transparent 70%),
+    linear-gradient(180deg, var(--color-ice) 0%, var(--color-silver) 55%);
+}
+
+/* A halo of marigold light under the answer on a screen, the same light as under the marigold
+   buttons. Kept saturated and low, below the digits: thin warm colour spread over aubergine turns
+   brown, and a glow straight behind white digits washes them out. No blur filter or text-shadow
+   (the rolling digits clip shadows into boxes); the gradient is soft on its own. */
+.bloom {
+  position: relative;
+  isolation: isolate;
+}
+.bloom::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 10% -6% -70% -8%;
+  background: radial-gradient(46% 40% at 40% 48%, rgb(247 175 0 / 0.62), rgb(240 140 0 / 0.26) 46%, rgb(234 120 0 / 0.08) 64%, transparent 76%);
+  pointer-events: none;
+}
+
+/* The board's small letter-spaced captions ("A CALMER TOMORROW"). Labels, never sentences. */
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* Glossy ice tile: the palette cards' soft bevel and lift. */
+.gloss-ice {
+  background-image: linear-gradient(180deg, #FFFFFF 0%, var(--color-ice) 45%, #EAE8E2 100%);
+}
+
+/* Film grain over everything. Fixed and click-through; drawn once by the GPU. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.13;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 1.6 -0.3'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");
+}
+@media (prefers-reduced-transparency: reduce) {
+  body::after { display: none; }
 }

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { SCHEMA_VERSION, STORAGE_KEY } from './migrations'
+import { LEGACY_STORAGE_KEY, SCHEMA_VERSION, STORAGE_KEY } from './migrations'
 import { createAppStore, newUuid, type DebtInput } from './store'
 
 const card: DebtInput = { type: 'credit_card', balance: 85000, apr: 42, monthlyPayment: 6000 }
@@ -74,7 +74,7 @@ describe('app store', () => {
     expect(store.getState().chargeChecks).toEqual([])
   })
 
-  it('saves to localStorage under ro:v1 and reloads it', async () => {
+  it('saves to localStorage under vektrr:v1 and reloads it', async () => {
     const store = makeStore()
     store.getState().addDebt(card)
     store.getState().setTakeHome(145000)
@@ -89,6 +89,18 @@ describe('app store', () => {
     expect(reloaded.getState().lastNextRupee?.buffer).toBe(30000)
   })
 
+  it('moves data saved under the old ro:v1 key to vektrr:v1', () => {
+    const old = makeStore()
+    old.getState().addDebt(card)
+    localStorage.setItem(LEGACY_STORAGE_KEY, localStorage.getItem(STORAGE_KEY)!)
+    localStorage.removeItem(STORAGE_KEY)
+
+    const moved = makeStore()
+    expect(moved.getState().debts).toHaveLength(1)
+    expect(localStorage.getItem(LEGACY_STORAGE_KEY)).toBeNull()
+    expect(localStorage.getItem(STORAGE_KEY)).not.toBeNull()
+  })
+
   it('clears take-home when it is emptied', () => {
     const store = makeStore()
     store.getState().setTakeHome(145000)
@@ -96,15 +108,17 @@ describe('app store', () => {
     expect(store.getState().profile.takeHomeMonthly).toBeUndefined()
   })
 
-  it('remembers which guides were seen, keeps the usage toggle, and forgets them on reset', () => {
+  it('remembers which guides were seen, keeps the other settings, and forgets them on reset', () => {
     const store = makeStore()
     store.getState().markTourSeen('overview')
     store.getState().markTourSeen('overview')
     store.getState().setShareUsageCounts(false)
-    expect(store.getState().settings).toEqual({ shareUsageCounts: false, toursSeen: ['overview'] })
+    store.getState().setHaptics(false)
+    store.getState().setCalmMotion(true)
+    expect(store.getState().settings).toEqual({ shareUsageCounts: false, toursSeen: ['overview'], haptics: false, calmMotion: true })
     expect(stored().state.settings.toursSeen).toEqual(['overview'])
     store.getState().resetTours()
-    expect(store.getState().settings).toEqual({ shareUsageCounts: false, toursSeen: [] })
+    expect(store.getState().settings).toEqual({ shareUsageCounts: false, toursSeen: [], haptics: false, calmMotion: true })
   })
 
   it('deletes all data: removes the key and resets the store', () => {

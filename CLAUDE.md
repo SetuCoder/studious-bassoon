@@ -1,6 +1,6 @@
-# Repayment Optimiser (beta)
+# Vektrr (beta)
 
-A mobile-first web app for people in India who hold several loans and credit cards. They add their debts, see the whole picture, get a ranked answer to "what should my next rupee do?", and check loan charges against RBI rules. "Repayment Optimiser" is a working name; keep it in one constant (`APP_NAME`) so it is easy to change.
+A mobile-first web app for people in India who hold several loans and credit cards. They add their debts, see the whole picture, get a ranked answer to "what should my next rupee do?", and check loan charges against RBI rules. The app is called Vektrr; the name lives in one constant (`APP_NAME`), so use that rather than typing it.
 
 Read these before any non-trivial change:
 

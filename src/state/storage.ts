@@ -3,9 +3,11 @@ import type { PersistStorage, StorageValue } from 'zustand/middleware'
 export interface SafeStorage<S> extends PersistStorage<S, void> {
   /** False when the browser blocks storage (private mode, disabled site data). */
   readonly available: boolean
+  /** Move a value saved under an old key name to `to`, unless `to` already holds one. */
+  moveItem: (from: string, to: string) => void
 }
 
-const PROBE_KEY = 'ro:probe'
+const PROBE_KEY = 'vektrr:probe'
 
 /**
  * localStorage for the persist middleware, with every read and write wrapped in try/catch.
@@ -62,6 +64,17 @@ export function createSafeStorage<S>(getBacking: () => Storage, onUnavailable: (
       if (!backing) return
       try {
         backing.removeItem(name)
+      } catch {
+        fail()
+      }
+    },
+    moveItem(from, to) {
+      if (!backing) return
+      try {
+        const old = backing.getItem(from)
+        if (old === null) return
+        if (backing.getItem(to) === null) backing.setItem(to, old)
+        backing.removeItem(from)
       } catch {
         fail()
       }

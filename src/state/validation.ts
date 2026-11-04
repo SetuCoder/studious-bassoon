@@ -7,9 +7,14 @@ export interface DebtFormValues {
   apr?: number
   monthlyPayment?: number
   sanctionedOn?: string
+  // Optional details; checked only when given.
+  originalAmount?: number
+  monthsLeft?: number
+  creditLimit?: number
+  dueDay?: number
 }
 
-export type DebtFormField = 'balance' | 'apr' | 'monthlyPayment' | 'sanctionedOn'
+export type DebtFormField = 'balance' | 'apr' | 'monthlyPayment' | 'sanctionedOn' | 'originalAmount' | 'monthsLeft' | 'creditLimit' | 'dueDay'
 
 export interface DebtValidation {
   errors: Partial<Record<DebtFormField, string>>
@@ -25,6 +30,12 @@ export function validateDebt(v: DebtFormValues, today: string = localToday()): D
   if (!isNum(v.apr) || v.apr < 0 || v.apr > 60) errors.apr = 'Enter the yearly rate, for example 13 or 42'
   if (!isNum(v.monthlyPayment) || v.monthlyPayment <= 0) errors.monthlyPayment = 'Enter what you pay each month'
   if (v.sanctionedOn && v.sanctionedOn > today) errors.sanctionedOn = 'That date is in the future'
+  if (v.originalAmount !== undefined && !(v.originalAmount > 0)) errors.originalAmount = 'Enter the amount you first borrowed'
+  if (v.monthsLeft !== undefined && !(Number.isInteger(v.monthsLeft) && v.monthsLeft >= 1 && v.monthsLeft <= 480)) {
+    errors.monthsLeft = 'Enter a number from 1 to 480'
+  }
+  if (v.creditLimit !== undefined && !(v.creditLimit > 0)) errors.creditLimit = 'Enter the card’s limit'
+  if (v.dueDay !== undefined && !(Number.isInteger(v.dueDay) && v.dueDay >= 1 && v.dueDay <= 31)) errors.dueDay = 'Enter a day from 1 to 31'
 
   const result: DebtValidation = { errors }
   if (!errors.balance && !errors.apr && !errors.monthlyPayment

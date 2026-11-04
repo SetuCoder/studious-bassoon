@@ -6,8 +6,8 @@ interface DayFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'val
   hint?: ReactNode
   /** Replaces the hint when set. */
   error?: string
-  /** "rupees": whole rupees, Indian grouping as you type. "rate": % a year. "text" and "date" as typed. */
-  kind: 'rupees' | 'rate' | 'text' | 'date'
+  /** "rupees": whole rupees, Indian grouping as you type. "rate": % a year. "count": a small whole number. "text" and "date" as typed. */
+  kind: 'rupees' | 'rate' | 'count' | 'text' | 'date'
   /** Digits only for rupees; the typed text otherwise. */
   value: string
   onChange: (value: string) => void
@@ -31,20 +31,20 @@ export function DayField({ label, hint, error, kind, value, onChange, ...rest }:
         className={`flex h-14 items-center gap-2 rounded-2xl bg-white px-4 focus-within:outline-2 focus-within:outline-aubergine ${
           error ? 'outline-2 outline-brick' : ''
         }`}
-        style={{ boxShadow: '0 3px 0 0 #C5CCD3' }}
+        style={{ boxShadow: '0 3px 0 0 var(--color-silver-line)' }}
       >
         {kind === 'rupees' && <span aria-hidden="true" className="text-lg font-bold text-plum-muted">₹</span>}
         <input
           id={id}
           type={kind === 'date' ? 'date' : 'text'}
-          inputMode={kind === 'rupees' ? 'numeric' : kind === 'rate' ? 'decimal' : undefined}
+          inputMode={kind === 'rupees' || kind === 'count' ? 'numeric' : kind === 'rate' ? 'decimal' : undefined}
           autoComplete="off"
           aria-describedby={note ? noteId : undefined}
           aria-invalid={error ? true : undefined}
           value={shown}
           onChange={(e) => {
             const v = e.target.value
-            onChange(kind === 'rupees' ? rupeeDigits(v) : kind === 'rate' ? rateText(v) : v)
+            onChange(kind === 'rupees' ? rupeeDigits(v) : kind === 'rate' ? rateText(v) : kind === 'count' ? rupeeDigits(v).slice(0, 3) : v)
           }}
           className={`w-full min-w-0 bg-transparent text-aubergine caret-aubergine outline-none placeholder:text-plum-muted/70 ${
             kind === 'text' || kind === 'date' ? 'text-[17px] font-medium' : 'text-[22px] font-extrabold tracking-[-0.02em]'
@@ -65,7 +65,8 @@ interface DaySelectProps<T extends string> {
   hint?: ReactNode
   value: T | ''
   onChange: (value: T) => void
-  options: readonly (readonly [T, string])[]
+  /** [value, label], or [value, label, true] for a choice shown but not available yet. */
+  options: readonly (readonly [T, string, boolean?])[]
   /** Shown while nothing is chosen. */
   placeholder?: string
 }
@@ -84,10 +85,10 @@ export function DaySelect<T extends string>({ label, hint, value, onChange, opti
           value={value}
           onChange={(e) => onChange(e.target.value as T)}
           className="h-14 w-full appearance-none rounded-2xl bg-white pr-11 pl-4 text-[17px] font-semibold text-aubergine focus:outline-2 focus:outline-aubergine"
-          style={{ boxShadow: '0 3px 0 0 #C5CCD3' }}
+          style={{ boxShadow: '0 3px 0 0 var(--color-silver-line)' }}
         >
           {placeholder && <option value="" disabled>{placeholder}</option>}
-          {options.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+          {options.map(([v, l, off]) => <option key={v} value={v} disabled={off}>{l}</option>)}
         </select>
         <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"
           className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2">

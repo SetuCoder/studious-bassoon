@@ -6,7 +6,7 @@ The wireframes are low-fidelity on purpose: grey boxes, real words. Build the st
 
 ## Design language: Marigold
 
-Chosen 27 October 2026 from the team's inspiration board. All twelve Milestone 1 screens are built in it. Surfaces by purpose: money moments (debts overview, next-rupee results and detail, the charge verdict, Home's hero) on the aubergine night surface; forms, questions and settings on calm ice silver.
+Chosen 27 October 2026 from the team's inspiration board. All twelve Milestone 1 screens are built in it. Surfaces by purpose: money moments (debts overview, next-rupee results and detail, the charge verdict, Home's hero) on the aubergine night surface; forms, questions and settings on calm, slightly warm silver.
 
 **Palette** (tokens in `src/index.css`):
 
@@ -14,8 +14,9 @@ Chosen 27 October 2026 from the team's inspiration board. All twelve Milestone 1
 | --- | --- | --- |
 | `aubergine` | #3A0F34 | Ink for all text; the "night" surface money moments sit on |
 | `marigold` | #EAAA00 | The one action per screen, the answer's highlights, stamps, petals |
-| `silver` | #DDE3E8 | Calm reading ground |
-| `ice` | #F1F4F6 | Text on aubergine; the hero result slab |
+| `silver` | #E5E4DF | Calm reading ground: silver with a mild hint of cream (was #DDE3E8 until November 2026) |
+| `ice` | #F5F4F0 | Text on aubergine; the hero result slab (was #F1F4F6) |
+| `silver-line`, `ice-edge` | #CFCCC4, #A9A49A | Raised edges under white fields and ice slabs |
 | `mauve` | #CDB9C9 | Secondary text on aubergine |
 | `plum-muted` | #5A4558 | Secondary text on silver or white |
 
@@ -24,6 +25,15 @@ Contrast rule: marigold is never text on a light ground (2:1). It is a fill unde
 **Type:** Schibsted Grotesk (self-hosted, variable 400–900). Answers at 900 with tight tracking (−0.04 to −0.05em). Display figures use normal digits: the font's tabular setting widens commas, which breaks Indian grouping. Tabular digits only in tables.
 
 **Material:** raised slabs and pills with a hard offset shadow as their thickness (`shadow-slab`); pressing pushes them down onto it. Large radii (24–28px) on slabs, full pills on buttons.
+
+**Atmosphere** (`src/index.css`). The inspiration board never shows a flat fill: light blooms through the colour, marigold burns to orange at its edges, and everything sits under film grain. The same six hexes, given light and texture:
+- `surface-night`: aubergine lit by a marigold glow at the top right and an ember on the left, deepening to aubergine-deep at the bottom. `NightScreen` and Home's top band use it.
+- `surface-day`: ice settling into silver with a faint marigold warmth in one corner. `DayScreen`, Home and Welcome use it.
+- `bloom`: a halo of marigold light under the one answer figure on a screen (Debts total, Home total, option detail, charge verdict), the same light as under the marigold buttons. Saturated and low, below the digits: thin warm colour over aubergine turns brown. Soft radial gradients only: no blur filter, no text-shadow (the rolling digits clip shadows into boxes).
+- Film grain over everything (`body::after`), off when the phone asks for reduced transparency.
+- Gloss: marigold buttons are a lit gradient with a highlight edge and a warm glow under the slab shadow; ice slabs (`gloss-ice`) and raised aubergine slabs catch light on their top edge.
+- `eyebrow`: the board's small letter-spaced captions, for labels like "TOTAL OWED", never sentences.
+- Sticky headers are translucent and blurred, fading out at their bottom edge.
 
 **Motion** (Motion for React, presets in `src/ui/motion.ts`). One set of springs everywhere. Each money screen has one ritual:
 - the answer figure arrives with the motion smear (`SmearIn`) and its digits roll in (`Odometer`);

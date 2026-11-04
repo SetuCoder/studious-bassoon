@@ -41,7 +41,7 @@ export function OptionDetail() {
   return (
     <NightScreen title={optionName(option.id, input.assumedReturn)} backTo="/plan/results">
       <div>
-        <SmearIn ghost={delta} delay={0.1} className="text-[56px] leading-none font-black tracking-[-0.05em]">
+        <SmearIn ghost={delta} delay={0.1} className="bloom text-[56px] leading-none font-black tracking-[-0.05em]">
           <Odometer value={delta} delay={0.2} />
         </SmearIn>
         <p className="mt-2 text-[15px] text-mauve">better off after {HORIZON_MONTHS} months than keeping it in savings</p>

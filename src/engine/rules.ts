@@ -127,10 +127,12 @@ export interface ChargeCheckResult {
   coverage: CoverageResult
   /** Same order as the lines */
   results: ChargeLineResult[]
-  /** Σ "doesn't add up" lines, GST included */
+  /** Σ "doesn't add up" lines, plus 18% GST when the quote charges GST */
   flaggedTotal: number
-  /** Σ "ask the lender" lines, GST included */
+  /** Σ "ask the lender" lines, plus 18% GST when the quote charges GST */
   toConfirmTotal: number
+  /** Whether the quote has a GST line, so the totals include GST */
+  withGst: boolean
 }
 
 export function checkCharges(answers: ChargeCheckAnswers, lines: readonly ChargeLine[], sanctionedOn?: string): ChargeCheckResult {
@@ -160,13 +162,17 @@ export function checkCharges(answers: ChargeCheckAnswers, lines: readonly Charge
     }
   })
 
-  const totalWithGst = (status: ChargeStatus) =>
-    lines.reduce((s, l, i) => (statuses[i] === status ? s + l.amount : s), 0) * (1 + GST_RATE)
+  // GST only comes off with a charge if the quote charged GST in the first place. Without a GST
+  // line, adding 18% would overstate what may not be allowed.
+  const withGst = lines.some((l) => l.kind === 'gst')
+  const total = (status: ChargeStatus) =>
+    lines.reduce((s, l, i) => (statuses[i] === status ? s + l.amount : s), 0) * (withGst ? 1 + GST_RATE : 1)
 
   return {
     coverage,
     results,
-    flaggedTotal: totalWithGst('doesnt_add_up'),
-    toConfirmTotal: totalWithGst('ask_lender'),
+    flaggedTotal: total('doesnt_add_up'),
+    toConfirmTotal: total('ask_lender'),
+    withGst,
   }
 }
