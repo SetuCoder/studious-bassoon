@@ -17,14 +17,14 @@ Treat this file as the product's reading of the rule, not legal advice. Re-check
 
 ## Questionnaire (screen 09)
 
-One question per screen. Pre-fill from the debt where known; the user can change answers.
+Pre-fill from the debt where known; the user can change answers. Questions 2–4 share one screen (see `beta-spec.md` 09 for the screens and their wording).
 
-1. **Which loan?** Pick from loans in the ledger (not cards or BNPL; the rule is about loans).
-2. **Fixed or floating rate?** Fixed / Floating / Not sure.
-3. **Sanctioned or renewed on or after 1 January 2026?** Yes / No / Not sure (pre-filled from `sanctionedOn`).
+1. **Which loan?** Pick from loans in the ledger (not cards or BNPL; the rule is about loans). Skipped when the link or a single loan decides it.
+2. **Fixed or floating rate?** Floating / Fixed / Not sure.
+3. **Sanctioned or renewed on or after 1 January 2026?** Shown as "In 2026 or later" / "Before 2026" / "Not sure" (pre-filled from `sanctionedOn`).
 4. **Personal or business use?** Personal / Business / Not sure.
-   - 4a, only if Business: **Who lent it?** (lender type list in `data-model.md`) and **Was the sanctioned amount ₹50 lakh or less?**
-5. **Which charges are on the quote?** For each line: type (foreclosure charge, prepayment fee, admin or documentation fee, other, GST), amount, and "Is it listed in your sanction letter or Key Facts Statement?" Yes / No / Not sure.
+   - 4a, only if Business: **Who lent it?** (lender type list in `data-model.md`) and **Was the sanctioned amount ₹50 lakh or less?** (pre-filled from `originalAmount` when the debt has one).
+5. **Which charges are on the quote?** For each line: type (foreclosure, prepayment fee, admin fee, GST, something else), amount, and "Is this charge written in your loan papers?" (the sanction letter or Key Facts Statement) Yes / No / Not sure.
 
 ## Is the loan covered? (`isCovered`)
 

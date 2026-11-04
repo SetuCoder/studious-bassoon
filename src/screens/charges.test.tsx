@@ -24,11 +24,11 @@ async function next(user: User) {
   await user.click(screen.getByRole('button', { name: 'Next' }))
 }
 
-/** Fill charge line `n` (1-based) on question 5, adding it first if needed. */
+/** Fill charge line `n` (1-based) on the charges step, adding it first if needed. */
 async function charge(user: User, n: number, kind: string, amount: string, disclosed?: 'Yes' | 'No' | 'Not sure') {
   if (n > 1) await user.click(screen.getByRole('button', { name: '+ Add another charge' }))
   const line = screen.getByRole('listitem', { name: `Charge ${n}` })
-  await user.selectOptions(within(line).getByLabelText('Type of charge'), kind)
+  await user.click(within(within(line).getByRole('radiogroup', { name: 'Type of charge' })).getByRole('radio', { name: kind }))
   await user.type(within(line).getByLabelText('Amount'), amount)
   if (disclosed) await user.click(within(line).getByRole('radio', { name: disclosed }))
 }
@@ -41,28 +41,28 @@ beforeEach(() => {
 })
 
 describe('09 charge check questions → 10 result', () => {
-  it('flags the personal-loan quote like the fixture and drafts the lender message', async () => {
+  it('explains itself first, pre-fills the loan, then flags the quote like the fixture', async () => {
     const user = renderAt(`/charges?debt=${ids.personal}`)
     expect(screen.queryByRole('navigation', { name: 'Main' })).not.toBeInTheDocument()
-    expect(screen.getByText('Question 1 of 5')).toBeInTheDocument()
-    expect(screen.getByRole('radio', { name: /Personal loan/ })).toHaveAttribute('aria-checked', 'true')
-    expect(screen.queryByRole('radio', { name: /Credit card/ })).not.toBeInTheDocument()
-    await next(user)
+    expect(screen.getByRole('heading', { name: 'Make sure you’re not overcharged.' })).toBeInTheDocument()
+    expect(screen.getByText('You’ll need the closing quote')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Start the check' }))
 
-    // Questions 2–4 come pre-filled from the ledger.
+    // The loan was chosen by the link, so its details come next, pre-filled from the ledger.
+    expect(screen.getByText('Step 1 of 2')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'About your Personal loan' })).toBeInTheDocument()
     expect(screen.getByRole('radio', { name: 'Floating' })).toHaveAttribute('aria-checked', 'true')
-    expect(screen.getByText('The RBI rule on prepayment charges only covers floating-rate loans.')).toBeInTheDocument()
-    await next(user)
-    expect(screen.getByText('Your debt details say 14 March 2026.')).toBeInTheDocument()
-    expect(screen.getByRole('radio', { name: 'Yes' })).toHaveAttribute('aria-checked', 'true')
-    await next(user)
+    expect(screen.getByText('Your debt details say 14 March 2026. The rule covers loans from 1 January 2026.')).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: 'In 2026 or later' })).toHaveAttribute('aria-checked', 'true')
     expect(screen.getByRole('radio', { name: 'Personal' })).toHaveAttribute('aria-checked', 'true')
     await next(user)
 
+    expect(screen.getByText('Step 2 of 2')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Check the charges' })).toBeDisabled()
-    await charge(user, 1, 'Foreclosure charge', '6300', 'Yes')
+    expect(screen.getByText('A fee for closing the whole loan early. Often 2–5% of what’s left.')).toBeInTheDocument()
+    await charge(user, 1, 'Foreclosure', '6300', 'Yes')
     await charge(user, 2, 'Prepayment fee', '1500', 'Yes')
-    await charge(user, 3, 'Admin or documentation fee', '750', 'No')
+    await charge(user, 3, 'Admin fee', '750', 'No')
     await charge(user, 4, 'GST', '1539')
     await user.click(screen.getByRole('button', { name: 'Check the charges' }))
 
@@ -96,8 +96,9 @@ describe('09 charge check questions → 10 result', () => {
 
   it('shows the fixed-rate car loan as not covered, with nothing to ask', async () => {
     const user = renderAt(`/charges?debt=${ids.car}`)
-    for (let i = 0; i < 4; i++) await next(user)
-    await charge(user, 1, 'Foreclosure charge', '8400', 'Yes')
+    await user.click(screen.getByRole('button', { name: 'Start the check' }))
+    await next(user)
+    await charge(user, 1, 'Foreclosure', '8400', 'Yes')
     await charge(user, 2, 'GST', '1512')
     await user.click(screen.getByRole('button', { name: 'Check the charges' }))
 
@@ -109,7 +110,7 @@ describe('09 charge check questions → 10 result', () => {
 
   it('asks who lent it, and whether it was up to ₹50 lakh, for business loans', async () => {
     const user = renderAt(`/charges?debt=${ids.personal}`)
-    for (let i = 0; i < 3; i++) await next(user)
+    await user.click(screen.getByRole('button', { name: 'Start the check' }))
     await user.click(screen.getByRole('radio', { name: 'Business' }))
     expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
     await user.selectOptions(screen.getByLabelText('Who lent it?'), 'Small finance bank')
@@ -117,17 +118,27 @@ describe('09 charge check questions → 10 result', () => {
     expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
   })
 
-  it('steps back through the questions with the back arrow', async () => {
+  it('steps back through the screens with the back arrow', async () => {
     const user = renderAt(`/charges?debt=${ids.personal}`)
+    await user.click(screen.getByRole('button', { name: 'Start the check' }))
     await next(user)
-    expect(screen.getByText('Question 2 of 5')).toBeInTheDocument()
+    expect(screen.getByText('Step 2 of 2')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Back' }))
-    expect(screen.getByText('Question 1 of 5')).toBeInTheDocument()
+    expect(screen.getByText('Step 1 of 2')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Back' }))
+    expect(screen.getByRole('button', { name: 'Start the check' })).toBeInTheDocument()
   })
 
-  it('needs a loan to be picked when there are several', () => {
-    renderAt('/charges')
+  it('asks which loan when there are several, and skips the explainer after the first check', async () => {
+    act(() => { appStore.getState().saveChargeCheck(buildChargeCheck(SAMPLE_DEBTS[0], { lines: [] })) })
+    const user = renderAt('/charges')
+    expect(screen.getByText('Step 1 of 3')).toBeInTheDocument()
+    expect(screen.queryByRole('radio', { name: /Credit card/ })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+    await user.click(screen.getByRole('radio', { name: /Car loan/ }))
+    await next(user)
+    expect(screen.getByRole('heading', { name: 'About your Car loan' })).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: 'Fixed' })).toHaveAttribute('aria-checked', 'true')
   })
 
   it('says the check is for loans when there are only cards', () => {
@@ -139,9 +150,9 @@ describe('09 charge check questions → 10 result', () => {
     expect(screen.getByText('The charge check is for loans. Add a loan to check its closing quote.')).toBeInTheDocument()
   })
 
-  it('goes back to the questions for an unknown check', () => {
+  it('goes back to the check for an unknown result', () => {
     renderAt('/charges/nope')
-    expect(screen.getByText('Question 1 of 5')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Start the check' })).toBeInTheDocument()
   })
 })
 

@@ -7,7 +7,7 @@ import type {
 } from '../../engine/types'
 import { CHARGE_KIND_LABELS } from '../../lib/chargeLabels'
 
-/** One charge line as typed on question 5. */
+/** One charge line as typed on the charges step. */
 export interface ChargeLineForm {
   key: number
   kind: ChargeKind
@@ -38,7 +38,7 @@ export function checkableLoans<T extends EngineDebt>(debts: readonly T[]): T[] {
   return debts.filter((d) => isLoan(d.type) && !d.paidOffOn)
 }
 
-/** Pre-fill questions 2–4 from what the ledger knows about the loan. */
+/** Pre-fill the loan questions from what the debt's details already say. */
 export function prefillFromDebt(form: ChargeCheckForm, debt: EngineDebt): ChargeCheckForm {
   return {
     ...form,
@@ -53,15 +53,23 @@ export function lineIsComplete(l: ChargeLineForm): boolean {
   return Number(l.amount) > 0 && (l.kind === 'gst' || l.disclosed !== undefined)
 }
 
-/** Whether question `step` (1–5) has an answer, so Next can go on. */
-export function stepIsAnswered(form: ChargeCheckForm, step: number): boolean {
+/** The check's screens: what it is (first check only), which loan (when there's a choice), the loan, the charges. */
+export type ChargeStep = 'intro' | 'loan' | 'about' | 'charges'
+
+/** The steps this person sees, in order. */
+export function chargeSteps({ firstCheck, loanChosen }: { firstCheck: boolean; loanChosen: boolean }): ChargeStep[] {
+  return [...(firstCheck ? ['intro' as const] : []), ...(loanChosen ? [] : ['loan' as const]), 'about', 'charges']
+}
+
+/** Whether `step` has its answers, so Next can go on. */
+export function stepIsAnswered(form: ChargeCheckForm, step: ChargeStep): boolean {
   switch (step) {
-    case 1: return !!form.debtId
-    case 2: return !!form.rateType
-    case 3: return !!form.sanctionedOnOrAfter2026
-    case 4: return !!form.purpose && (form.purpose !== 'business' || (!!form.lenderType && !!form.sanctionedAmountUpTo50L))
-    case 5: return form.lines.length > 0 && form.lines.every(lineIsComplete)
-    default: return false
+    case 'intro': return true
+    case 'loan': return !!form.debtId
+    case 'about':
+      return !!form.rateType && !!form.sanctionedOnOrAfter2026 && !!form.purpose
+        && (form.purpose !== 'business' || (!!form.lenderType && !!form.sanctionedAmountUpTo50L))
+    case 'charges': return form.lines.length > 0 && form.lines.every(lineIsComplete)
   }
 }
 

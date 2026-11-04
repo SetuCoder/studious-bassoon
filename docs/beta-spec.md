@@ -98,9 +98,12 @@ Each waits for its screen's entrance to finish before dimming.
 - **Done** → Home. M2 adds **Save as my plan**.
 
 ### 09 Charge check, questions
-- One question per screen with a progress bar ("Question 2 of 5"), Back and Next. Questions and pre-fills in `docs/rules.md`.
-- Step 5 lets the user add charge lines (type, amount, disclosed?) with "+ Add another charge". At least one line is required.
-- "Why we ask" box on the rate question: "The RBI rule on prepayment charges only covers floating-rate loans."
+Written for someone who has never heard of a closing quote. Questions and pre-fills in `docs/rules.md`.
+- **Explainer** (the person's first check only): "Make sure you're not overcharged.", what a closing quote is and that RBI bars many closing charges since 2026, a night card "What you get" (a verdict per charge, how much may not be allowed, a message for the lender), and "You'll need the closing quote" (also called a foreclosure letter or closure statement; where to ask for it). **Start the check**.
+- **Which loan are you closing?** Only when there are several loans and none was chosen by the link.
+- **About your {loan}**: the three things the rule depends on, on one screen, each with a line on why it matters, pre-filled from the debt's details.
+- **What charges are on the quote?** Charge lines: the type as chips (Foreclosure, Prepayment fee, Admin fee, GST, Something else) with a one-line explanation of the chosen one, the amount, and "Is this charge written in your loan papers?" (explained as the sanction letter or Key Facts Statement). "+ Add another charge". At least one line is required.
+- Progress reads "Step 1 of 2" (the explainer isn't counted). Back steps through the screens.
 
 ### 10 Charge check, result
 - Summary: "₹{flaggedTotal} of charges on this quote may not be allowed" and "₹{toConfirmTotal} more to confirm with the lender" (each line hidden when 0).

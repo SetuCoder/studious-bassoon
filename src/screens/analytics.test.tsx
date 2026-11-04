@@ -132,9 +132,10 @@ describe('charge check', () => {
   it('sends the verdict as counts, then the copy and the share', async () => {
     const user = renderAt(`/charges?debt=${ids.personal}`)
     await expectSent('charge_check_started', { entry: 'tab' })
-    for (let i = 0; i < 4; i++) await user.click(screen.getByRole('button', { name: 'Next' }))
-    await addCharge(user, 1, 'Foreclosure charge', '6300', 'Yes')
-    await addCharge(user, 2, 'Admin or documentation fee', '750', 'No')
+    await user.click(screen.getByRole('button', { name: 'Start the check' }))
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+    await addCharge(user, 1, 'Foreclosure', '6300', 'Yes')
+    await addCharge(user, 2, 'Admin fee', '750', 'No')
     await addCharge(user, 3, 'GST', '1539')
     await user.click(screen.getByRole('button', { name: 'Check the charges' }))
     await expectSent('charge_check_completed', { covered: 'yes', flag_count: 1, ask_count: 1, line_count: 3 })
@@ -149,7 +150,7 @@ describe('charge check', () => {
 async function addCharge(user: User, n: number, kind: string, amount: string, disclosed?: 'Yes' | 'No') {
   if (n > 1) await user.click(screen.getByRole('button', { name: '+ Add another charge' }))
   const line = screen.getByRole('listitem', { name: `Charge ${n}` })
-  await user.selectOptions(within(line).getByLabelText('Type of charge'), kind)
+  await user.click(within(within(line).getByRole('radiogroup', { name: 'Type of charge' })).getByRole('radio', { name: kind }))
   await user.type(within(line).getByLabelText('Amount'), amount)
   if (disclosed) await user.click(within(line).getByRole('radio', { name: disclosed }))
 }
