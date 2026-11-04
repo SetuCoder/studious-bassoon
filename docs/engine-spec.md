@@ -20,6 +20,9 @@ For the list of active debts (not paid off):
 - `shareOfTakeHome = monthlyPayments / takeHomeMonthly` (only if take-home is set)
 - `interestThisMonth = Σ balance × apr / 1200`
 - `weightedApr = Σ (balance × apr) / totalOwed`
+- `principalThisMonth = max(0, monthlyPayments − interestThisMonth)`
+- `interestShareOfPayments = min(1, interestThisMonth / monthlyPayments)` (0 when nothing is paid)
+- Per debt: `monthlyInterest = balance × apr / 1200`; `cardUsage = balance / creditLimit`; `repaidShare = clamp(1 − balance / originalAmount, 0, 1)`
 - `sortedByCost`: debts sorted by `apr` descending; ties by larger balance first. The first one is labelled "costs the most".
 
 ## 2. EMI helper (`pmt`)
@@ -34,6 +37,8 @@ Used only to build test fixtures and as a suggestion; in the app, the user enter
 - If `r = 0`: `months = B / A`.
 - If `A ≤ r × B`: return `{ never: true }`. The UI says "This payment doesn't cover the monthly interest, so the balance grows."
 - Round up to whole months for display ("about 20 months").
+
+**Debt-free projection** (`projectDebtFree`, Home): run `simulate` on the active debts with no lump sum for up to 600 months. Same rules as the options: the total paid each month stays fixed, and a payment freed by a cleared debt goes to the costliest debt left. `months` is the month the last debt clears (undefined if any doesn't clear within 600 months); `firstCleared` is the debt that clears soonest. The sample borrower: debt-free in 90 months, buy-now-pay-later first in 4.
 
 ## 4. Month-by-month simulation (`simulate.ts`)
 

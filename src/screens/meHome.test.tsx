@@ -26,12 +26,38 @@ beforeEach(() => {
 })
 
 describe('12 Home (M1)', () => {
+  it('greets by name once it is known', () => {
+    act(() => appStore.getState().setName('Riya'))
+    renderAt('/')
+    expect(screen.getByRole('heading', { name: /^Good (morning|afternoon|evening), Riya$/ })).toBeInTheDocument()
+  })
+
+  it('shows where you stand, when you are debt-free, where the payment goes, and the top debts', () => {
+    renderAt('/')
+    expect(screen.getByRole('heading', { name: /^Good (morning|afternoon|evening)$/ })).toBeInTheDocument()
+    expect(screen.getByText('Across 6 debts')).toBeInTheDocument()
+    expect(screen.getByText('Average rate').nextSibling).toHaveTextContent('9.9%')
+
+    const free = within(screen.getByRole('region', { name: 'Debt-free' }))
+    expect(free.getByText(/^by [A-Z][a-z]+ \d{4}$/)).toBeInTheDocument()
+    expect(free.getByText(/In about 7 years 6 months, if you keep paying ₹69,771 a month/)).toBeInTheDocument()
+    expect(free.getByText('Buy now, pay later')).toBeInTheDocument()
+
+    const split = within(screen.getByRole('region', { name: 'This month’s payments' }))
+    expect(split.getByText('54% goes to interest')).toBeInTheDocument()
+    expect(split.getByText('Pays down what you owe').nextSibling).toHaveTextContent('₹32,341')
+
+    const top = within(screen.getByRole('region', { name: 'Your debts, costliest first' }))
+    expect(top.getAllByRole('listitem')).toHaveLength(3)
+    expect(top.getByRole('link', { name: 'See all 6 debts' })).toHaveAttribute('href', '/debts')
+  })
+
   it('shows the total, the focus and the to-do list', async () => {
     const user = renderAt('/')
     expect(screen.getByText('₹45,55,000')).toBeInTheDocument() // the rolling total; screen readers hear "₹45,55,000 owed"
     expect(screen.getByText('owed')).toBeInTheDocument()
-    expect(screen.getByText('₹69,771')).toBeInTheDocument()
-    expect(screen.getByText('₹37,430')).toBeInTheDocument()
+    expect(screen.getAllByText('₹69,771')).not.toHaveLength(0)
+    expect(screen.getAllByText('₹37,430')).not.toHaveLength(0)
     expect(screen.getByText('Credit card 1, at 42%: about ₹2,975 in interest this month.')).toBeInTheDocument()
     expect(screen.queryByText(/should go there first/)).not.toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'See where extra money helps most' })).toHaveAttribute('href', '/plan')

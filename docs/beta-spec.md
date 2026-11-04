@@ -76,7 +76,7 @@ Each waits for its screen's entrance to finish before dimming.
 - **Save debt** → 04. **Upload a statement instead** → fake-door sheet.
 
 ### 03 Debts, empty
-- Placeholder illustration, "No debts added yet", body copy, optional **Monthly take-home pay** field (saved on blur), **Add your first debt** → 02.
+- Placeholder illustration, "No debts added yet", body copy, optional **Your first name** (for Home's greeting) and **Monthly take-home pay** fields (saved on blur), **Add your first debt** → 02.
 
 ### 04 Debts overview
 - Stat tiles: Total owed, Paid each month, Share of take-home (hidden if no take-home), Interest this month.
@@ -131,7 +131,10 @@ Written for someone who has never heard of a closing quote. Questions and pre-fi
 - About: version, "Shows the cost of each option. Not financial advice." and "Charge checks are a guide to what to ask, not legal advice."
 
 ### 12 Home (M1 version)
-- "₹{totalOwed} owed", stat tiles (Paid each month, Interest this month).
+- Night band: "Good morning" (or afternoon, evening), with the first name in marigold on its own line when it's known (asked on 03 and on Me, optional). "₹{totalOwed} owed", "Across {n} debts", and four tiles: Paid each month, Interest this month, Average rate (weighted by balance), Of your take-home (or the number of debts when take-home isn't set).
+- "Debt-free by {Month Year}": "In about {x years y months}, if you keep paying ₹{monthlyPayments} a month and each payment that frees up goes to the costliest debt left." Then "First to clear: {debt}, in about {n months}." When a debt never clears: "Not at today's payments".
+- "This month's payments": "{x}% goes to interest", a bar, and the split in rupees (Interest; Pays down what you owe).
+- "Your debts, costliest first": the top three, each opening its page, and **See all {n} debts** → 04.
 - Focus box "Costs you the most": "{costliest debt}, at {apr}%: about ₹{its interest this month} in interest this month." with **See where extra money helps most** → 06. A fact, not a recommendation: whether extra money should go there depends on the comparison (an assumed return can beat a cheap loan).
 - "Needs your attention" list built from data: no take-home set → "Add your take-home pay"; any loan without rate type or sanction date → "Complete {loan} for the charge check"; always → "Bonus or extra cash coming? See what it should do" → 06.
 - M2 adds: progress since start, debts cleared, saved so far, check-in reminder, open lender questions.
@@ -155,7 +158,7 @@ Follow the Figma screens and their notes. Key behaviours:
 
 ## Demo mode
 
-For live demos, any build accepts `?demo`: it loads the sample borrower from `docs/reference/engine-fixtures.json` plus a saved check of the fixture's personal-loan closing quote, and opens Debts. `?demo=charge` opens that saved check (loading the demo first if needed). If the browser holds someone's own debts, the app asks before replacing them and changes nothing on "Cancel". The dev server also keeps `?sample` (borrower only, opens Plan).
+For live demos, any build accepts `?demo`: it loads the sample borrower from `docs/reference/engine-fixtures.json` (named Riya, with the two cards shown as HDFC Infinia and Axis Magnus, with limits and due dates; the numbers are the fixture's) plus a saved check of the fixture's personal-loan closing quote, and opens Debts. `?demo=charge` opens that saved check (loading the demo first if needed). If the browser holds someone's own debts, the app asks before replacing them and changes nothing on "Cancel". The dev server also keeps `?sample` (borrower only, opens Plan).
 
 ## Definition of done for M1
 

@@ -101,6 +101,14 @@ describe('app store', () => {
     expect(localStorage.getItem(STORAGE_KEY)).not.toBeNull()
   })
 
+  it('keeps a trimmed first name, and clears it when blank', () => {
+    const store = makeStore()
+    store.getState().setName('  Riya ')
+    expect(store.getState().profile.name).toBe('Riya')
+    store.getState().setName('   ')
+    expect(store.getState().profile.name).toBeUndefined()
+  })
+
   it('clears take-home when it is emptied', () => {
     const store = makeStore()
     store.getState().setTakeHome(145000)

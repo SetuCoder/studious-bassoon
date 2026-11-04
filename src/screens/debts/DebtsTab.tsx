@@ -44,6 +44,9 @@ function DebtsEmpty() {
   const saved = useAppStore((s) => s.profile.takeHomeMonthly)
   const setTakeHome = useAppStore((s) => s.setTakeHome)
   const [takeHome, setTakeHomeText] = useState(saved ? String(saved) : '')
+  const savedName = useAppStore((s) => s.profile.name)
+  const setName = useAppStore((s) => s.setName)
+  const [name, setNameText] = useState(savedName ?? '')
   const reduce = useReducedMotion()
 
   return (
@@ -62,6 +65,16 @@ function DebtsEmpty() {
           Add your first loan or card. It takes about 30 seconds, and nothing leaves your phone.
         </p>
       </div>
+      <DayField
+        kind="text"
+        label="Your first name (optional)"
+        hint="So Home can say hello"
+        autoComplete="given-name"
+        maxLength={30}
+        value={name}
+        onChange={setNameText}
+        onBlur={() => setName(name)}
+      />
       <div data-tour="take-home">
       <DayField
         kind="rupees"

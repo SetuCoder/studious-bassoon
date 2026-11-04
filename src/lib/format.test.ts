@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatDate, formatDelta, formatINR, formatRate, formatShare, groupDigits, rateText, rupeeDigits } from './format'
+import { formatDate, formatDelta, formatDuration, formatINR, formatRate, formatShare, groupDigits, monthYearAfter, rateText, rupeeDigits } from './format'
 
 describe('formatINR', () => {
   it('uses Indian digit grouping and no decimals', () => {
@@ -45,5 +45,20 @@ describe('formatDelta', () => {
     expect(formatDelta(55727.66)).toBe('+₹55,728')
     expect(formatDelta(0.3)).toBe('₹0')
     expect(formatDelta(-1200)).toBe('−₹1,200')
+  })
+})
+
+describe('monthYearAfter and formatDuration', () => {
+  it('names the month a number of months ahead', () => {
+    expect(monthYearAfter(90, new Date(2026, 10, 5))).toBe('May 2034')
+    expect(monthYearAfter(2, new Date(2026, 10, 30))).toBe('January 2027')
+  })
+
+  it('says a duration in years and months', () => {
+    expect(formatDuration(4)).toBe('4 months')
+    expect(formatDuration(1)).toBe('1 month')
+    expect(formatDuration(12)).toBe('1 year')
+    expect(formatDuration(90)).toBe('7 years 6 months')
+    expect(formatDuration(25)).toBe('2 years 1 month')
   })
 })

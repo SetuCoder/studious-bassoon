@@ -42,6 +42,8 @@ export type EngineDebt = Pick<Debt, 'id' | 'name' | 'type' | 'balance' | 'apr' |
 
 export interface Profile {
   takeHomeMonthly?: number
+  /** First name for Home's greeting. Stays on the phone; never in analytics. */
+  name?: string
 }
 
 export interface NextRupeeInput {
