@@ -33,6 +33,8 @@ export function newLine(key: number, kind: ChargeKind = 'foreclosure'): ChargeLi
   return { key, kind, name: '', amount: '' }
 }
 
+const FIFTY_LAKH = 50_00_000
+
 /** Loans only: the RBI rule is about loans, not cards or BNPL. */
 export function checkableLoans<T extends EngineDebt>(debts: readonly T[]): T[] {
   return debts.filter((d) => isLoan(d.type) && !d.paidOffOn)
@@ -46,6 +48,8 @@ export function prefillFromDebt(form: ChargeCheckForm, debt: EngineDebt): Charge
     rateType: debt.rateType,
     sanctionedOnOrAfter2026: debt.sanctionedOn ? (debt.sanctionedOn >= RULE_START_DATE ? 'yes' : 'no') : undefined,
     purpose: debt.purpose,
+    // Only matters for business loans; the debt knows it when the amount borrowed was given.
+    sanctionedAmountUpTo50L: debt.originalAmount ? (debt.originalAmount <= FIFTY_LAKH ? 'yes' : 'no') : undefined,
   }
 }
 

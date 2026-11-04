@@ -38,6 +38,12 @@ interface Debt {
   rateType?: RateType;
   sanctionedOn?: string;      // sanctioned or last renewed, ISO date
   purpose?: 'personal' | 'business' | 'unknown';
+  originalAmount?: number;    // loans: amount first borrowed, > 0
+  lender?: string;            // loans and BNPL: as typed; stays on the phone, never in analytics
+  monthsLeft?: number;        // loans: EMIs left; BNPL: instalments left; whole, 1 to 480
+  // Cards only:
+  creditLimit?: number;       // > 0
+  dueDay?: number;            // day of the month the bill is due, 1 to 31
   createdAt: string;
   updatedAt: string;
   paidOffOn?: string;         // set by "Mark as paid off"
@@ -133,5 +139,9 @@ interface AppData {
 | monthlyPayment | number > 0 | "Enter what you pay each month" |
 | monthlyPayment vs interest | if monthlyPayment ≤ balance × apr / 1200, allow but warn | "This payment doesn't cover the monthly interest, so the balance grows." |
 | sanctionedOn | not in the future | "That date is in the future" |
+| originalAmount (optional) | number > 0 | "Enter the amount you first borrowed" |
+| monthsLeft (optional) | whole, 1 to 480 | "Enter a number from 1 to 480" |
+| creditLimit (optional) | number > 0 | "Enter the card's limit" |
+| dueDay (optional) | whole, 1 to 31 | "Enter a day from 1 to 31" |
 
-Rate hint for credit cards (helper text only, never pre-filled as a value): "Cards are usually 36–45% a year. Check your statement."
+Rate hints per type (helper text only, never pre-filled as a value) are in `beta-spec.md` screen 02.

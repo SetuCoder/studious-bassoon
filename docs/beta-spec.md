@@ -60,8 +60,18 @@ Each waits for its screen's entrance to finish before dimming.
 
 ### 02 Add a debt
 - Type chips: Credit card, Personal loan, Home loan, Car loan, Education loan, BNPL, Gold loan, Other. Default: Credit card.
-- Fields: Name (optional; default "{Type} {n}"), How much do you owe? (₹), Interest rate (% a year), What you pay each month (₹).
-- Loans only (hidden for credit card and BNPL): Fixed / Floating / Not sure chips; Sanctioned or renewed on (date, optional, hint "Needed for the charge check"); Personal / Business use chips.
+- The same four required numbers, worded for the type:
+
+  | | Card | BNPL | Loans |
+  | --- | --- | --- | --- |
+  | Name | Card name | App or store | Name (optional) |
+  | Balance | How much is on the card? | How much is left to pay? | How much is left on the loan? ("principal outstanding") |
+  | Rate | Interest rate (% a year), hint "usually 36–45%… 3–3.75% a month" | Interest or fee rate, hint "Enter 0 if it's interest-free" | Interest rate, with the type's usual range as a hint |
+  | Payment | What you usually pay each month ("Paying only the minimum due? Enter that.") | Monthly instalment | Your EMI (gold loans: "Paying only the interest each month? Enter that.") |
+
+- Default name "{Type} {n}", or "{Lender} {type}" when a loan's lender is given ("SBI home loan").
+- "About this loan" (loans only): Fixed / Floating / Not sure chips; Sanctioned or renewed on (date, optional); Personal / Business use chips (not asked for home and education loans, which are saved as personal).
+- **More details (optional)**, folded on 02 and open on 05: cards: Credit limit, Bill due on (day of the month); BNPL: Instalments left; loans: Lender, Amount you first borrowed, EMIs left. A mistake in them unfolds the section. Each type keeps only its own details when saved.
 - Validation per `docs/data-model.md`. The "payment doesn't cover interest" case is a warning, not a block.
 - **Save debt** → 04. **Upload a statement instead** → fake-door sheet.
 
@@ -75,7 +85,7 @@ Each waits for its screen's entrance to finish before dimming.
 - Buttons: **What should my next rupee do?** → 06. **Check a closing quote** → 09 (only if at least one loan exists). **+ Add another debt** → 02.
 
 ### 05 Debt edit (M1)
-- Same fields as 02, pre-filled. Info box: "At ₹{payment} a month, this clears in about {n} months." (or the never-clears warning) and "Interest this month: ₹{x}".
+- Same fields as 02, pre-filled, More details open. Info box: "At ₹{payment} a month, this clears in about {n} months." (or the never-clears warning) and "Interest this month: ₹{x}". Then, when the details allow: "Using {x}% of your ₹{limit} limit.", "Bill due on the {nth} of each month.", "You've repaid {x}% of the ₹{original} you borrowed.", "Your lender says {n} EMIs left; at this payment we work out about {m}."
 - **Save changes**, **Delete this debt** (confirm first).
 
 ### 06 Next rupee, inputs

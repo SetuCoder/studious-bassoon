@@ -21,6 +21,16 @@ export interface Debt {
   rateType?: RateType
   sanctionedOn?: string
   purpose?: Purpose
+  /** Loans: the amount first borrowed. */
+  originalAmount?: number
+  /** Loans and BNPL: the bank's or app's name, as typed. Never sent anywhere. */
+  lender?: string
+  /** Loans: EMIs left. BNPL: instalments left. As the lender states them. */
+  monthsLeft?: number
+  // Cards only:
+  creditLimit?: number
+  /** Day of the month the bill is due, 1–31. */
+  dueDay?: number
   createdAt: string
   updatedAt: string
   paidOffOn?: string
@@ -28,7 +38,7 @@ export interface Debt {
 
 /** The fields the engine reads. A stored Debt satisfies it. */
 export type EngineDebt = Pick<Debt, 'id' | 'name' | 'type' | 'balance' | 'apr' | 'monthlyPayment'> &
-  Partial<Pick<Debt, 'rateType' | 'sanctionedOn' | 'purpose' | 'paidOffOn'>>
+  Partial<Pick<Debt, 'rateType' | 'sanctionedOn' | 'purpose' | 'paidOffOn' | 'originalAmount'>>
 
 export interface Profile {
   takeHomeMonthly?: number

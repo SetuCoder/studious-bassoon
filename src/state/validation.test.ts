@@ -18,10 +18,20 @@ describe('validateDebt', () => {
     [{ apr: Number.NaN }, 'apr', 'Enter the yearly rate, for example 13 or 42'],
     [{ monthlyPayment: 0 }, 'monthlyPayment', 'Enter what you pay each month'],
     [{ sanctionedOn: '2026-10-23' }, 'sanctionedOn', 'That date is in the future'],
+    [{ originalAmount: 0 }, 'originalAmount', 'Enter the amount you first borrowed'],
+    [{ monthsLeft: 0 }, 'monthsLeft', 'Enter a number from 1 to 480'],
+    [{ monthsLeft: 481 }, 'monthsLeft', 'Enter a number from 1 to 480'],
+    [{ creditLimit: 0 }, 'creditLimit', 'Enter the card’s limit'],
+    [{ dueDay: 32 }, 'dueDay', 'Enter a day from 1 to 31'],
+    [{ dueDay: 0 }, 'dueDay', 'Enter a day from 1 to 31'],
   ] as const)('rejects %o', (patch, field, message) => {
     const v = validateDebt({ ...ok, ...patch }, '2026-10-22')
     expect(v.errors[field]).toBe(message)
     expect(isValid(v)).toBe(false)
+  })
+
+  it('accepts the optional details when they make sense', () => {
+    expect(isValid(validateDebt({ ...ok, originalAmount: 300000, monthsLeft: 30, creditLimit: 150000, dueDay: 31 }, '2026-10-22'))).toBe(true)
   })
 
   it('allows rates of 0 and 60, and a sanction date of today', () => {

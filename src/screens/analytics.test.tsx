@@ -65,10 +65,10 @@ describe('first run', () => {
     await user.click(screen.getByRole('link', { name: 'Add your first debt' }))
     await expectSent('take_home_set', {})
 
-    await user.type(screen.getByLabelText('Name'), 'HDFC Millennia card')
-    await user.type(screen.getByLabelText('How much do you owe?'), '85000')
+    await user.type(screen.getByLabelText('Card name'), 'HDFC Millennia card')
+    await user.type(screen.getByLabelText('How much is on the card?'), '85000')
     await user.type(screen.getByLabelText('Interest rate (% a year)'), '42')
-    await user.type(screen.getByLabelText('What you pay each month'), '6000')
+    await user.type(screen.getByLabelText('What you usually pay each month'), '6000')
     await user.click(screen.getByRole('button', { name: 'Save debt' }))
 
     await expectSent('debt_added', { type: 'credit_card', has_rate_type: false, has_sanction_date: false, debt_count: 1 })
@@ -82,9 +82,9 @@ describe('first run', () => {
 
   it('counts a debt saved while its payment is below the interest', async () => {
     const user = renderAt('/debts/new')
-    await user.type(screen.getByLabelText('How much do you owe?'), '85000')
+    await user.type(screen.getByLabelText('How much is on the card?'), '85000')
     await user.type(screen.getByLabelText('Interest rate (% a year)'), '42')
-    await user.type(screen.getByLabelText('What you pay each month'), '500')
+    await user.type(screen.getByLabelText('What you usually pay each month'), '500')
     await user.click(screen.getByRole('button', { name: 'Save debt' }))
     await expectSent('debt_payment_below_interest', { type: 'credit_card' })
   })

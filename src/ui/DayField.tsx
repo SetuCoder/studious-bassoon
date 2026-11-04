@@ -6,8 +6,8 @@ interface DayFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'val
   hint?: ReactNode
   /** Replaces the hint when set. */
   error?: string
-  /** "rupees": whole rupees, Indian grouping as you type. "rate": % a year. "text" and "date" as typed. */
-  kind: 'rupees' | 'rate' | 'text' | 'date'
+  /** "rupees": whole rupees, Indian grouping as you type. "rate": % a year. "count": a small whole number. "text" and "date" as typed. */
+  kind: 'rupees' | 'rate' | 'count' | 'text' | 'date'
   /** Digits only for rupees; the typed text otherwise. */
   value: string
   onChange: (value: string) => void
@@ -37,14 +37,14 @@ export function DayField({ label, hint, error, kind, value, onChange, ...rest }:
         <input
           id={id}
           type={kind === 'date' ? 'date' : 'text'}
-          inputMode={kind === 'rupees' ? 'numeric' : kind === 'rate' ? 'decimal' : undefined}
+          inputMode={kind === 'rupees' || kind === 'count' ? 'numeric' : kind === 'rate' ? 'decimal' : undefined}
           autoComplete="off"
           aria-describedby={note ? noteId : undefined}
           aria-invalid={error ? true : undefined}
           value={shown}
           onChange={(e) => {
             const v = e.target.value
-            onChange(kind === 'rupees' ? rupeeDigits(v) : kind === 'rate' ? rateText(v) : v)
+            onChange(kind === 'rupees' ? rupeeDigits(v) : kind === 'rate' ? rateText(v) : kind === 'count' ? rupeeDigits(v).slice(0, 3) : v)
           }}
           className={`w-full min-w-0 bg-transparent text-aubergine caret-aubergine outline-none placeholder:text-plum-muted/70 ${
             kind === 'text' || kind === 'date' ? 'text-[17px] font-medium' : 'text-[22px] font-extrabold tracking-[-0.02em]'

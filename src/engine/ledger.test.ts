@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { isLoan, summariseLedger } from './ledger'
+import { cardUsage, isLoan, monthlyInterest, repaidShare, summariseLedger } from './ledger'
 import { debt } from './testDebts'
 
 describe('isLoan', () => {
@@ -31,5 +31,23 @@ describe('summariseLedger', () => {
   it('returns zeros for an empty ledger', () => {
     const l = summariseLedger([])
     expect(l).toMatchObject({ totalOwed: 0, monthlyPayments: 0, interestThisMonth: 0, weightedApr: 0, sortedByCost: [] })
+  })
+})
+
+describe('per-debt figures', () => {
+  it('works out card usage only when there is a limit', () => {
+    expect(cardUsage({ balance: 85000, creditLimit: 150000 })).toBeCloseTo(0.5667, 4)
+    expect(cardUsage({ balance: 85000 })).toBeUndefined()
+    expect(cardUsage({ balance: 85000, creditLimit: 0 })).toBeUndefined()
+  })
+
+  it('works out the share repaid, kept between 0 and 1', () => {
+    expect(repaidShare({ balance: 210000, originalAmount: 300000 })).toBeCloseTo(0.3, 6)
+    expect(repaidShare({ balance: 320000, originalAmount: 300000 })).toBe(0)
+    expect(repaidShare({ balance: 210000 })).toBeUndefined()
+  })
+
+  it('gives one debt\'s interest this month', () => {
+    expect(monthlyInterest({ balance: 85000, apr: 42 })).toBeCloseTo(2975, 6)
   })
 })

@@ -156,6 +156,15 @@ describe('09 charge check questions → 10 result', () => {
   })
 })
 
+describe('prefillFromDebt', () => {
+  it('answers "₹50 lakh or less?" from the amount first borrowed, when the debt has it', () => {
+    const personal = SAMPLE_DEBTS.find((d) => d.id === 'personal')!
+    expect(prefillFromDebt({ lines: [] }, { ...personal, originalAmount: 300000 }).sanctionedAmountUpTo50L).toBe('yes')
+    expect(prefillFromDebt({ lines: [] }, { ...personal, originalAmount: 6000000 }).sanctionedAmountUpTo50L).toBe('no')
+    expect(prefillFromDebt({ lines: [] }, personal).sanctionedAmountUpTo50L).toBeUndefined()
+  })
+})
+
 describe('buildChargeCheck', () => {
   it('quotes the ledger date only when it matches the answer', () => {
     const personal = SAMPLE_DEBTS.find((d) => d.id === 'personal')!
