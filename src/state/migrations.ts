@@ -1,7 +1,9 @@
 import type { AppData, Debt, TourId } from '../engine/types'
 
 /** The one localStorage key that holds everything (docs/data-model.md). */
-export const STORAGE_KEY = 'ro:v1'
+export const STORAGE_KEY = 'vektrr:v1'
+/** Where data lived before the app was named Vektrr. Moved to STORAGE_KEY on first open. */
+export const LEGACY_STORAGE_KEY = 'ro:v1'
 export const SCHEMA_VERSION = 2
 
 const TOUR_IDS: readonly TourId[] = ['start', 'overview', 'results', 'charge']

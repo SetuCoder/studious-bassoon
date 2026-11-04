@@ -4,7 +4,7 @@ import { createStore } from 'zustand/vanilla'
 import { isLoan } from '../engine/ledger'
 import type { AppData, ChargeCheck, Debt, NextRupeeInput, TourId } from '../engine/types'
 import { defaultDebtName } from '../lib/debtTypes'
-import { SCHEMA_VERSION, STORAGE_KEY, emptyAppData, migrate, normalise } from './migrations'
+import { LEGACY_STORAGE_KEY, SCHEMA_VERSION, STORAGE_KEY, emptyAppData, migrate, normalise } from './migrations'
 import { createSafeStorage } from './storage'
 
 /** What the add-a-debt and edit forms hand over. Name is optional; it defaults from the type. */
@@ -100,6 +100,8 @@ export function createAppStore(deps: Partial<StoreDeps> = {}) {
   // so the flag is also synced once after creation.
   let store: ReturnType<typeof build> | undefined
   const storage = createSafeStorage<AppData>(getStorage, () => store?.setState({ storageAvailable: false }))
+  // Data saved before the rename to Vektrr; moved before the store reads it.
+  storage.moveItem(LEGACY_STORAGE_KEY, STORAGE_KEY)
 
   const build = () => createStore<AppState>()(
     persist(

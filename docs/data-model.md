@@ -4,7 +4,7 @@ All data lives in the browser under one localStorage key. Nothing is sent to a s
 
 ## Storage
 
-- Key: `ro:v1`
+- Key: `vektrr:v1` (until November 2026 it was `ro:v1`; the app moves data from the old key on first open)
 - Value: JSON of `{ state: AppData, version }` (below), written by the Zustand persist middleware. `version` equals `schemaVersion`.
 - `schemaVersion` starts at 1. Any change to the shape adds a migration in `src/state/migrations.ts` and bumps the version. Version 2 (guided tours) added `settings.toursSeen`; the 1 → 2 step keeps everything else and starts it empty.
 - Every read and write is wrapped in try/catch. If storage is unavailable (private mode, blocked, or a write fails later, for example when full), the app still works for the session and shows a one-line notice: "Your data won't be saved on this device."
