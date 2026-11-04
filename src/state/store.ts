@@ -20,6 +20,8 @@ const OPTIONAL: readonly (keyof Debt)[] = ['rateType', 'sanctionedOn', 'purpose'
 
 export interface AppActions {
   setTakeHome: (rupees: number | undefined) => void
+  /** First name for the greeting; blank clears it. */
+  setName: (name: string) => void
   /** Returns the new debt's id. */
   addDebt: (input: DebtInput) => string
   updateDebt: (id: string, patch: Partial<DebtInput>) => void
@@ -124,6 +126,9 @@ export function createAppStore(deps: Partial<StoreDeps> = {}) {
 
         setTakeHome: (rupees) =>
           set((s) => ({ profile: { ...s.profile, takeHomeMonthly: rupees && rupees > 0 ? rupees : undefined } })),
+
+        setName: (name) =>
+          set((s) => ({ profile: { ...s.profile, name: name.trim().slice(0, 30) || undefined } })),
 
         addDebt: (input) => {
           const id = newId()

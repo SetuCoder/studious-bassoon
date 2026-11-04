@@ -5,7 +5,7 @@ import { isActive } from '../../engine/ledger'
 import { forgetAnalyticsId, track } from '../../lib/analytics'
 import { APP_NAME, APP_VERSION } from '../../lib/constants'
 import { useAppStore } from '../../state/store'
-import { DaySelect } from '../../ui/DayField'
+import { DayField, DaySelect } from '../../ui/DayField'
 import { DayScreen } from '../../ui/DayScreen'
 import { MarigoldMark } from '../../ui/Marigold'
 import { SlabButton, SlabLink } from '../../ui/SlabButton'
@@ -33,6 +33,9 @@ export function Me() {
   const debtCount = useAppStore((s) => s.debts.filter(isActive).length)
   const checkCount = useAppStore((s) => s.chargeChecks.length)
   const settings = useAppStore((s) => s.settings)
+  const name = useAppStore((s) => s.profile.name)
+  const setName = useAppStore((s) => s.setName)
+  const [nameText, setNameText] = useState(name ?? '')
   const setShareUsageCounts = useAppStore((s) => s.setShareUsageCounts)
   const setHaptics = useAppStore((s) => s.setHaptics)
   const setCalmMotion = useAppStore((s) => s.setCalmMotion)
@@ -48,7 +51,7 @@ export function Me() {
             <MarigoldMark size={26} />
           </span>
           <div>
-            <p className="text-[19px] font-black tracking-[-0.02em]">Your {APP_NAME}</p>
+            <p className="text-[19px] font-black tracking-[-0.02em]">{name ? `${name}’s ${APP_NAME}` : `Your ${APP_NAME}`}</p>
             <p className="text-[13px] text-mauve">Saved on this phone. No sign-in needed.</p>
           </div>
         </div>
@@ -73,6 +76,17 @@ export function Me() {
       </Group>
 
       <Group id="preferences" title="Preferences">
+        <DayField
+          kind="text"
+          label="Your first name"
+          hint="For the greeting on Home. It stays on this phone."
+          placeholder="Optional"
+          autoComplete="given-name"
+          maxLength={30}
+          value={nameText}
+          onChange={setNameText}
+          onBlur={() => setName(nameText)}
+        />
         <DaySelect<Currency>
           label="Currency"
           hint="Rupees for now. Other currencies are on the way."

@@ -92,7 +92,7 @@ describe('07 results and 08 option detail', () => {
     expect(within(table).getByRole('columnheader', { name: 'Credit card 1' })).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Done' }))
-    expect(screen.getByRole('heading', { name: 'Home' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeInTheDocument()
   })
 
   it('shows the invested amount for the invest option', async () => {

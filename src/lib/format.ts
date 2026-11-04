@@ -17,6 +17,21 @@ export function formatDate(iso: string): string {
   return `${d} ${MONTHS[m - 1]} ${y}`
 }
 
+/** The calendar month `months` from `from`: 90 months from November 2026 -> "May 2034". */
+export function monthYearAfter(months: number, from: Date): string {
+  const d = new Date(from.getFullYear(), from.getMonth() + months, 1)
+  return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`
+}
+
+/** 4 -> "4 months", 12 -> "1 year", 90 -> "7 years 6 months". */
+export function formatDuration(months: number): string {
+  const years = Math.floor(months / 12)
+  const rest = months % 12
+  const y = years === 1 ? '1 year' : `${years} years`
+  const m = rest === 1 ? '1 month' : `${rest} months`
+  return years === 0 ? m : rest === 0 ? y : `${y} ${m}`
+}
+
 const grouped = new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 })
 const rate = new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 })
 

@@ -72,7 +72,7 @@ describe('first run', () => {
   it('opens on Home, not Welcome, once a debt exists', () => {
     act(() => { appStore.getState().addDebt({ type: 'credit_card', balance: 1000, apr: 36, monthlyPayment: 500 }) })
     renderAt('/welcome')
-    expect(screen.getByRole('heading', { name: 'Home' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /^Good (morning|afternoon|evening)/ })).toBeInTheDocument()
   })
 
   it('opens how it works from Get started, chapter by chapter, then starts', async () => {

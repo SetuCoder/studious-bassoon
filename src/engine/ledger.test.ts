@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { cardUsage, isLoan, monthlyInterest, repaidShare, summariseLedger } from './ledger'
-import { debt } from './testDebts'
+import { debt, SAMPLE_DEBTS } from './testDebts'
 
 describe('isLoan', () => {
   it('treats cards and BNPL as not loans', () => {
@@ -31,6 +31,20 @@ describe('summariseLedger', () => {
   it('returns zeros for an empty ledger', () => {
     const l = summariseLedger([])
     expect(l).toMatchObject({ totalOwed: 0, monthlyPayments: 0, interestThisMonth: 0, weightedApr: 0, sortedByCost: [] })
+  })
+})
+
+describe('interestShareOfPayments', () => {
+  it('is the share of this month’s payments that only covers interest, capped at all of it', () => {
+    expect(summariseLedger(SAMPLE_DEBTS).interestShareOfPayments).toBeCloseTo(0.5365, 4)
+    expect(summariseLedger([debt({ id: 'a', balance: 100000, apr: 36, monthlyPayment: 1000 })]).interestShareOfPayments).toBe(1)
+    expect(summariseLedger([]).interestShareOfPayments).toBe(0)
+  })
+
+  it('splits the payments: what pays down the balances is what the interest leaves, never negative', () => {
+    const s = summariseLedger(SAMPLE_DEBTS)
+    expect(s.principalThisMonth + s.interestThisMonth).toBeCloseTo(s.monthlyPayments, 6)
+    expect(summariseLedger([debt({ id: 'a', balance: 100000, apr: 36, monthlyPayment: 1000 })]).principalThisMonth).toBe(0)
   })
 })
 

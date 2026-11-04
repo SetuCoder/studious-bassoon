@@ -40,6 +40,10 @@ export interface LedgerSummary<T extends EngineDebt> {
   /** Only when take-home is set. 0.48 means 48%. */
   shareOfTakeHome?: number
   interestThisMonth: number
+  /** What this month's payments take off the balances once interest is covered. Never below 0. */
+  principalThisMonth: number
+  /** Share of this month's payments that only covers interest, 0 to 1. 0 when nothing is paid. */
+  interestShareOfPayments: number
   /** % a year, weighted by balance. 0 when nothing is owed. */
   weightedApr: number
   /** The first one "costs the most". */
@@ -56,6 +60,8 @@ export function summariseLedger<T extends EngineDebt>(debts: readonly T[], takeH
     monthlyPayments,
     shareOfTakeHome: takeHomeMonthly && takeHomeMonthly > 0 ? monthlyPayments / takeHomeMonthly : undefined,
     interestThisMonth: weighted / 1200,
+    principalThisMonth: Math.max(0, monthlyPayments - weighted / 1200),
+    interestShareOfPayments: monthlyPayments > 0 ? Math.min(1, weighted / 1200 / monthlyPayments) : 0,
     weightedApr: totalOwed > 0 ? weighted / totalOwed : 0,
     sortedByCost: sortByCost(active),
   }

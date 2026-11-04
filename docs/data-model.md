@@ -51,6 +51,7 @@ interface Debt {
 
 interface Profile {
   takeHomeMonthly?: number;   // optional; enables "share of take-home"
+  name?: string;              // optional first name for Home's greeting, trimmed, at most 30 characters; never in analytics
 }
 
 interface NextRupeeInput {
