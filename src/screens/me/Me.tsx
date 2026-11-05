@@ -49,14 +49,21 @@ export function Me() {
   const [code, setCode] = useState('')
   const [codeWrong, setCodeWrong] = useState(false)
 
+  const [loadFailed, setLoadFailed] = useState(false)
+
   const unlockDemo = async () => {
     if (code.trim().toLowerCase() !== DEMO_CODE) {
       setCodeWrong(true)
       return
     }
-    const { startDemo } = await import('../../demo/sampleBorrower')
-    setCodeOpen(false)
-    navigate(startDemo(appStore, '', () => true))
+    try {
+      const { startDemo } = await import('../../demo/sampleBorrower')
+      setCodeOpen(false)
+      navigate(startDemo(appStore, '', () => true))
+    } catch {
+      // Usually an old copy of the app from the phone's cache asking for a file the new one replaced.
+      setLoadFailed(true)
+    }
   }
 
   return (
@@ -132,22 +139,24 @@ export function Me() {
       </Group>
 
       <section aria-labelledby="about" className="flex flex-col gap-1.5 px-1">
-        <h2 id="about" className="flex items-center gap-1 text-[17px] font-extrabold">
-          {/* The logo opens the demo code: an app added to the iPhone Home Screen has its own storage
-              and no address bar, so ?demo can't reach it. Not a lock; it only keeps the demo out of the way. */}
-          <button
-            type="button"
-            aria-label="Enter a code"
-            onClick={() => {
-              setCode('')
-              setCodeWrong(false)
-              setCodeOpen(true)
-            }}
-            className="-ml-2.5 flex size-11 items-center justify-center rounded-full"
-          >
-            <MarigoldMark size={20} />
-          </button>
-          About {APP_NAME}
+        <h2 id="about" className="flex items-center gap-2 text-[17px] font-extrabold">
+          <MarigoldMark size={20} />
+          <span>
+            About{' '}
+            {/* The name opens the demo code: an app added to the iPhone Home Screen has its own storage
+                and no address bar, so ?demo can't reach it. Not a lock; it only keeps the demo out of the way. */}
+            <button
+              type="button"
+              onClick={() => {
+                setCode('')
+                setCodeWrong(false)
+                setCodeOpen(true)
+              }}
+              className="-my-3 inline-block min-h-11 cursor-pointer py-3 font-extrabold touch-manipulation"
+            >
+              {APP_NAME}
+            </button>
+          </span>
         </h2>
         <p className="text-[14px] text-plum-muted">Version {APP_VERSION}</p>
         <p className="text-[14px] text-plum-muted">Shows the cost of each option. Not financial advice.</p>
@@ -166,14 +175,14 @@ export function Me() {
           <DayField
             kind="text"
             label="Code"
-            hint="The demo replaces the debts on this phone."
-            error={codeWrong ? 'That code isn’t right' : undefined}
+            error={codeWrong ? 'That code isn’t right' : loadFailed ? 'Couldn’t load. Close the app fully and open it again.' : undefined}
             autoCapitalize="none"
             autoCorrect="off"
             value={code}
             onChange={(v) => {
               setCode(v)
               setCodeWrong(false)
+              setLoadFailed(false)
             }}
           />
           <SlabButton type="submit" surface="day" disabled={!code.trim()}>Unlock</SlabButton>
