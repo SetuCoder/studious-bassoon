@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router'
 import { Sheet } from '../../components/Sheet'
 import { isActive } from '../../engine/ledger'
@@ -10,6 +10,9 @@ import { DayScreen } from '../../ui/DayScreen'
 import { MarigoldMark } from '../../ui/Marigold'
 import { SlabButton, SlabLink } from '../../ui/SlabButton'
 import { Switch } from '../../ui/Switch'
+
+/** Typed in the code sheet (Me → About logo) to load the demo borrower. */
+const DEMO_CODE = 'admin'
 
 type Currency = 'INR' | 'USD' | 'AED' | 'GBP'
 
@@ -42,15 +45,17 @@ export function Me() {
   const deleteAllData = useAppStore((s) => s.deleteAllData)
   const resetTours = useAppStore((s) => s.resetTours)
   const [confirmOpen, setConfirmOpen] = useState(false)
-  const taps = useRef<number[]>([])
+  const [codeOpen, setCodeOpen] = useState(false)
+  const [code, setCode] = useState('')
+  const [codeWrong, setCodeWrong] = useState(false)
 
-  const versionTapped = async () => {
-    const now = Date.now()
-    taps.current = [...taps.current.filter((t) => now - t < 3000), now]
-    if (taps.current.length < 5) return
-    taps.current = []
-    if (!window.confirm('Load the demo borrower? It replaces the debts on this phone.')) return
+  const unlockDemo = async () => {
+    if (code.trim().toLowerCase() !== DEMO_CODE) {
+      setCodeWrong(true)
+      return
+    }
     const { startDemo } = await import('../../demo/sampleBorrower')
+    setCodeOpen(false)
     navigate(startDemo(appStore, '', () => true))
   }
 
@@ -127,16 +132,53 @@ export function Me() {
       </Group>
 
       <section aria-labelledby="about" className="flex flex-col gap-1.5 px-1">
-        <h2 id="about" className="flex items-center gap-2 text-[17px] font-extrabold">
-          <MarigoldMark size={20} />
+        <h2 id="about" className="flex items-center gap-1 text-[17px] font-extrabold">
+          {/* The logo opens the demo code: an app added to the iPhone Home Screen has its own storage
+              and no address bar, so ?demo can't reach it. Not a lock; it only keeps the demo out of the way. */}
+          <button
+            type="button"
+            aria-label="Enter a code"
+            onClick={() => {
+              setCode('')
+              setCodeWrong(false)
+              setCodeOpen(true)
+            }}
+            className="-ml-2.5 flex size-11 items-center justify-center rounded-full"
+          >
+            <MarigoldMark size={20} />
+          </button>
           About {APP_NAME}
         </h2>
-        {/* Five quick taps load the demo borrower: an app added to the iPhone Home Screen has its own
-            storage and no address bar, so ?demo can't reach it. Hidden; it asks before replacing anything. */}
-        <p className="text-[14px] text-plum-muted select-none" onClick={versionTapped}>Version {APP_VERSION}</p>
+        <p className="text-[14px] text-plum-muted">Version {APP_VERSION}</p>
         <p className="text-[14px] text-plum-muted">Shows the cost of each option. Not financial advice.</p>
         <p className="text-[14px] text-plum-muted">Charge checks are a guide to what to ask, not legal advice.</p>
       </section>
+
+      <Sheet open={codeOpen} title="Enter a code" onClose={() => setCodeOpen(false)}>
+        <form
+          noValidate
+          className="flex flex-col gap-4"
+          onSubmit={(e) => {
+            e.preventDefault()
+            void unlockDemo()
+          }}
+        >
+          <DayField
+            kind="text"
+            label="Code"
+            hint="The demo replaces the debts on this phone."
+            error={codeWrong ? 'That code isn’t right' : undefined}
+            autoCapitalize="none"
+            autoCorrect="off"
+            value={code}
+            onChange={(v) => {
+              setCode(v)
+              setCodeWrong(false)
+            }}
+          />
+          <SlabButton type="submit" surface="day" disabled={!code.trim()}>Unlock</SlabButton>
+        </form>
+      </Sheet>
 
       <Sheet open={confirmOpen} title="Delete all your data?" onClose={() => setConfirmOpen(false)}>
         <p className="text-[15px] leading-snug text-plum-muted">

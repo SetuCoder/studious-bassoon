@@ -1,7 +1,7 @@
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import App from '../App'
 import { SAMPLE_DEBTS } from '../engine/testDebts'
 import { STORAGE_KEY } from '../state/migrations'
@@ -122,17 +122,21 @@ describe('11 Me', () => {
     expect(screen.getByRole('heading', { name: 'Your account' })).toBeInTheDocument()
   })
 
-  it('loads the demo after five quick taps on the version, once confirmed', async () => {
+  it('loads the demo from the About logo with the code admin, and not with a wrong one', async () => {
     act(() => appStore.getState().deleteAllData())
-    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true)
     const user = renderAt('/me')
-    const version = screen.getByText(/^Version /)
-    for (let i = 0; i < 4; i++) await user.click(version)
-    expect(confirm).not.toHaveBeenCalled()
-    await user.click(version)
+    await user.click(screen.getByRole('button', { name: 'Enter a code' }))
+    const sheet = within(screen.getByRole('dialog', { name: 'Enter a code' }))
+    await user.type(sheet.getByLabelText('Code'), 'guest')
+    await user.click(sheet.getByRole('button', { name: 'Unlock' }))
+    expect(sheet.getByText('That code isn’t right')).toBeInTheDocument()
+    expect(appStore.getState().debts).toHaveLength(0)
+
+    await user.clear(sheet.getByLabelText('Code'))
+    await user.type(sheet.getByLabelText('Code'), ' Admin ')
+    await user.click(sheet.getByRole('button', { name: 'Unlock' }))
     await waitFor(() => expect(appStore.getState().debts).toHaveLength(6))
     expect(appStore.getState().profile.name).toBe('Riya')
-    confirm.mockRestore()
   })
 
   it('keeps everything if you back out of deleting', async () => {
