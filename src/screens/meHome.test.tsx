@@ -122,10 +122,11 @@ describe('11 Me', () => {
     expect(screen.getByRole('heading', { name: 'Your account' })).toBeInTheDocument()
   })
 
-  it('loads the demo from the About logo with the code admin, and not with a wrong one', async () => {
+  it('loads the demo from the name in About with the code admin, and not with a wrong one', async () => {
     act(() => appStore.getState().deleteAllData())
     const user = renderAt('/me')
-    await user.click(screen.getByRole('button', { name: 'Enter a code' }))
+    await user.click(within(screen.getByRole('region', { name: /About Vektrr/ })).getByRole('button', { name: 'Vektrr' }))
+    expect(screen.queryByText(/replaces the debts/)).not.toBeInTheDocument()
     const sheet = within(screen.getByRole('dialog', { name: 'Enter a code' }))
     await user.type(sheet.getByLabelText('Code'), 'guest')
     await user.click(sheet.getByRole('button', { name: 'Unlock' }))
